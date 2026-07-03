@@ -61,6 +61,14 @@ class SessionBridgeTest {
         val mockSession = mockk<UserSession>(relaxed = true)
         every { mockSession.user } returns mockUserInfo
         
+        // Start initialization in background
+        val initJob = backgroundScope.launch {
+            sessionBridge.initialize()
+        }
+        
+        // Give initialization time to start
+        kotlinx.coroutines.delay(50)
+        
         // Emit authenticated status
         sessionStatusFlow.value = SessionStatus.Authenticated(mockSession)
         
@@ -74,6 +82,8 @@ class SessionBridgeTest {
         assertEquals(testEmail, state.email)
         assertTrue(sessionBridge.isAuthenticated)
         assertEquals(testUserId, sessionBridge.currentUserId)
+        
+        initJob.cancel()
     }
     
     @Test
