@@ -1,16 +1,15 @@
 {
-  "_comment": "This is a placeholder google-services.json file for CI builds.",
-  "_comment2": "Replace this with your actual google-services.json from Firebase Console.",
-  "_comment3": "Download from: Firebase Console > Project Settings > General > Your apps",
+  "_comment": "Replace mobilesdk_app_id and api_key after registering the Android app in Firebase Console.",
+  "_instructions": "Firebase Console > Project Settings > Your apps > Add app (Android) > package com.spot.android > Download google-services.json",
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "spot-placeholder",
-    "storage_bucket": "spot-placeholder.appspot.com"
+    "project_number": "415359921164",
+    "project_id": "spot-a6a75",
+    "storage_bucket": "spot-a6a75.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:415359921164:android:0000000000000000000000",
         "android_client_info": {
           "package_name": "com.spot.android"
         }
@@ -18,7 +17,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAPlaceholderKeyForLocalDevelopment"
+          "current_key": "REPLACE_WITH_ANDROID_APP_API_KEY_FROM_FIREBASE_CONSOLE"
         }
       ],
       "services": {

@@ -31,6 +31,7 @@ ktor = "2.3.12"
 
 # Google Services
 googleServices = "4.4.2"
+firebaseCrashlyticsGradle = "3.0.2"
 playServicesLocation = "21.3.0"
 playServicesMaps = "18.2.0"
 mapsCompose = "5.0.1"
@@ -137,3 +138,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
