@@ -25,12 +25,12 @@ These can run in parallel after Phase 0.
 | **1.1** Design system / theme | ✅ | [#4](https://github.com/Ewynman/spot-android-app/pull/4) | 0.1 | Colors, spacing, typography, vibe chips, preview screen |
 | **1.2** Supabase core | ✅ | [#2](https://github.com/Ewynman/spot-android-app/pull/2) | 0.1 | Client provider, session bridge |
 | **1.3** Domain models + DTOs | ✅ | [#3](https://github.com/Ewynman/spot-android-app/pull/3) | 0.1 | Spot, User, VibeTag, enums, Constants |
-| **1.4** Signed-URL image loader | ⏳ | — | 1.2 | Coil fetcher with auth + caching |
-| **1.5** Shared components | ⏳ | — | 1.1, 1.4 | SpotCard, vibe chips, avatar, empty views |
-| **1.6** Navigation shell + overlay | ⏳ | — | 1.1 | 5-tab bar, NavGraph, overlay host |
+| **1.4** Signed-URL image loader | ✅ | [#5](https://github.com/Ewynman/spot-android-app/pull/5) | 1.2 | Coil fetcher with auth + caching |
+| **1.5** Shared components | ✅ | [#6](https://github.com/Ewynman/spot-android-app/pull/6) | 1.1, 1.4 | SpotCard, vibe chips, avatar, empty views |
+| **1.6** Navigation shell + overlay | 🚧 | [#7](https://github.com/Ewynman/spot-android-app/pull/7) | 1.1 | 5-tab bar, NavGraph, overlay host |
 | **1.7** Structured logger + analytics | ⬜ | — | 0.1 | Per-area logging, debug toggles |
 
-**Next recommended**: 1.4 (Signed-URL image loader) or 1.7 (Structured logger)
+**Next recommended**: 1.7 (Structured logger) — can run in parallel with 1.6 PR review
 
 ---
 
@@ -91,13 +91,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 4 (14%)
-- **In Progress**: 0
-- **Blocked (waiting on deps)**: 9
-- **Not Started**: 15
+- **Completed**: 6 (21%)
+- **In Progress**: 1
+- **Blocked (waiting on deps)**: 7
+- **Not Started**: 14
 
 **Current Phase**: Phase 1 (Foundation)  
-**Next Task**: 1.4 (Signed-URL image loader) or 1.7 (Structured logger)
+**Next Task**: 1.7 (Structured logger + analytics)
 
 ---
 
