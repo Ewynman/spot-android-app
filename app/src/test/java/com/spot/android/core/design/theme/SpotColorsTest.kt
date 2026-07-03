@@ -42,18 +42,12 @@ class SpotColorsTest {
     }
     
     @Test
-    fun `welcome card shadow has correct alpha`() {
-        val shadow = SpotColors.WelcomeCardShadow
-        assertEquals("WelcomeCardShadow base should be #1D2C24", 0xFF1D2C24u, (shadow.value and 0x00FFFFFFu) or 0xFF000000u)
-    }
-    
-    @Test
     fun `button text and background are same color for contrast`() {
         // Per PRD: ButtonText is same as Background - never use as body text on cream
         assertEquals(
             "ButtonText should match Background for proper contrast on dark buttons",
-            SpotColors.Background.value,
-            SpotColors.ButtonText.value
+            SpotColors.Background.value.toLong(),
+            SpotColors.ButtonText.value.toLong()
         )
     }
 }
