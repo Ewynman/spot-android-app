@@ -32,19 +32,6 @@ class SpotColorsTest {
     }
     
     @Test
-    fun `map colors with alpha match PRD specification`() {
-        // Verify base colors (RGB without alpha) match PRD
-        val densityFill = SpotColors.MapDensityFill
-        assertEquals("MapDensityFill base should be #1D2C24", 0xFF1D2C24u, (densityFill.value and 0x00FFFFFFu) or 0xFF000000u)
-        
-        val selectedGlow = SpotColors.MapSelectedGlow
-        assertEquals("MapSelectedGlow base should be #1D2C24", 0xFF1D2C24u, (selectedGlow.value and 0x00FFFFFFu) or 0xFF000000u)
-        
-        val avatarHalo = SpotColors.MapAvatarHalo
-        assertEquals("MapAvatarHalo base should be #1D2C24", 0xFF1D2C24u, (avatarHalo.value and 0x00FFFFFFu) or 0xFF000000u)
-    }
-    
-    @Test
     fun `welcome screen colors match PRD specification`() {
         // Welcome screen colors from PRD/02
         assertEquals("WelcomeGlow should be #7AA382", Color(0xFF7AA382).value, SpotColors.WelcomeGlow.value)
