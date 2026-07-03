@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spot</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_post">Post</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_profile">Profile</string>
+    
+    <!-- Common Actions -->
+    <string name="action_continue">Continue</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_done">Done</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_close">Close</string>
+    
+    <!-- Permissions -->
+    <string name="permission_location_title">Enable Location</string>
+    <string name="permission_camera_title">Enable Camera</string>
+    <string name="permission_photos_title">Enable Photos</string>
+    <string name="permission_notifications_title">Enable Notifications</string>
+    
+    <!-- Content Descriptions for Accessibility -->
+    <string name="cd_profile_image">Profile image</string>
+    <string name="cd_spot_image">Spot image</string>
+    <string name="cd_like_button">Like button</string>
+    <string name="cd_bookmark_button">Bookmark button</string>
+    <string name="cd_menu_button">Menu button</string>
+    <string name="cd_back_button">Back button</string>
+    
+    <!-- Error Messages -->
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_network">Network error. Check your connection.</string>
+    <string name="error_auth">Authentication error. Please sign in again.</string>
+</resources>

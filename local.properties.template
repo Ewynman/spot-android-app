@@ -1,0 +1,22 @@
+# Local Configuration Template
+# Copy this file to local.properties and fill in your actual values
+# DO NOT commit local.properties to version control
+
+## SDK Location (Android Studio will add this automatically)
+sdk.dir=/path/to/Android/sdk
+
+## Supabase Configuration
+# Project ref: aeurigbbohyxvtsfiyul
+# Get these from: https://supabase.com/dashboard/project/aeurigbbohyxvtsfiyul/settings/api
+supabase.url=https://aeurigbbohyxvtsfiyul.supabase.co
+supabase.anonKey=YOUR_SUPABASE_ANON_KEY_HERE
+
+## Share URL Configuration
+share.baseUrl=https://spotapp.online
+
+## Google Maps API Key
+# Get from: https://console.cloud.google.com/google/maps-apis/credentials
+google.maps.apiKey=YOUR_GOOGLE_MAPS_API_KEY_HERE
+
+## Google Play Billing Product IDs
+billing.productId.proYearly=spot_pro_yearly
