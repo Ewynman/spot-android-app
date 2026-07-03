@@ -8,7 +8,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -37,6 +40,9 @@ class ImageUrlSignerTest {
     
     @Before
     fun setup() {
+        // Mock the storage extension property
+        mockkStatic("io.github.jan.supabase.storage.StorageKt")
+        
         // Mock Supabase dependencies
         supabaseProvider = mockk(relaxed = true)
         supabaseClient = mockk(relaxed = true)
@@ -46,6 +52,11 @@ class ImageUrlSignerTest {
         every { supabaseClient.storage } returns storage
         
         imageUrlSigner = ImageUrlSigner(supabaseProvider)
+    }
+    
+    @After
+    fun tearDown() {
+        unmockkAll()
     }
     
     @Test
