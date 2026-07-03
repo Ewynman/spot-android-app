@@ -24,13 +24,13 @@ These can run in parallel after Phase 0.
 |------|--------|----|--------------|----|
 | **1.1** Design system / theme | ⬜ | — | 0.1 | Colors, spacing, typography, vibe chips |
 | **1.2** Supabase core | ✅ | [#2](https://github.com/Ewynman/spot-android-app/pull/2) | 0.1 | Client provider, session bridge |
-| **1.3** Domain models + DTOs | ⬜ | — | 0.1 | Spot, User, VibeTag, enums, Constants |
+| **1.3** Domain models + DTOs | ✅ | [#3](https://github.com/Ewynman/spot-android-app/pull/3) | 0.1 | Spot, User, VibeTag, enums, Constants |
 | **1.4** Signed-URL image loader | ⏳ | — | 1.2 | Coil fetcher with auth + caching |
 | **1.5** Shared components | ⏳ | — | 1.1, 1.4 | SpotCard, vibe chips, avatar, empty views |
 | **1.6** Navigation shell + overlay | ⏳ | — | 1.1 | 5-tab bar, NavGraph, overlay host |
 | **1.7** Structured logger + analytics | ⬜ | — | 0.1 | Per-area logging, debug toggles |
 
-**Next recommended**: 1.1 (Design system) or 1.3 (Domain models)
+**Next recommended**: 1.1 (Design system) or 1.7 (Structured logger)
 
 ---
 
@@ -40,7 +40,7 @@ Mostly sequential; gates the app.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **2.1** Auth repository + session VM | ⏳ | — | 1.2, 1.3 | Email/password, OTP, OAuth, sync_current_user_v1 |
+| **2.1** Auth repository + session VM | ⬜ | — | 1.2, 1.3 | Email/password, OTP, OAuth, sync_current_user_v1 |
 | **2.2** Launch gate + splash | ⏳ | — | 2.1, 1.6 | Decision table routing |
 | **2.3** Welcome / sign-up / login / OTP | ⏳ | — | 2.1 | Auth screens + terms checkbox |
 | **2.4** Post-auth username + terms gate | ⏳ | — | 2.1 | record_terms_acceptance_v1 |
@@ -91,13 +91,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 2 (7%)
+- **Completed**: 3 (11%)
 - **In Progress**: 0
-- **Blocked (waiting on deps)**: 11
+- **Blocked (waiting on deps)**: 10
 - **Not Started**: 15
 
 **Current Phase**: Phase 1 (Foundation)  
-**Next Task**: 1.1 (Design system) or 1.3 (Domain models)
+**Next Task**: 1.1 (Design system) or 1.7 (Structured logger)
 
 ---
 
