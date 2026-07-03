@@ -38,9 +38,9 @@ class ImageUrlSignerTest {
     @Before
     fun setup() {
         // Mock Supabase dependencies
-        supabaseProvider = mockk()
-        supabaseClient = mockk()
-        storage = mockk()
+        supabaseProvider = mockk(relaxed = true)
+        supabaseClient = mockk(relaxed = true)
+        storage = mockk(relaxed = true)
         
         every { supabaseProvider.client } returns supabaseClient
         every { supabaseClient.storage } returns storage
