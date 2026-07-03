@@ -55,16 +55,18 @@ class ImageUrlSignerTest {
         val bucket = "spots"
         val expectedSignedUrl = "https://example.supabase.co/storage/v1/object/sign/spots/$storagePath?token=abc123"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from(bucket) } returns bucketStorage
-        coEvery { bucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns expectedSignedUrl
+        coEvery { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        } returns expectedSignedUrl
         
         // When
         val url = imageUrlSigner.getImageUrl(storagePath, bucket)
         
         // Then
         assertEquals(expectedSignedUrl, url)
-        coVerify(exactly = 1) { bucketStorage.createSignedUrl(storagePath, 604800.seconds) }
+        coVerify(exactly = 1) { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        }
     }
     
     @Test
@@ -74,16 +76,18 @@ class ImageUrlSignerTest {
         val bucket = "avatars"
         val expectedPublicUrl = "https://example.supabase.co/storage/v1/object/public/avatars/$storagePath"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from(bucket) } returns bucketStorage
-        every { bucketStorage.publicUrl(storagePath) } returns expectedPublicUrl
+        every { 
+            storage.from(bucket).publicUrl(storagePath) 
+        } returns expectedPublicUrl
         
         // When
         val url = imageUrlSigner.getImageUrl(storagePath, bucket)
         
         // Then
         assertEquals(expectedPublicUrl, url)
-        coVerify(exactly = 0) { bucketStorage.createSignedUrl(any(), any()) }
+        coVerify(exactly = 0) { 
+            storage.from(any()).createSignedUrl(any(), any()) 
+        }
     }
     
     @Test
@@ -93,9 +97,9 @@ class ImageUrlSignerTest {
         val bucket = "spots"
         val expectedSignedUrl = "https://example.supabase.co/storage/v1/object/sign/spots/$storagePath?token=abc123"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from(bucket) } returns bucketStorage
-        coEvery { bucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns expectedSignedUrl
+        coEvery { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        } returns expectedSignedUrl
         
         // When: First call generates signed URL
         val url1 = imageUrlSigner.getImageUrl(storagePath, bucket)
@@ -106,7 +110,9 @@ class ImageUrlSignerTest {
         // Then: Both URLs are the same and signing happened only once
         assertEquals(expectedSignedUrl, url1)
         assertEquals(expectedSignedUrl, url2)
-        coVerify(exactly = 1) { bucketStorage.createSignedUrl(storagePath, 604800.seconds) }
+        coVerify(exactly = 1) { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        }
     }
     
     @Test
@@ -117,9 +123,9 @@ class ImageUrlSignerTest {
         val firstSignedUrl = "https://example.supabase.co/storage/v1/object/sign/spots/$storagePath?token=abc123"
         val secondSignedUrl = "https://example.supabase.co/storage/v1/object/sign/spots/$storagePath?token=def456"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from(bucket) } returns bucketStorage
-        coEvery { bucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns firstSignedUrl andThen secondSignedUrl
+        coEvery { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        } returns firstSignedUrl andThen secondSignedUrl
         
         // When: First call
         val url1 = imageUrlSigner.getImageUrl(storagePath, bucket)
@@ -142,7 +148,9 @@ class ImageUrlSignerTest {
         assertEquals(secondSignedUrl, url3)
         
         // Verify signing happened twice total
-        coVerify(exactly = 2) { bucketStorage.createSignedUrl(storagePath, 604800.seconds) }
+        coVerify(exactly = 2) { 
+            storage.from(bucket).createSignedUrl(storagePath, 604800.seconds) 
+        }
     }
     
     @Test
@@ -152,9 +160,9 @@ class ImageUrlSignerTest {
         val storagePath2 = "user-123/spot-456/image2.jpg"
         val bucket = "spots"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from(bucket) } returns bucketStorage
-        coEvery { bucketStorage.createSignedUrl(any(), any()) } returns "https://signed.url"
+        coEvery { 
+            storage.from(bucket).createSignedUrl(any(), any()) 
+        } returns "https://signed.url"
         
         // When: Cache some URLs
         imageUrlSigner.getImageUrl(storagePath1, bucket)
@@ -175,7 +183,9 @@ class ImageUrlSignerTest {
         imageUrlSigner.getImageUrl(storagePath1, bucket)
         
         // Then: Should re-sign (total 3 signings: 2 initial + 1 after clear)
-        coVerify(exactly = 3) { bucketStorage.createSignedUrl(any(), any()) }
+        coVerify(exactly = 3) { 
+            storage.from(bucket).createSignedUrl(any(), any()) 
+        }
     }
     
     @Test
@@ -185,14 +195,13 @@ class ImageUrlSignerTest {
         val spotsBucket = "spots"
         val pendingBucket = "pending_images"
         
-        val spotsBucketStorage = mockk<Storage.BucketApi>()
-        val pendingBucketStorage = mockk<Storage.BucketApi>()
+        coEvery { 
+            storage.from(spotsBucket).createSignedUrl(storagePath, 604800.seconds) 
+        } returns "https://spots.url"
         
-        every { storage.from(spotsBucket) } returns spotsBucketStorage
-        every { storage.from(pendingBucket) } returns pendingBucketStorage
-        
-        coEvery { spotsBucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns "https://spots.url"
-        coEvery { pendingBucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns "https://pending.url"
+        coEvery { 
+            storage.from(pendingBucket).createSignedUrl(storagePath, 604800.seconds) 
+        } returns "https://pending.url"
         
         // When
         val spotsUrl = imageUrlSigner.getImageUrl(storagePath, spotsBucket)
@@ -203,8 +212,12 @@ class ImageUrlSignerTest {
         assertEquals("https://pending.url", pendingUrl)
         
         // Both buckets were signed
-        coVerify(exactly = 1) { spotsBucketStorage.createSignedUrl(storagePath, 604800.seconds) }
-        coVerify(exactly = 1) { pendingBucketStorage.createSignedUrl(storagePath, 604800.seconds) }
+        coVerify(exactly = 1) { 
+            storage.from(spotsBucket).createSignedUrl(storagePath, 604800.seconds) 
+        }
+        coVerify(exactly = 1) { 
+            storage.from(pendingBucket).createSignedUrl(storagePath, 604800.seconds) 
+        }
     }
     
     @Test
@@ -213,9 +226,9 @@ class ImageUrlSignerTest {
         val storagePath = "user-123/image.jpg"
         val expectedSignedUrl = "https://signed.url"
         
-        val bucketStorage = mockk<Storage.BucketApi>()
-        every { storage.from("spots") } returns bucketStorage
-        coEvery { bucketStorage.createSignedUrl(storagePath, 604800.seconds) } returns expectedSignedUrl
+        coEvery { 
+            storage.from("spots").createSignedUrl(storagePath, 604800.seconds) 
+        } returns expectedSignedUrl
         
         // When: Call without specifying bucket (should default to "spots")
         val url = imageUrlSigner.getImageUrl(storagePath)
