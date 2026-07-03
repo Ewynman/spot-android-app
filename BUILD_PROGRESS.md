@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 2.1 (Auth repository + session VM)
+**Next recommended**: 2.2 (Launch gate + splash)
 
 ---
 
@@ -42,7 +42,7 @@ Mostly sequential; gates the app.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **2.1** Auth repository + session VM | ⬜ | — | 1.2, 1.3 | Email/password, OTP, OAuth, sync_current_user_v1 |
+| **2.1** Auth repository + session VM | ✅ | [#9](https://github.com/Ewynman/spot-android-app/pull/9) | 1.2, 1.3 | AuthRepository, UserSessionHolder, AuthViewModel |
 | **2.2** Launch gate + splash | ⏳ | — | 2.1, 1.6 | Decision table routing |
 | **2.3** Welcome / sign-up / login / OTP | ⏳ | — | 2.1 | Auth screens + terms checkbox |
 | **2.4** Post-auth username + terms gate | ⏳ | — | 2.1 | record_terms_acceptance_v1 |
@@ -93,13 +93,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 8 (29%)
+- **Completed**: 9 (32%)
 - **In Progress**: 0
-- **Blocked (waiting on deps)**: 6
+- **Blocked (waiting on deps)**: 5
 - **Not Started**: 14
 
 **Current Phase**: Phase 2 (Auth, Session & Safety Spine)  
-**Next Task**: 2.1 (Auth repository + session VM)
+**Next Task**: 2.2 (Launch gate + splash)
 
 ---
 
