@@ -14,28 +14,28 @@ class DimensionsTest {
     @Test
     fun `padding values match PRD specification`() {
         // Padding from PRD/02
-        assertEquals(32.dp, Dimensions.Padding.horizontal, "Horizontal padding should be 32dp")
-        assertEquals(8.dp, Dimensions.Padding.verticalSmall, "Vertical small padding should be 8dp")
-        assertEquals(12.dp, Dimensions.Padding.verticalMedium, "Vertical medium padding should be 12dp")
-        assertEquals(16.dp, Dimensions.Padding.verticalLarge, "Vertical large padding should be 16dp")
-        assertEquals(24.dp, Dimensions.Padding.verticalXL, "Vertical XL padding should be 24dp")
+        assertEquals("Horizontal padding should be 32dp", 32f, Dimensions.Padding.horizontal.value, 0.001f)
+        assertEquals("Vertical small padding should be 8dp", 8f, Dimensions.Padding.verticalSmall.value, 0.001f)
+        assertEquals("Vertical medium padding should be 12dp", 12f, Dimensions.Padding.verticalMedium.value, 0.001f)
+        assertEquals("Vertical large padding should be 16dp", 16f, Dimensions.Padding.verticalLarge.value, 0.001f)
+        assertEquals("Vertical XL padding should be 24dp", 24f, Dimensions.Padding.verticalXL.value, 0.001f)
     }
     
     @Test
     fun `spacing values match PRD specification`() {
         // Spacing from PRD/02
-        assertEquals(8.dp, Dimensions.Spacing.small, "Small spacing should be 8dp")
-        assertEquals(12.dp, Dimensions.Spacing.medium, "Medium spacing should be 12dp")
-        assertEquals(16.dp, Dimensions.Spacing.large, "Large spacing should be 16dp")
-        assertEquals(24.dp, Dimensions.Spacing.xl, "XL spacing should be 24dp")
+        assertEquals("Small spacing should be 8dp", 8f, Dimensions.Spacing.small.value, 0.001f)
+        assertEquals("Medium spacing should be 12dp", 12f, Dimensions.Spacing.medium.value, 0.001f)
+        assertEquals("Large spacing should be 16dp", 16f, Dimensions.Spacing.large.value, 0.001f)
+        assertEquals("XL spacing should be 24dp", 24f, Dimensions.Spacing.xl.value, 0.001f)
     }
     
     @Test
     fun `radius values match PRD specification`() {
         // Corner radius from PRD/02
-        assertEquals(10.dp, Dimensions.Radius.small, "Small radius should be 10dp")
-        assertEquals(12.dp, Dimensions.Radius.medium, "Medium radius should be 12dp")
-        assertEquals(20.dp, Dimensions.Radius.large, "Large radius (vibe chips) should be 20dp")
+        assertEquals("Small radius should be 10dp", 10f, Dimensions.Radius.small.value, 0.001f)
+        assertEquals("Medium radius should be 12dp", 12f, Dimensions.Radius.medium.value, 0.001f)
+        assertEquals("Large radius (vibe chips) should be 20dp", 20f, Dimensions.Radius.large.value, 0.001f)
     }
     
     @Test
@@ -58,9 +58,21 @@ class DimensionsTest {
     @Test
     fun `spacing and vertical padding use same values`() {
         // Per PRD, these should be aligned
-        assertEquals(Dimensions.Padding.verticalSmall, Dimensions.Spacing.small)
-        assertEquals(Dimensions.Padding.verticalMedium, Dimensions.Spacing.medium)
-        assertEquals(Dimensions.Padding.verticalLarge, Dimensions.Spacing.large)
-        assertEquals(Dimensions.Padding.verticalXL, Dimensions.Spacing.xl)
+        assertEquals("Small values should match", 
+            Dimensions.Padding.verticalSmall.value, 
+            Dimensions.Spacing.small.value, 
+            0.001f)
+        assertEquals("Medium values should match",
+            Dimensions.Padding.verticalMedium.value, 
+            Dimensions.Spacing.medium.value, 
+            0.001f)
+        assertEquals("Large values should match",
+            Dimensions.Padding.verticalLarge.value, 
+            Dimensions.Spacing.large.value, 
+            0.001f)
+        assertEquals("XL values should match",
+            Dimensions.Padding.verticalXL.value, 
+            Dimensions.Spacing.xl.value, 
+            0.001f)
     }
 }

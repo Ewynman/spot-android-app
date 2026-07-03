@@ -81,7 +81,7 @@ class SpotTypographyTest {
     fun `label medium is appropriate for vibe chips`() {
         // Per PRD, vibe chips use label medium
         val labelMedium = SpotTypography.labelMedium
-        assertEquals(12.sp, labelMedium.fontSize, "Label medium should be 12sp for vibe chips")
+        assertEquals("Label medium should be 12sp for vibe chips", 12f, labelMedium.fontSize.value, 0.001f)
         assertEquals(FontWeight.Medium, labelMedium.fontWeight)
     }
 }
