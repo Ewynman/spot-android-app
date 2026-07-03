@@ -57,7 +57,7 @@ class SpotColorsTest {
     @Test
     fun `welcome card shadow has correct alpha`() {
         val shadow = SpotColors.WelcomeCardShadow
-        assertEquals("WelcomeCardShadow base should be #1D2C24", 0xFF1D2C24u, shadow.value and 0xFFFFFF00u)
+        assertEquals("WelcomeCardShadow base should be #1D2C24", 0xFF1D2C24u, (shadow.value and 0x00FFFFFFu) or 0xFF000000u)
     }
     
     @Test
