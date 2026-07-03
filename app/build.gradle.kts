@@ -32,13 +32,13 @@ android {
 
         // Supabase configuration
         buildConfigField("String", "SUPABASE_URL", 
-            properties.getProperty("supabase.url", "\"https://aeurigbbohyxvtsfiyul.supabase.co\""))
+            "\"${properties.getProperty("supabase.url", "https://aeurigbbohyxvtsfiyul.supabase.co")}\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", 
-            properties.getProperty("supabase.anonKey", "\"\""))
+            "\"${properties.getProperty("supabase.anonKey", "")}\"")
         
         // Share URL base
         buildConfigField("String", "SHARE_BASE_URL", 
-            properties.getProperty("share.baseUrl", "\"https://spotapp.online\""))
+            "\"${properties.getProperty("share.baseUrl", "https://spotapp.online")}\"")
         
         // Google Maps API key
         manifestPlaceholders["MAPS_API_KEY"] = 
@@ -46,7 +46,7 @@ android {
         
         // Product IDs for Play Billing
         buildConfigField("String", "PRODUCT_ID_PRO_YEARLY", 
-            properties.getProperty("billing.productId.proYearly", "\"spot_pro_yearly\""))
+            "\"${properties.getProperty("billing.productId.proYearly", "spot_pro_yearly")}\"")
     }
 
     buildTypes {
