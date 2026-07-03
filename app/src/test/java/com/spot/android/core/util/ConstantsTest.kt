@@ -83,7 +83,7 @@ class ConstantsTest {
             "Adventure", "Waterfront", "Study Spot"
         )
         
-        assertEquals(expectedTags, Constants.VibeTags.DEFAULT_TAGS.toSet(), "Default tags should match PRD")
+        assertEquals("Default tags should match PRD", expectedTags, Constants.VibeTags.DEFAULT_TAGS.toSet())
     }
     
     @Test
@@ -107,12 +107,12 @@ class ConstantsTest {
     @Test
     fun `pro tier offers more capacity than free tier`() {
         assertTrue(
-            Constants.PostLimits.PRO_MAX_IMAGES > Constants.PostLimits.FREE_MAX_IMAGES,
-            "Pro should allow more images than free"
+            "Pro should allow more images than free",
+            Constants.PostLimits.PRO_MAX_IMAGES > Constants.PostLimits.FREE_MAX_IMAGES
         )
         assertTrue(
-            Constants.PostLimits.PRO_MAX_VIBES > Constants.PostLimits.FREE_MAX_VIBES,
-            "Pro should allow more vibes than free"
+            "Pro should allow more vibes than free",
+            Constants.PostLimits.PRO_MAX_VIBES > Constants.PostLimits.FREE_MAX_VIBES
         )
     }
 }
