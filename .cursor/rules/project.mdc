@@ -1,0 +1,104 @@
+---
+description: Spot Android build — always-on guardrails, stack, and conventions for autonomous agents
+alwaysApply: true
+---
+
+# Spot (Android) — Project Rules
+
+You are building the **Android port of Spot**, a social place-discovery app, from the specs in `PRD/`.
+The full product spec lives in `PRD/` (start at `PRD/README.md`). The build sequence and
+agent-sized task list live in `PRD/18-build-order.md`. **Read the relevant PRD doc before
+implementing a feature** — do not guess contracts.
+
+## Non-negotiable golden rules
+
+1. **Same backend, same contracts.** Android talks to the *same* Supabase project as iOS
+   (`aeurigbbohyxvtsfiyul`). Never fork the schema. All access goes through the RPCs/tables in
+   `PRD/03-data-model.md` and `PRD/04-backend-api.md`. **RLS is authoritative** — never rely on
+   client-only authorization.
+2. **Supabase is the only data plane** for users, spots, media, social data. Firebase = analytics/
+   crash/App Check only. Never add a second datastore or a parallel upload path.
+3. **Every uploaded image must pass moderation** (`moderate-image` edge function) before it becomes
+   an approved, publicly-referenced asset. No client-only bypass.
+4. **Safety features ship in v1 and are non-negotiable:** terms agreement before registration,
+   image + text moderation, report content, report + block users, content filtering. See
+   `PRD/13-moderation-safety.md`.
+5. **Preserve limits/gating exactly** so both platforms behave identically against shared data:
+   feed page 24; post free 1 image/1 vibe, Pro 5/5; bookmark free cap 50; vibe length 2–30;
+   publish timeout 90s; OTP 6 digits, resend 30s; map cap 250. Pull the authoritative numbers from
+   the PRD, never hardcode a guess.
+6. **Never embed the service-role key.** Only the anon/publishable key ships in the client.
+7. **Sign in with Apple → Google Sign-In** is the sanctioned platform swap (via supabase-kt OAuth).
+   Email/password + email OTP remains the primary flow. Any OAuth account without a username hits
+   the post-auth username gate.
+
+## Stack (do not substitute without a note in the PR)
+
+- **Kotlin + Jetpack Compose** (Material 3, custom light-only theme).
+- **MVVM/MVI**: ViewModel + `StateFlow<UiState>`; one-shot effects via `Channel`/`SharedFlow`.
+- **Hilt** for DI.
+- **Navigation-Compose** + custom bottom bar (5 tabs) + overlay host for deep-link/paywall overlays.
+- **Coroutines + Flow** for async.
+- **supabase-kt** (`gotrue`, `postgrest`, `storage`, `functions`, `realtime`).
+- **Coil** with an auth-aware fetcher for signed URLs.
+- **Google Maps Compose** + FusedLocationProvider.
+- **Google Play Billing v6+** for Pro.
+- **FCM** (+ `NotificationManagerCompat` local notifications).
+- Persistence: **DataStore** (prefs/search history), files/Room (drafts), supabase-kt encrypted
+  session storage.
+
+## Architecture rules
+
+- Layering is strict: `UI (Compose) → ViewModel → Repository/Service (typed interfaces) → Supabase`.
+- **No business logic in composables.** No Supabase calls from composables or ViewModels directly —
+  always through a repository interface.
+- Repositories are **interfaces with fakes** so ViewModels are unit-testable with no live Supabase,
+  no real billing, no real OAuth.
+- Every user-facing flow explicitly handles **loading / empty / error / unauthenticated** states.
+- Keep the current user's `liked` / `bookmarked` / `blocked` / Pro sets in a **shared session
+  holder** so feed, map, search, and profile stay consistent.
+- Package layout follows `PRD/01-architecture-android.md` (`core/`, `data/`, `feature/`,
+  `navigation/`, `di/`). Do not invent a different structure.
+
+## DTO / data conventions
+
+- DTOs use **snake_case field names** matching Postgres (no global snake_case conversion). Domain
+  models (`Spot`, `User`) are assembled in code from DTOs — see `PRD/04`, `PRD/06`, `PRD/10`.
+- Map Postgres types: `uuid`→String, `double precision`→Double, `timestamptz`→ISO-8601 String,
+  `uuid[]`→List<String>, `jsonb`→JsonObject.
+- Profile writes go through `sync_current_user_v1`, **not** a direct upsert.
+- Set `platform = "android"` on `reports` and `user_terms_acceptances`.
+
+## Coding conventions
+
+- Reuse shared components (`SpotCard`, vibe chip, avatar, empty/skeleton views, paywall sheet,
+  report/block flows). Do not re-implement `SpotCard` per screen.
+- Use `Modifier.testTag(...)` with the **iOS identifier strings** (`navigation.homeTab`,
+  `home.feedRoot`, `welcome.screen`, …) so a shared test vocabulary works.
+- Design tokens (colors, spacing, radius, type) come only from the central theme built from
+  `PRD/02-design-system.md`. Never inline hex colors in feature code.
+- Optimistic like/bookmark/delete with rollback on failure.
+- Emit feed events via a lightweight coalescing service (`record_feed_event_v1`).
+
+## Safety, security & logging
+
+- Auth/terms gating runs **before** any sensitive network/DB/posting action.
+- Treat 401/403 and empty RLS-filtered results as expected when unauthenticated/unauthorized.
+- **Never log PII, tokens, or raw image bytes.** Use the structured logger with per-area categories.
+- Downscale images to ≤1600px longest edge, JPEG ~0.8, before upload.
+- Cache signed spot-image URLs until near their 7-day expiry.
+
+## Definition of done (every feature task)
+
+- Matches the relevant `PRD/NN-*.md` contract, states, copy, and constants.
+- Loading/empty/error/unauthenticated states implemented.
+- Unit tests for ViewModel logic using fakes (see `PRD/17` high-value scenarios).
+- No hardcoded secrets; anon key only; RLS relied on for authz.
+- `./gradlew assembleDebug` compiles; lint clean; no new PII in logs.
+- Test tags match the iOS vocabulary where practical.
+
+## When unsure
+
+- The PRD is the source of truth for behavior; the **live Supabase schema** is the source of truth
+  for contracts. If a contract seems ambiguous, re-read `PRD/03`/`PRD/04` before inventing one.
+- Anything marked **[ANDROID DECISION]** in the PRD already has a recommended default — follow it.

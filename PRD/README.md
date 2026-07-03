@@ -36,6 +36,7 @@ Spot is a **social place-discovery** app. A **Spot** is a saved place recommenda
 | — | [15-deep-links.md](15-deep-links.md) | App Links / custom scheme routing, pending links, subscription return |
 | — | [16-feed-ranking-algorithm.md](16-feed-ranking-algorithm.md) | Server ranking, affinities, feed events, diversity, dedupe |
 | — | [17-non-functional-testing.md](17-non-functional-testing.md) | Performance, logging, analytics, testing, release |
+| — | [18-build-order.md](18-build-order.md) | **Execution layer** — dependency-ordered, agent-sized task graph for building autonomously |
 
 ## Source of truth
 
