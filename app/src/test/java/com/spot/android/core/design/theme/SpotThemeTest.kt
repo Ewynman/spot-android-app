@@ -1,13 +1,13 @@
 package com.spot.android.core.design.theme
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.junit4.createComposeRule
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
 
 /**
  * Unit tests for Spot theme configuration.
@@ -60,7 +60,7 @@ class SpotThemeTest {
         }
         
         composeTestRule.runOnIdle {
-            assert(typographyMatch) { "Theme should use SpotTypography" }
+            assertTrue("Theme should use SpotTypography", typographyMatch)
         }
     }
 }

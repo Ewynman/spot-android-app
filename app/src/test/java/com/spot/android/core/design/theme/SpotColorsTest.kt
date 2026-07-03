@@ -1,9 +1,8 @@
 package com.spot.android.core.design.theme
 
 import androidx.compose.ui.graphics.Color
-import com.spot.android.core.design.theme.SpotColors
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 /**
  * Unit tests for Spot color tokens.

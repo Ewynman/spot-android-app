@@ -1,8 +1,8 @@
 package com.spot.android.core.design
 
 import androidx.compose.ui.unit.dp
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 /**
  * Unit tests for Spot layout dimensions.
@@ -41,9 +41,18 @@ class DimensionsTest {
     @Test
     fun `vertical padding scales consistently`() {
         // Verify the progression: 8, 12, 16, 24
-        assert(Dimensions.Padding.verticalSmall < Dimensions.Padding.verticalMedium)
-        assert(Dimensions.Padding.verticalMedium < Dimensions.Padding.verticalLarge)
-        assert(Dimensions.Padding.verticalLarge < Dimensions.Padding.verticalXL)
+        assertTrue(
+            "Vertical small should be less than vertical medium",
+            Dimensions.Padding.verticalSmall < Dimensions.Padding.verticalMedium
+        )
+        assertTrue(
+            "Vertical medium should be less than vertical large",
+            Dimensions.Padding.verticalMedium < Dimensions.Padding.verticalLarge
+        )
+        assertTrue(
+            "Vertical large should be less than vertical XL",
+            Dimensions.Padding.verticalLarge < Dimensions.Padding.verticalXL
+        )
     }
     
     @Test

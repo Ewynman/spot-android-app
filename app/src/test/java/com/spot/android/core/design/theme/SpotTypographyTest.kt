@@ -2,9 +2,10 @@ package com.spot.android.core.design.theme
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 /**
  * Unit tests for Spot typography configuration.
@@ -56,12 +57,24 @@ class SpotTypographyTest {
     @Test
     fun `font sizes decrease from large to small`() {
         // Body sizes
-        assert(SpotTypography.bodyLarge.fontSize > SpotTypography.bodyMedium.fontSize)
-        assert(SpotTypography.bodyMedium.fontSize > SpotTypography.bodySmall.fontSize)
+        assertTrue(
+            "Body large should be larger than body medium",
+            SpotTypography.bodyLarge.fontSize > SpotTypography.bodyMedium.fontSize
+        )
+        assertTrue(
+            "Body medium should be larger than body small",
+            SpotTypography.bodyMedium.fontSize > SpotTypography.bodySmall.fontSize
+        )
         
         // Label sizes
-        assert(SpotTypography.labelLarge.fontSize > SpotTypography.labelMedium.fontSize)
-        assert(SpotTypography.labelMedium.fontSize > SpotTypography.labelSmall.fontSize)
+        assertTrue(
+            "Label large should be larger than label medium",
+            SpotTypography.labelLarge.fontSize > SpotTypography.labelMedium.fontSize
+        )
+        assertTrue(
+            "Label medium should be larger than label small",
+            SpotTypography.labelMedium.fontSize > SpotTypography.labelSmall.fontSize
+        )
     }
     
     @Test

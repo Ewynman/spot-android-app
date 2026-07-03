@@ -8,11 +8,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.spot.android.core.design.theme.SpotTheme
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 /**
  * UI tests for VibeChip component.
@@ -109,14 +108,14 @@ class VibeChipTest {
             }
         }
         
-        assertFalse(isSelected, "Should start unselected")
+        assertFalse("Should start unselected", isSelected)
         
         composeTestRule
             .onNodeWithTag("test.chip")
             .performClick()
         
         composeTestRule.runOnIdle {
-            assertTrue(isSelected, "Should be selected after click")
+            assertTrue("Should be selected after click", isSelected)
         }
     }
     
@@ -135,14 +134,14 @@ class VibeChipTest {
             }
         }
         
-        assertTrue(isSelected, "Should start selected")
+        assertTrue("Should start selected", isSelected)
         
         composeTestRule
             .onNodeWithTag("test.chip")
             .performClick()
         
         composeTestRule.runOnIdle {
-            assertFalse(isSelected, "Should be unselected after click")
+            assertFalse("Should be unselected after click", isSelected)
         }
     }
     
