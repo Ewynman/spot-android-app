@@ -2,6 +2,8 @@ package com.spot.android
 
 import android.app.Application
 import android.util.Log
+import coil.ImageLoader
+import coil.ImageLoaderFactory
 import com.spot.android.core.supabase.SessionBridge
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -15,13 +17,16 @@ import javax.inject.Inject
  * 
  * Annotated with @HiltAndroidApp to enable Hilt dependency injection.
  * Initializes application-wide services: Supabase session management,
- * logging, and analytics.
+ * logging, analytics, and Coil image loading.
  */
 @HiltAndroidApp
-class SpotApplication : Application() {
+class SpotApplication : Application(), ImageLoaderFactory {
     
     @Inject
     lateinit var sessionBridge: SessionBridge
+    
+    @Inject
+    lateinit var imageLoader: ImageLoader
     
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     
@@ -34,6 +39,14 @@ class SpotApplication : Application() {
         // TODO: Initialize Firebase Analytics
         // TODO: Initialize Firebase Crashlytics
         // TODO: Initialize structured logger
+    }
+    
+    /**
+     * Provides the singleton ImageLoader with Spot-specific configuration.
+     * This is called by Coil to get the ImageLoader instance.
+     */
+    override fun newImageLoader(): ImageLoader {
+        return imageLoader
     }
     
     private fun initializeSessionBridge() {
