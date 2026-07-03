@@ -52,7 +52,7 @@ class SpotImageFetcher(
         return SourceResult(
             source = ImageSource(
                 source = body.source(),
-                fileSystem = options.fileSystem
+                context = options.context
             ),
             mimeType = body.contentType()?.toString(),
             dataSource = DataSource.NETWORK
