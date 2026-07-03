@@ -48,8 +48,8 @@ render.experimental.xml
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
-# Comment next line if keeping google-services.json in repo
-google-services.json
+# NOTE: A placeholder google-services.json is committed for CI builds.
+# Replace with your actual Firebase configuration in production.
 
 # Android Profiling
 *.hprof
@@ -66,6 +66,3 @@ google-services.json
 
 # Kotlin
 *.kotlin_module
-
-# Android Studio patch
-google-services.json
