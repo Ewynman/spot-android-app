@@ -22,7 +22,7 @@ These can run in parallel after Phase 0.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **1.1** Design system / theme | ✅ | TBD | 0.1 | Colors, spacing, typography, vibe chips, preview screen |
+| **1.1** Design system / theme | ✅ | [#4](https://github.com/Ewynman/spot-android-app/pull/4) | 0.1 | Colors, spacing, typography, vibe chips, preview screen |
 | **1.2** Supabase core | ✅ | [#2](https://github.com/Ewynman/spot-android-app/pull/2) | 0.1 | Client provider, session bridge |
 | **1.3** Domain models + DTOs | ✅ | [#3](https://github.com/Ewynman/spot-android-app/pull/3) | 0.1 | Spot, User, VibeTag, enums, Constants |
 | **1.4** Signed-URL image loader | ⏳ | — | 1.2 | Coil fetcher with auth + caching |
