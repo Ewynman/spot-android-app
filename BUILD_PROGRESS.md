@@ -28,7 +28,7 @@ These can run in parallel after Phase 0.
 | **1.4** Signed-URL image loader | ✅ | [#5](https://github.com/Ewynman/spot-android-app/pull/5) | 1.2 | Coil fetcher with auth + caching |
 | **1.5** Shared components | ✅ | [#6](https://github.com/Ewynman/spot-android-app/pull/6) | 1.1, 1.4 | SpotCard, vibe chips, avatar, empty views |
 | **1.6** Navigation shell + overlay | ✅ | [#7](https://github.com/Ewynman/spot-android-app/pull/7) | 1.1 | 5-tab bar, NavGraph, overlay host |
-| **1.7** Structured logger + analytics | ✅ | — | 0.1 | SpotLogger, DataStore toggles, Firebase analytics |
+| **1.7** Structured logger + analytics | ✅ | [#8](https://github.com/Ewynman/spot-android-app/pull/8) | 0.1 | SpotLogger, DataStore toggles, Firebase analytics |
 
 **Phase 1 Complete** ✅
 
@@ -93,12 +93,12 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 7 (25%)
-- **In Progress**: 1
-- **Blocked (waiting on deps)**: 7
-- **Not Started**: 13
+- **Completed**: 8 (29%)
+- **In Progress**: 0
+- **Blocked (waiting on deps)**: 6
+- **Not Started**: 14
 
-**Current Phase**: Phase 1 (Foundation) — completing 1.7  
+**Current Phase**: Phase 2 (Auth, Session & Safety Spine)  
 **Next Task**: 2.1 (Auth repository + session VM)
 
 ---
