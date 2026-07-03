@@ -79,7 +79,7 @@ class SessionBridgeTest {
     @Test
     fun `unauthenticated session updates state correctly`() = runTest {
         // Emit unauthenticated status
-        sessionStatusFlow.value = SessionStatus.NotAuthenticated()
+        sessionStatusFlow.value = SessionStatus.NotAuthenticated(isSignOut = false)
         
         // Give flow time to collect
         kotlinx.coroutines.delay(100)
