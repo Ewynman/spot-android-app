@@ -77,7 +77,7 @@ fun PermissionPrePrompt(
                 .testTag("permissionPrePrompt.icon")
         )
         
-        Spacer(modifier = Modifier.height(Dimensions.Spacing.XL))
+        Spacer(modifier = Modifier.height(Dimensions.Spacing.xl))
         
         // Title
         Text(
@@ -99,7 +99,7 @@ fun PermissionPrePrompt(
             modifier = Modifier.testTag("permissionPrePrompt.message")
         )
         
-        Spacer(modifier = Modifier.height(Dimensions.Spacing.XL * 2))
+        Spacer(modifier = Modifier.height(Dimensions.Spacing.xl * 2))
         
         // Continue button
         Button(

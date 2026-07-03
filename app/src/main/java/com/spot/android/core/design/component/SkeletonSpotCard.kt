@@ -150,7 +150,7 @@ fun SkeletonSpotCard(
             )
         }
         
-        Spacer(modifier = Modifier.height(Dimensions.Spacing.XL))
+        Spacer(modifier = Modifier.height(Dimensions.Spacing.xl))
     }
 }
 

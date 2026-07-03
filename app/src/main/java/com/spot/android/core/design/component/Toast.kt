@@ -148,7 +148,7 @@ fun Banner(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(type.backgroundColor)
-                .padding(horizontal = Dimensions.Padding.horizontal, vertical = Dimensions.Padding.Medium)
+                .padding(horizontal = Dimensions.Padding.horizontal, vertical = Dimensions.Padding.verticalMedium)
                 .testTag("banner")
                 .semantics {
                     liveRegion = LiveRegionMode.Polite
