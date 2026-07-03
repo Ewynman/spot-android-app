@@ -18,7 +18,7 @@ class SpotTypographyTest {
     fun `display large is configured for SPOT wordmark`() {
         val displayLarge = SpotTypography.displayLarge
         assertNotNull("Display large should be configured", displayLarge)
-        assertEquals("Display large should be bold for wordmark", FontWeight.Bold.weight, displayLarge.fontWeight.weight)
+        assertEquals("Display large should be bold for wordmark", FontWeight.Bold.weight, displayLarge.fontWeight!!.weight)
         assertEquals("Display large should use appropriate size", 32f, displayLarge.fontSize.value, 0.001f)
     }
     
@@ -26,8 +26,8 @@ class SpotTypographyTest {
     fun `title styles are configured for headers`() {
         assertNotNull("Title large should be configured", SpotTypography.titleLarge)
         assertNotNull("Title medium should be configured", SpotTypography.titleMedium)
-        assertEquals(FontWeight.Bold.weight, SpotTypography.titleLarge.fontWeight.weight)
-        assertEquals(FontWeight.SemiBold.weight, SpotTypography.titleMedium.fontWeight.weight)
+        assertEquals(FontWeight.Bold.weight, SpotTypography.titleLarge.fontWeight!!.weight)
+        assertEquals(FontWeight.SemiBold.weight, SpotTypography.titleMedium.fontWeight!!.weight)
     }
     
     @Test
@@ -37,9 +37,9 @@ class SpotTypographyTest {
         assertNotNull("Body small should be configured", SpotTypography.bodySmall)
         
         // Body text should be normal weight
-        assertEquals(FontWeight.Normal.weight, SpotTypography.bodyLarge.fontWeight.weight)
-        assertEquals(FontWeight.Normal.weight, SpotTypography.bodyMedium.fontWeight.weight)
-        assertEquals(FontWeight.Normal.weight, SpotTypography.bodySmall.fontWeight.weight)
+        assertEquals(FontWeight.Normal.weight, SpotTypography.bodyLarge.fontWeight!!.weight)
+        assertEquals(FontWeight.Normal.weight, SpotTypography.bodyMedium.fontWeight!!.weight)
+        assertEquals(FontWeight.Normal.weight, SpotTypography.bodySmall.fontWeight!!.weight)
     }
     
     @Test
@@ -49,9 +49,9 @@ class SpotTypographyTest {
         assertNotNull("Label small should be configured", SpotTypography.labelSmall)
         
         // Labels should be medium weight
-        assertEquals(FontWeight.Medium.weight, SpotTypography.labelLarge.fontWeight.weight)
-        assertEquals(FontWeight.Medium.weight, SpotTypography.labelMedium.fontWeight.weight)
-        assertEquals(FontWeight.Medium.weight, SpotTypography.labelSmall.fontWeight.weight)
+        assertEquals(FontWeight.Medium.weight, SpotTypography.labelLarge.fontWeight!!.weight)
+        assertEquals(FontWeight.Medium.weight, SpotTypography.labelMedium.fontWeight!!.weight)
+        assertEquals(FontWeight.Medium.weight, SpotTypography.labelSmall.fontWeight!!.weight)
     }
     
     @Test
@@ -82,6 +82,6 @@ class SpotTypographyTest {
         // Per PRD, vibe chips use label medium
         val labelMedium = SpotTypography.labelMedium
         assertEquals("Label medium should be 12sp for vibe chips", 12f, labelMedium.fontSize.value, 0.001f)
-        assertEquals(FontWeight.Medium, labelMedium.fontWeight)
+        assertEquals(FontWeight.Medium.weight, labelMedium.fontWeight!!.weight)
     }
 }
