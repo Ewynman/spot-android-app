@@ -127,4 +127,27 @@ object Constants {
     object SignedUrls {
         const val EXPIRY_SECONDS = 604800 // 7 days
     }
+
+    /**
+     * Analytics event names mirroring iOS `Constants.Analytics`.
+     *
+     * Reference: PRD/17-non-functional-testing.md
+     */
+    object Analytics {
+        const val AUTH_REINSTALL = "AuthReinstall"
+        const val PERMS_REQUESTED = "Perms.Requested"
+        const val FEED_DROP_PRIVATE = "Feed.DropPrivate"
+        const val IMAGE_LOAD_FAILED = "Image.LoadFailed"
+        const val AUTH_EMAIL_IN_USE = "Auth.EmailInUse"
+        const val AUTH_DELETE_BY_EMAIL = "Auth.DeleteByEmail"
+        const val DEEP_LINK = "DeepLink"
+
+        object Params {
+            const val PERMISSION_TYPE = "permission_type"
+            const val REASON = "reason"
+            const val SOURCE = "source"
+            const val ORIGIN = "origin"
+            const val ROUTE = "route"
+        }
+    }
 }

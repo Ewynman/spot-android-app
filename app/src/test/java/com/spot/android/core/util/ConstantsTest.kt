@@ -115,4 +115,15 @@ class ConstantsTest {
             Constants.PostLimits.PRO_MAX_VIBES > Constants.PostLimits.FREE_MAX_VIBES
         )
     }
+
+    @Test
+    fun `analytics event names match PRD specification`() {
+        assertEquals("AuthReinstall", Constants.Analytics.AUTH_REINSTALL)
+        assertEquals("Perms.Requested", Constants.Analytics.PERMS_REQUESTED)
+        assertEquals("Feed.DropPrivate", Constants.Analytics.FEED_DROP_PRIVATE)
+        assertEquals("Image.LoadFailed", Constants.Analytics.IMAGE_LOAD_FAILED)
+        assertEquals("Auth.EmailInUse", Constants.Analytics.AUTH_EMAIL_IN_USE)
+        assertEquals("Auth.DeleteByEmail", Constants.Analytics.AUTH_DELETE_BY_EMAIL)
+        assertEquals("DeepLink", Constants.Analytics.DEEP_LINK)
+    }
 }

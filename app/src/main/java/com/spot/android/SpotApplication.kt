@@ -1,9 +1,12 @@
 package com.spot.android
 
 import android.app.Application
-import android.util.Log
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.spot.android.core.analytics.AnalyticsTracker
+import com.spot.android.core.logging.LogCategory
+import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.supabase.SessionBridge
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -27,18 +30,23 @@ class SpotApplication : Application(), ImageLoaderFactory {
     
     @Inject
     lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var spotLogger: SpotLogger
+
+    @Inject
+    lateinit var analyticsTracker: AnalyticsTracker
+
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
     
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     
     override fun onCreate() {
         super.onCreate()
         
-        // Initialize Supabase session observation
         initializeSessionBridge()
-        
-        // TODO: Initialize Firebase Analytics
-        // TODO: Initialize Firebase Crashlytics
-        // TODO: Initialize structured logger
+        initializeLoggingAndAnalytics()
     }
     
     /**
@@ -53,12 +61,18 @@ class SpotApplication : Application(), ImageLoaderFactory {
         applicationScope.launch {
             try {
                 sessionBridge.initialize()
-                Log.d(TAG, "SessionBridge initialized successfully")
+                spotLogger.d(LogCategory.Auth, TAG, "SessionBridge initialized successfully")
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to initialize SessionBridge", e)
-                // Non-fatal: app can continue, auth will fail gracefully
+                spotLogger.e(LogCategory.Auth, TAG, "Failed to initialize SessionBridge", e)
+                crashlytics.recordException(e)
             }
         }
+    }
+
+    private fun initializeLoggingAndAnalytics() {
+        crashlytics.setCrashlyticsCollectionEnabled(true)
+        spotLogger.d(LogCategory.Network, TAG, "Structured logger and analytics initialized")
+        analyticsTracker.logEvent("app_start")
     }
     
     companion object {
