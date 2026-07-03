@@ -1,13 +1,25 @@
 package com.spot.android.data.validator
 
-import android.util.Patterns
-
 /**
- * Email validation using Android's standard pattern.
+ * Email validation using a standard email regex pattern.
  * 
  * Reference: PRD/05-auth-onboarding.md
  */
 object EmailValidator {
+    
+    /**
+     * Basic email validation regex.
+     * Matches standard email format: local@domain.tld
+     */
+    private val EMAIL_REGEX = Regex(
+        "[a-zA-Z0-9+._%\\-]{1,256}" +
+        "@" +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+        "(" +
+            "\\." +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+        ")+"
+    )
     
     /**
      * Validate email format.
@@ -19,7 +31,7 @@ object EmailValidator {
         
         return when {
             trimmed.isBlank() -> "Email cannot be empty"
-            !Patterns.EMAIL_ADDRESS.matcher(trimmed).matches() -> 
+            !EMAIL_REGEX.matches(trimmed) -> 
                 "Please enter a valid email address"
             else -> null
         }
