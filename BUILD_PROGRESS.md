@@ -22,7 +22,7 @@ These can run in parallel after Phase 0.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **1.1** Design system / theme | ⬜ | — | 0.1 | Colors, spacing, typography, vibe chips |
+| **1.1** Design system / theme | ✅ | TBD | 0.1 | Colors, spacing, typography, vibe chips, preview screen |
 | **1.2** Supabase core | ✅ | [#2](https://github.com/Ewynman/spot-android-app/pull/2) | 0.1 | Client provider, session bridge |
 | **1.3** Domain models + DTOs | ✅ | [#3](https://github.com/Ewynman/spot-android-app/pull/3) | 0.1 | Spot, User, VibeTag, enums, Constants |
 | **1.4** Signed-URL image loader | ⏳ | — | 1.2 | Coil fetcher with auth + caching |
@@ -30,7 +30,7 @@ These can run in parallel after Phase 0.
 | **1.6** Navigation shell + overlay | ⏳ | — | 1.1 | 5-tab bar, NavGraph, overlay host |
 | **1.7** Structured logger + analytics | ⬜ | — | 0.1 | Per-area logging, debug toggles |
 
-**Next recommended**: 1.1 (Design system) or 1.7 (Structured logger)
+**Next recommended**: 1.4 (Signed-URL image loader) or 1.7 (Structured logger)
 
 ---
 
@@ -91,13 +91,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 3 (11%)
+- **Completed**: 4 (14%)
 - **In Progress**: 0
-- **Blocked (waiting on deps)**: 10
+- **Blocked (waiting on deps)**: 9
 - **Not Started**: 15
 
 **Current Phase**: Phase 1 (Foundation)  
-**Next Task**: 1.1 (Design system) or 1.7 (Structured logger)
+**Next Task**: 1.4 (Signed-URL image loader) or 1.7 (Structured logger)
 
 ---
 
