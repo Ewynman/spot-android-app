@@ -6,6 +6,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Service for generating and caching signed URLs for private Supabase Storage buckets.
@@ -82,7 +83,7 @@ class ImageUrlSigner @Inject constructor(
             // Generate new signed URL
             val signedUrl = supabaseProvider.client.storage
                 .from(bucket)
-                .createSignedUrl(storagePath, signedUrlExpirySeconds)
+                .createSignedUrl(storagePath, signedUrlExpirySeconds.seconds)
             
             // Cache the new URL with its expiry timestamp
             val expiresAt = now + signedUrlExpirySeconds

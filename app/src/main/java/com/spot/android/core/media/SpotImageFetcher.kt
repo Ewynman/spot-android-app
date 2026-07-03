@@ -2,6 +2,7 @@ package com.spot.android.core.media
 
 import coil.ImageLoader
 import coil.decode.DataSource
+import coil.decode.ImageSource
 import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.fetch.SourceResult
@@ -49,7 +50,10 @@ class SpotImageFetcher(
         val body = response.body ?: throw Exception("Empty response body")
         
         return SourceResult(
-            source = body.source().buffer(),
+            source = ImageSource(
+                source = body.source(),
+                fileSystem = options.fileSystem
+            ),
             mimeType = body.contentType()?.toString(),
             dataSource = DataSource.NETWORK
         )
