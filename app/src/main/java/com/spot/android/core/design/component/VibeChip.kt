@@ -3,6 +3,10 @@ package com.spot.android.core.design.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -169,6 +173,89 @@ private fun VibeChipUnselectedPreview() {
             text = "Scenic View",
             selected = false,
             onSelectedChange = {}
+        )
+    }
+}
+
+/**
+ * Horizontal row of vibe chips.
+ * Used for displaying multiple vibes in a compact layout.
+ */
+@Composable
+fun VibeChipRow(
+    vibes: List<String>,
+    modifier: Modifier = Modifier,
+    onVibeClick: ((String) -> Unit)? = null
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.Spacing.small)
+    ) {
+        vibes.forEach { vibe ->
+            VibeChipDisplay(
+                text = vibe,
+                modifier = if (onVibeClick != null) {
+                    Modifier.clickable { onVibeClick(vibe) }
+                } else {
+                    Modifier
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Wrapping flow of vibe chips.
+ * Used for displaying multiple vibes in pickers and filters.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun VibeChipFlow(
+    vibes: List<String>,
+    selectedVibes: Set<String> = emptySet(),
+    onVibeToggle: ((String) -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.Spacing.small),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.Spacing.small)
+    ) {
+        vibes.forEach { vibe ->
+            if (onVibeToggle != null) {
+                VibeChipSelectable(
+                    text = vibe,
+                    selected = vibe in selectedVibes,
+                    onSelectedChange = { onVibeToggle(vibe) }
+                )
+            } else {
+                VibeChipDisplay(text = vibe)
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VibeChipRowPreview() {
+    SpotTheme {
+        VibeChipRow(
+            vibes = listOf("Chill Spot", "Hidden Gem", "Scenic View")
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun VibeChipFlowPreview() {
+    SpotTheme {
+        VibeChipFlow(
+            vibes = listOf(
+                "Chill Spot", "Hidden Gem", "Scenic View",
+                "Romantic", "Great For Photos", "Family Friendly"
+            ),
+            selectedVibes = setOf("Chill Spot", "Scenic View"),
+            onVibeToggle = {}
         )
     }
 }
