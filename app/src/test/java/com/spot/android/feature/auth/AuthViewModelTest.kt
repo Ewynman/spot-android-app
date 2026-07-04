@@ -236,6 +236,101 @@ class AuthViewModelTest {
     }
 
     @Test
+    fun `complete username setup syncs profile and clears gate`() = runTest {
+        fakeUserSessionRepository.snapshot = Result.success(
+            UserSessionSnapshot(
+                username = "",
+                profileImageURL = null,
+                isPro = false,
+                proUntil = null,
+                emailVerified = true,
+                likedSpots = emptySet(),
+                bookmarkedSpots = emptySet(),
+                blockedUsers = emptySet(),
+                customVibeTags = emptyList(),
+                needsUsernameSetup = true,
+            ),
+        )
+        setAuthenticatedSession(userId = "oauth-user", email = "oauth@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.needsUsernameSetup)
+
+        fakeUserSessionRepository.snapshot = Result.success(
+            UserSessionSnapshot(
+                username = "newoauth",
+                profileImageURL = null,
+                isPro = false,
+                proUntil = null,
+                emailVerified = true,
+                likedSpots = emptySet(),
+                bookmarkedSpots = emptySet(),
+                blockedUsers = emptySet(),
+                customVibeTags = emptyList(),
+                needsUsernameSetup = false,
+            ),
+        )
+
+        viewModel.completeUsernameSetup("newoauth")
+        advanceUntilIdle()
+
+        assertEquals(1, fakeAuthRepository.syncCalls)
+        assertEquals(1, fakeTermsRepository.recordCalls)
+        assertFalse(viewModel.uiState.value.needsUsernameSetup)
+        assertEquals("newoauth", viewModel.uiState.value.currentUserUsername)
+    }
+
+    @Test
+    fun `complete username setup with taken username surfaces error`() = runTest {
+        fakeAuthRepository.usernameAvailable = false
+        setAuthenticatedSession(userId = "oauth-user", email = "oauth@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        viewModel.completeUsernameSetup("takenuser")
+        advanceUntilIdle()
+
+        assertEquals(AuthError.UsernameTaken, viewModel.uiState.value.authError)
+        assertEquals(0, fakeAuthRepository.syncCalls)
+    }
+
+    @Test
+    fun `accept terms update records acceptance and clears gate`() = runTest {
+        fakeTermsRepository.hasAcceptedResult = Result.success(false)
+        setAuthenticatedSession(userId = "user-terms", email = "terms@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.needsTermsAcceptance)
+
+        viewModel.acceptTermsUpdate()
+        advanceUntilIdle()
+
+        assertEquals(1, fakeTermsRepository.recordCalls)
+        assertFalse(viewModel.uiState.value.needsTermsAcceptance)
+    }
+
+    @Test
+    fun `accept terms update failure surfaces auth error`() = runTest {
+        fakeTermsRepository.hasAcceptedResult = Result.success(false)
+        fakeTermsRepository.recordResult = Result.failure(RuntimeException("network"))
+        setAuthenticatedSession(userId = "user-terms", email = "terms@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        viewModel.acceptTermsUpdate()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.authError is AuthError.Generic)
+        assertTrue(viewModel.uiState.value.needsTermsAcceptance)
+    }
+
+    @Test
     fun `sign out clears session state`() = runTest {
         setAuthenticatedSession(userId = "user-789", email = "out@example.com")
         fakeAuthRepository.emailVerified = true
