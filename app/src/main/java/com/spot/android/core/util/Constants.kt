@@ -69,6 +69,14 @@ object Constants {
         const val SPLASH_MIN_DURATION_MS = 1500L
         const val SPLASH_FADE_DURATION_MS = 500L
     }
+
+    /**
+     * Permission prompt timing (mirrors iOS).
+     */
+    object Permissions {
+        const val NOTIFICATION_PROMPT_DELAY_MS = 600L
+        const val TOUR_START_DELAY_MS = 500L
+    }
     
     /**
      * Search constants.

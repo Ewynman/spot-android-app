@@ -1,6 +1,5 @@
 package com.spot.android.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.spot.android.feature.home.HomeScreen
 import com.spot.android.feature.map.MapScreen
+import com.spot.android.feature.permissions.PermissionRequestHost
 import com.spot.android.feature.post.PostScreen
 import com.spot.android.feature.profile.ProfileScreen
 import com.spot.android.feature.search.SearchScreen
@@ -38,7 +38,7 @@ fun SpotShell(
     val currentRoute = navBackStackEntry?.destination?.route
     val selectedTab = SpotTab.fromRoute(currentRoute) ?: SpotTab.DEFAULT
 
-    Box(
+    PermissionRequestHost(
         modifier = modifier
             .fillMaxSize()
             .testTag("navigation.shell"),
