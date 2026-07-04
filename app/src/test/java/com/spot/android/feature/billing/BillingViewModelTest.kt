@@ -71,7 +71,7 @@ class BillingViewModelTest {
         every { billingRepository.productDetails } returns MutableStateFlow(null)
         every { billingRepository.errorMessage } returns MutableStateFlow(null)
         every { userSessionHolder.isPro } returns MutableStateFlow(false)
-        every { sessionBridge.currentUserId() } returns testUserId
+        every { sessionBridge.currentUserId } returns testUserId
 
         coEvery { billingRepository.initialize() } returns Unit
     }
