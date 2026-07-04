@@ -58,7 +58,7 @@ Parallel after Phase 2.
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
 | **3.1** Home feed | ✅ | [#16](https://github.com/Ewynman/spot-android-app/pull/16) | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
-| **3.2** Post flow | ✅ | — | 2.x, 2.5 | 3-step composer, moderation pipeline |
+| **3.2** Post flow | ✅ | [#17](https://github.com/Ewynman/spot-android-app/pull/17) | 2.x, 2.5 | 3-step composer, moderation pipeline |
 | **3.3** Map | ⏳ | — | 2.x, 1.5 | Google Maps, viewport loading, drawer |
 | **3.4** Search | ⏳ | — | 2.x, 1.5 | 3 segments, debounce, history |
 | **3.5** Profile & social | ⏳ | — | 2.x, 3.3 | Profile tabs, follow, privacy |
