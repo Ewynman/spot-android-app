@@ -173,10 +173,17 @@ class BillingViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.purchasePro(activity, "test_entry")
-        advanceUntilIdle()
+        viewModel.uiState.test {
+            // Consume initial state
+            awaitItem()
+            
+            viewModel.purchasePro(activity, "test_entry")
+            advanceUntilIdle()
 
-        assertEquals(errorMsg, viewModel.uiState.value.userErrorMessage)
+            // Wait for the updated state with error message
+            val state = awaitItem()
+            assertEquals(errorMsg, state.userErrorMessage)
+        }
     }
 
     @Test
