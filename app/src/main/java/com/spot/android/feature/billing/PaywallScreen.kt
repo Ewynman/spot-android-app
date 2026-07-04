@@ -192,7 +192,7 @@ fun PaywallScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                         ),
-                        shape = RoundedCornerShape(Dimensions.cornerRadiusMedium),
+                        shape = RoundedCornerShape(Dimensions.Radius.medium),
                     ) {
                         Text(
                             text = "Subscribe",
@@ -208,7 +208,7 @@ fun PaywallScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("paywall.restoreButton"),
-                        shape = RoundedCornerShape(Dimensions.cornerRadiusMedium),
+                        shape = RoundedCornerShape(Dimensions.Radius.medium),
                     ) {
                         Text("Restore Purchase")
                     }

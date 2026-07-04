@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.feature.overlay.PaywallSheet
+import com.spot.android.feature.overlay.ProOnboardingOverlay
 import com.spot.android.feature.overlay.ProSuccessOverlay
 import com.spot.android.feature.overlay.SpotDetailOverlay
 import com.spot.android.feature.overlay.SpotLoadingOverlay

@@ -92,7 +92,7 @@ fun ProSuccessScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 ),
-                shape = RoundedCornerShape(Dimensions.cornerRadiusMedium),
+                shape = RoundedCornerShape(Dimensions.Radius.medium),
             ) {
                 Text(
                     text = "Done",

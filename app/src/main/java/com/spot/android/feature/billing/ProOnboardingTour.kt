@@ -145,7 +145,7 @@ fun ProOnboardingTour(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                         ),
-                        shape = RoundedCornerShape(Dimensions.cornerRadiusMedium),
+                        shape = RoundedCornerShape(Dimensions.Radius.medium),
                     ) {
                         Text(
                             text = "Get Started",
@@ -167,7 +167,7 @@ fun ProOnboardingTour(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                         ),
-                        shape = RoundedCornerShape(Dimensions.cornerRadiusMedium),
+                        shape = RoundedCornerShape(Dimensions.Radius.medium),
                     ) {
                         Text(
                             text = "Next",

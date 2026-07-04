@@ -8,7 +8,10 @@ import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult as AndroidBillingResult
 import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.ProductDetailsResponseListener
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchaseHistoryResponseListener
+import com.android.billingclient.api.PurchasesResponseListener
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
@@ -135,7 +138,16 @@ class PlayBillingRepository @Inject constructor(
                 .setProductList(productList)
                 .build()
 
-            val result = client.queryProductDetails(params)
+            data class ProductDetailsResult(
+                val billingResult: AndroidBillingResult,
+                val productDetailsList: List<ProductDetails>?
+            )
+            
+            val result = suspendCancellableCoroutine<ProductDetailsResult> { continuation ->
+                client.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+                    continuation.resume(ProductDetailsResult(billingResult, productDetailsList))
+                }
+            }
 
             if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 val details = result.productDetailsList?.firstOrNull()
@@ -253,7 +265,16 @@ class PlayBillingRepository @Inject constructor(
                 .setProductType(BillingClient.ProductType.SUBS)
                 .build()
 
-            val result = client.queryPurchasesAsync(params)
+            data class PurchasesResult(
+                val billingResult: AndroidBillingResult,
+                val purchasesList: List<Purchase>
+            )
+            
+            val result = suspendCancellableCoroutine<PurchasesResult> { continuation ->
+                client.queryPurchasesAsync(params) { billingResult, purchases ->
+                    continuation.resume(PurchasesResult(billingResult, purchases))
+                }
+            }
 
             if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 logger.d(LogCategory.Billing, TAG, "Restore found ${result.purchasesList.size} purchases")
@@ -286,7 +307,16 @@ class PlayBillingRepository @Inject constructor(
                 .setProductType(BillingClient.ProductType.SUBS)
                 .build()
 
-            val result = client.queryPurchasesAsync(params)
+            data class PurchasesResult(
+                val billingResult: AndroidBillingResult,
+                val purchasesList: List<Purchase>
+            )
+            
+            val result = suspendCancellableCoroutine<PurchasesResult> { continuation ->
+                client.queryPurchasesAsync(params) { billingResult, purchases ->
+                    continuation.resume(PurchasesResult(billingResult, purchases))
+                }
+            }
 
             if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 return@withContext hasValidProPurchase(result.purchasesList, userId)
@@ -343,7 +373,11 @@ class PlayBillingRepository @Inject constructor(
                 .setPurchaseToken(purchase.purchaseToken)
                 .build()
 
-            val result = client.acknowledgePurchase(params)
+            val result = suspendCancellableCoroutine<AndroidBillingResult> { continuation ->
+                client.acknowledgePurchase(params) { billingResult ->
+                    continuation.resume(billingResult)
+                }
+            }
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                 logger.i(LogCategory.Billing, TAG, "Purchase acknowledged")
             } else {

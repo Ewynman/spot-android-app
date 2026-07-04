@@ -70,7 +70,7 @@ class BillingViewModel @Inject constructor(
 
     fun purchasePro(activity: Activity, entryPoint: String?) {
         viewModelScope.launch {
-            val userId = sessionBridge.currentUserId()
+            val userId = sessionBridge.currentUserId
             if (userId == null) {
                 logger.w(LogCategory.Billing, TAG, "Purchase attempted without user ID")
                 _uiState.update { it.copy(userErrorMessage = "Not authenticated") }
@@ -105,7 +105,7 @@ class BillingViewModel @Inject constructor(
 
     fun restorePurchases() {
         viewModelScope.launch {
-            val userId = sessionBridge.currentUserId()
+            val userId = sessionBridge.currentUserId
             if (userId == null) {
                 logger.w(LogCategory.Billing, TAG, "Restore attempted without user ID")
                 _uiState.update { it.copy(userErrorMessage = "Not authenticated") }
