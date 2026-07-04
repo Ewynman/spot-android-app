@@ -23,6 +23,7 @@ import com.spot.android.feature.auth.ConfirmEmailScreen
 import com.spot.android.feature.onboarding.TermsUpdateScreen
 import com.spot.android.feature.onboarding.UsernameSetupScreen
 import com.spot.android.navigation.OverlayHostViewModel
+import com.spot.android.navigation.ShellNavigationBus
 import com.spot.android.navigation.SpotShell
 import com.spot.android.navigation.TabReselectBus
 import kotlinx.coroutines.delay
@@ -35,6 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SpotAppRoot(
     tabReselectBus: TabReselectBus,
+    shellNavigationBus: ShellNavigationBus,
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = hiltViewModel(),
     overlayViewModel: OverlayHostViewModel = hiltViewModel(),
@@ -102,6 +104,7 @@ fun SpotAppRoot(
             )
             LaunchDestination.MainShell -> SpotShell(
                 tabReselectBus = tabReselectBus,
+                shellNavigationBus = shellNavigationBus,
                 overlayViewModel = overlayViewModel,
             )
         }

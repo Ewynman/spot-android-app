@@ -14,6 +14,11 @@ import com.spot.android.data.feed.FeedSpotHydrator
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.feed.HomeFeedStatusDto
 import com.spot.android.data.location.ViewerLocationProvider
+import com.spot.android.data.post.SpotPostedBus
+import com.spot.android.data.post.SpotPublishCoordinator
+import com.spot.android.data.post.FakeSpotPublishRepository
+import com.spot.android.data.post.FakeVibeTagRepository
+import com.spot.android.data.post.FakePostDraftRepository
 import com.spot.android.core.supabase.SupabaseClientProvider
 import io.github.jan.supabase.gotrue.Auth
 import io.mockk.coEvery
@@ -82,6 +87,14 @@ class HomeFeedViewModelTest {
             userSessionHolder = userSessionHolder,
             localContentRemovalBus = localContentRemovalBus,
             viewerLocationProvider = viewerLocationProvider,
+            spotPostedBus = SpotPostedBus(),
+            spotPublishCoordinator = SpotPublishCoordinator(
+                vibeTagRepository = FakeVibeTagRepository(),
+                spotPublishRepository = FakeSpotPublishRepository(),
+                postDraftRepository = FakePostDraftRepository(),
+                spotPostedBus = SpotPostedBus(),
+                logger = logger,
+            ),
             logger = logger,
         )
     }

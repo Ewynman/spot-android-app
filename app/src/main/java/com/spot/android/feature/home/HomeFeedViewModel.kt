@@ -17,10 +17,14 @@ import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.location.ViewerLocationProvider
 import com.spot.android.data.model.Spot
 import com.spot.android.data.model.enums.FeedEventType
+import com.spot.android.data.post.PublishCoordinatorState
+import com.spot.android.data.post.SpotPublishCoordinator
+import com.spot.android.data.post.SpotPostedBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,6 +48,8 @@ class HomeFeedViewModel @Inject constructor(
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val viewerLocationProvider: ViewerLocationProvider,
+    private val spotPostedBus: SpotPostedBus,
+    private val spotPublishCoordinator: SpotPublishCoordinator,
     private val logger: SpotLogger,
 ) : ViewModel() {
 
@@ -61,6 +67,8 @@ class HomeFeedViewModel @Inject constructor(
     init {
         observeContentRemovals()
         observeSessionEngagement()
+        observeSpotPosted()
+        observePublishState()
     }
 
     fun onFirstAppear() {
@@ -203,6 +211,14 @@ class HomeFeedViewModel @Inject constructor(
             eventType = FeedEventType.IMPRESSION,
             coalesceKey = "impression:$spotId",
         )
+    }
+
+    fun dismissPublishBanner() {
+        spotPublishCoordinator.dismissBanner()
+    }
+
+    fun clearSuccessToast() {
+        _uiState.update { it.copy(successToast = null) }
     }
 
     fun clearErrorToast() {
@@ -427,7 +443,29 @@ class HomeFeedViewModel @Inject constructor(
         }
     }
 
+    private fun observePublishState() {
+        viewModelScope.launch {
+            spotPublishCoordinator.state.collect { state ->
+                _uiState.update { it.copy(publishState = state) }
+            }
+        }
+    }
+
+    private fun observeSpotPosted() {
+        viewModelScope.launch {
+            spotPostedBus.events.collect {
+                _uiState.update { state -> state.copy(successToast = "Spot posted!") }
+                repeat(POST_SUCCESS_REFRESH_ATTEMPTS) { attempt ->
+                    if (attempt > 0) delay(POST_SUCCESS_REFRESH_DELAY_MS)
+                    refresh()
+                }
+            }
+        }
+    }
+
     private companion object {
         const val TAG = "HomeFeedViewModel"
+        const val POST_SUCCESS_REFRESH_ATTEMPTS = 3
+        const val POST_SUCCESS_REFRESH_DELAY_MS = 700L
     }
 }

@@ -24,6 +24,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -40,6 +41,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -58,6 +60,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -73,6 +76,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -88,6 +92,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -103,6 +108,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -118,6 +124,7 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -31,6 +32,7 @@ import com.spot.android.feature.search.SearchScreen
 @Composable
 fun SpotShell(
     tabReselectBus: TabReselectBus,
+    shellNavigationBus: ShellNavigationBus,
     overlayViewModel: OverlayHostViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -38,6 +40,18 @@ fun SpotShell(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val selectedTab = SpotTab.fromRoute(currentRoute) ?: SpotTab.DEFAULT
+
+    LaunchedEffect(shellNavigationBus) {
+        shellNavigationBus.tabRequests.collect { tab ->
+            navController.navigate(tab.route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    }
 
     SafetyFlowHost(
         modifier = modifier
