@@ -32,6 +32,7 @@ class FakeLogPreferencesRepository(
             LogCategory.DeepLink -> mutablePreferences.value.copy(logDeepLink = enabled)
             LogCategory.Privacy -> mutablePreferences.value.copy(logPrivacy = enabled)
             LogCategory.SpotCard -> mutablePreferences.value.copy(logSpotCard = enabled)
+            LogCategory.Billing -> mutablePreferences.value.copy(logBilling = enabled)
         }
     }
 }

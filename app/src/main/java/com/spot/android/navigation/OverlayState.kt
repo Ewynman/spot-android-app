@@ -23,6 +23,9 @@ sealed interface AppOverlay {
     /** Post-purchase / subscription-return success screen. */
     data object ProSuccess : AppOverlay
 
+    /** Post-purchase Pro onboarding tour. */
+    data object ProOnboarding : AppOverlay
+
     /** Pro upsell sheet. [entryPoint] identifies the trigger for analytics. */
     data class Paywall(val entryPoint: String? = null) : AppOverlay
 }

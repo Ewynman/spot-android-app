@@ -143,50 +143,39 @@ fun ProSuccessOverlay(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(SpotColors.Background)
-            .testTag("overlay.proSuccess"),
-    ) {
-        TopNavigationView(
-            showBackButton = true,
-            onBackClick = onDismiss,
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Welcome to Spot Pro",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = SpotColors.Primary,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Your subscription is active. Enjoy unlimited bookmarks, multi-photo posts, and more.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpotColors.WelcomeMutedText,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-    }
+    com.spot.android.feature.billing.ProSuccessScreen(
+        onDone = onDismiss,
+        modifier = modifier,
+    )
 }
 
 /**
- * Pro upsell bottom sheet placeholder.
+ * Post-purchase Pro onboarding tour.
  *
- * Full paywall lands in Phase 4.1 (PRD/12).
+ * Reference: PRD/12-pro-subscription.md
+ */
+@Composable
+fun ProOnboardingOverlay(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    com.spot.android.feature.billing.ProOnboardingTour(
+        onComplete = onDismiss,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Pro upsell paywall with purchase/restore actions.
+ *
+ * Reference: PRD/12-pro-subscription.md
  */
 @Composable
 fun PaywallSheet(
     entryPoint: String?,
     onDismiss: () -> Unit,
+    onShowProSuccess: () -> Unit,
+    onShowProOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -199,45 +188,21 @@ fun PaywallSheet(
                 onClick = onDismiss,
             )
             .testTag("overlay.paywall"),
-        contentAlignment = Alignment.BottomCenter,
+        contentAlignment = Alignment.Center,
     ) {
-        Column(
+        com.spot.android.feature.billing.PaywallScreen(
+            entryPoint = entryPoint,
+            onDismiss = onDismiss,
+            onNavigateToTerms = { /* TODO: navigate to terms */ },
+            onNavigateToPrivacy = { /* TODO: navigate to privacy */ },
+            onShowProSuccess = onShowProSuccess,
+            onShowProOnboarding = onShowProOnboarding,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-            Column(
-                modifier = Modifier
-                    .background(
-                        color = SpotColors.Background,
-                        shape = MaterialTheme.shapes.large,
-                    )
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "Upgrade to Spot Pro",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = SpotColors.Primary,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Unlock unlimited bookmarks, 5 photos per spot, custom vibes, and more.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpotColors.WelcomeMutedText,
-                    textAlign = TextAlign.Center,
-                )
-                if (entryPoint != null) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Entry: $entryPoint",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = SpotColors.WelcomeMutedText,
-                    )
-                }
-            }
-        }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { /* Prevent dismiss on content click */ }
+                ),
+        )
     }
 }
