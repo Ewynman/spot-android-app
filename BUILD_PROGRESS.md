@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 2.2 (Launch gate + splash)
+**Next recommended**: 2.3 (Welcome / sign-up / login / OTP)
 
 ---
 
@@ -43,7 +43,7 @@ Mostly sequential; gates the app.
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
 | **2.1** Auth repository + session VM | ✅ | [#9](https://github.com/Ewynman/spot-android-app/pull/9) | 1.2, 1.3 | AuthRepository, UserSessionHolder, AuthViewModel |
-| **2.2** Launch gate + splash | ⏳ | — | 2.1, 1.6 | Decision table routing |
+| **2.2** Launch gate + splash | ✅ | — | 2.1, 1.6 | Decision table routing |
 | **2.3** Welcome / sign-up / login / OTP | ⏳ | — | 2.1 | Auth screens + terms checkbox |
 | **2.4** Post-auth username + terms gate | ⏳ | — | 2.1 | record_terms_acceptance_v1 |
 | **2.5** Permissions framework | ⏳ | — | 1.5 | Pre-prompt + OS dialog |

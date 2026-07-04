@@ -60,6 +60,14 @@ object Constants {
     object Auth {
         const val OTP_LENGTH = 6
     }
+
+    /**
+     * Launch splash timing (mirrors iOS).
+     */
+    object Launch {
+        const val SPLASH_MIN_DURATION_MS = 1500L
+        const val SPLASH_FADE_DURATION_MS = 500L
+    }
     
     /**
      * Search constants.

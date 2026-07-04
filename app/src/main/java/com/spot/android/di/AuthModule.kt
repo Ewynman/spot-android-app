@@ -4,6 +4,8 @@ import com.spot.android.data.auth.AuthRepository
 import com.spot.android.data.auth.SupabaseAuthRepository
 import com.spot.android.data.auth.SupabaseUserSessionRepository
 import com.spot.android.data.auth.UserSessionRepository
+import com.spot.android.data.terms.SupabaseTermsRepository
+import com.spot.android.data.terms.TermsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,4 +32,10 @@ abstract class AuthModule {
     abstract fun bindUserSessionRepository(
         impl: SupabaseUserSessionRepository,
     ): UserSessionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTermsRepository(
+        impl: SupabaseTermsRepository,
+    ): TermsRepository
 }
