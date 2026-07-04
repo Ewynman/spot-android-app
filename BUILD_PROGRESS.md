@@ -47,7 +47,7 @@ Mostly sequential; gates the app.
 | **2.3** Welcome / sign-up / login / OTP | ✅ | [#12](https://github.com/Ewynman/spot-android-app/pull/12) | 2.1 | Auth screens + terms checkbox |
 | **2.4** Post-auth username + terms gate | ✅ | [#13](https://github.com/Ewynman/spot-android-app/pull/13) | 2.1 | UsernameSetup + TermsUpdate screens |
 | **2.5** Permissions framework | ✅ | [#14](https://github.com/Ewynman/spot-android-app/pull/14) | 1.5 | Pre-prompt + OS dialog, DataStore state keys |
-| **2.6** Safety flows (report + block) | ✅ | — | 2.1, 1.5 | Report sheet, block dialog, overflow menus |
+| **2.6** Safety flows (report + block) | ✅ | [#15](https://github.com/Ewynman/spot-android-app/pull/15) | 2.1, 1.5 | Report sheet, block dialog, overflow menus |
 
 **Phase 2 Complete** ✅
 
