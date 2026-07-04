@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 2.6 (Safety flows — report + block)
+**Next recommended**: 3.1 (Home feed)
 
 ---
 
@@ -47,9 +47,9 @@ Mostly sequential; gates the app.
 | **2.3** Welcome / sign-up / login / OTP | ✅ | [#12](https://github.com/Ewynman/spot-android-app/pull/12) | 2.1 | Auth screens + terms checkbox |
 | **2.4** Post-auth username + terms gate | ✅ | [#13](https://github.com/Ewynman/spot-android-app/pull/13) | 2.1 | UsernameSetup + TermsUpdate screens |
 | **2.5** Permissions framework | ✅ | [#14](https://github.com/Ewynman/spot-android-app/pull/14) | 1.5 | Pre-prompt + OS dialog, DataStore state keys |
-| **2.6** Safety flows (report + block) | ⏳ | — | 2.1, 1.5 | Report sheet, block dialog |
+| **2.6** Safety flows (report + block) | ✅ | [#15](https://github.com/Ewynman/spot-android-app/pull/15) | 2.1, 1.5 | Report sheet, block dialog, overflow menus |
 
----
+**Phase 2 Complete** ✅
 
 ## Phase 3 — Core Content Surfaces
 
@@ -57,7 +57,7 @@ Parallel after Phase 2.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **3.1** Home feed | ⏳ | — | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
+| **3.1** Home feed | ⬜ | — | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
 | **3.2** Post flow | ⏳ | — | 2.x, 2.5 | 3-step composer, moderation pipeline |
 | **3.3** Map | ⏳ | — | 2.x, 1.5 | Google Maps, viewport loading, drawer |
 | **3.4** Search | ⏳ | — | 2.x, 1.5 | 3 segments, debounce, history |
@@ -93,13 +93,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 13 (46%)
+- **Completed**: 14 (50%)
 - **In Progress**: 0
-- **Blocked (waiting on deps)**: 1
+- **Blocked (waiting on deps)**: 0
 - **Not Started**: 14
 
-**Current Phase**: Phase 2 (Auth, Session & Safety Spine)  
-**Next Task**: 2.6 (Safety flows — report + block)
+**Current Phase**: Phase 3 (Core Content Surfaces)  
+**Next Task**: 3.1 (Home feed)
 
 ---
 
