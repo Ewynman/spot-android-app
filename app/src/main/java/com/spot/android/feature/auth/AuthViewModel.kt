@@ -9,6 +9,8 @@ import com.spot.android.core.supabase.SessionState
 import com.spot.android.data.auth.AuthError
 import com.spot.android.data.auth.AuthException
 import com.spot.android.data.auth.AuthRepository
+import com.spot.android.BuildConfig
+import com.spot.android.data.auth.PreAuthTermsAgreementStore
 import com.spot.android.data.auth.SignUpResult
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.auth.UserSessionRepository
@@ -32,6 +34,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userSessionRepository: UserSessionRepository,
     private val termsRepository: TermsRepository,
+    private val preAuthTermsAgreementStore: PreAuthTermsAgreementStore,
     private val sessionBridge: SessionBridge,
     private val userSessionHolder: UserSessionHolder,
     private val logger: SpotLogger,
@@ -56,7 +59,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             setLoading(true)
             authRepository.signUpWithEmail(email, password, username, isPrivate)
-                .onSuccess { result -> handleSignUpSuccess(result) }
+                .onSuccess { result ->
+                    handleSignUpSuccess(result)
+                    recordPreAuthTermsIfNeeded()
+                }
                 .onFailure { error -> setAuthError(error.toAuthError()) }
             setLoading(false)
         }
@@ -68,6 +74,7 @@ class AuthViewModel @Inject constructor(
             authRepository.signInWithEmailOrUsername(identifier, password)
                 .onSuccess {
                     clearAuthError()
+                    recordPreAuthTermsIfNeeded()
                     refreshSessionSnapshot(force = true)
                 }
                 .onFailure { error -> setAuthError(error.toAuthError()) }
@@ -90,6 +97,7 @@ class AuthViewModel @Inject constructor(
             authRepository.handleOAuthCallback(url)
                 .onSuccess {
                     clearAuthError()
+                    recordPreAuthTermsIfNeeded()
                     refreshSessionSnapshot(force = true)
                 }
                 .onFailure { error -> setAuthError(error.toAuthError()) }
@@ -103,6 +111,7 @@ class AuthViewModel @Inject constructor(
             authRepository.verifyEmailOtp(email, token)
                 .onSuccess {
                     clearAuthError()
+                    recordPreAuthTermsIfNeeded()
                     refreshSessionSnapshot(force = true)
                 }
                 .onFailure { error -> setAuthError(error.toAuthError()) }
@@ -120,8 +129,14 @@ class AuthViewModel @Inject constructor(
     fun resetPassword(email: String) {
         viewModelScope.launch {
             authRepository.resetPassword(email)
-                .onSuccess { clearAuthError() }
-                .onFailure { error -> setAuthError(error.toAuthError()) }
+                .onSuccess {
+                    clearAuthError()
+                    _uiState.update { it.copy(passwordResetSent = true) }
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(passwordResetSent = false) }
+                    setAuthError(error.toAuthError())
+                }
         }
     }
 
@@ -149,7 +164,42 @@ class AuthViewModel @Inject constructor(
     }
 
     fun clearAuthError() {
-        _uiState.update { it.copy(authError = null) }
+        _uiState.update { it.copy(authError = null, passwordResetSent = false) }
+    }
+
+    fun savePreAuthTermsAgreement(agreed: Boolean) {
+        viewModelScope.launch {
+            preAuthTermsAgreementStore.setAgreed(agreed)
+        }
+    }
+
+    fun checkUsernameAvailability(username: String) {
+        if (username.isBlank()) {
+            _uiState.update { it.copy(usernameAvailability = UsernameAvailability.Unknown) }
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update { it.copy(usernameAvailability = UsernameAvailability.Checking) }
+            authRepository.isUsernameAvailable(username)
+                .onSuccess { available ->
+                    _uiState.update {
+                        it.copy(
+                            usernameAvailability = if (available) {
+                                UsernameAvailability.Available
+                            } else {
+                                UsernameAvailability.Taken
+                            },
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(usernameAvailability = UsernameAvailability.Unknown) }
+                }
+        }
+    }
+
+    fun clearUsernameAvailability() {
+        _uiState.update { it.copy(usernameAvailability = UsernameAvailability.Unknown) }
     }
 
     fun refreshSessionSnapshot(force: Boolean = false) {
@@ -341,6 +391,19 @@ class AuthViewModel @Inject constructor(
                     false
                 },
             )
+    }
+
+    private suspend fun recordPreAuthTermsIfNeeded() {
+        if (!preAuthTermsAgreementStore.hasAgreed()) return
+        termsRepository.recordTermsAcceptance(
+            appVersion = BuildConfig.VERSION_NAME,
+            buildNumber = BuildConfig.VERSION_CODE.toString(),
+            deviceInfo = "android",
+        ).onSuccess {
+            preAuthTermsAgreementStore.clear()
+        }.onFailure { error ->
+            logger.w(LogCategory.Auth, TAG, "Failed to record pre-auth terms acceptance", error)
+        }
     }
 
     private suspend fun handleSignUpSuccess(result: SignUpResult) {

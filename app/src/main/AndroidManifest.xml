@@ -74,6 +74,16 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="spotapp" />
             </intent-filter>
+
+            <!-- OAuth callback for Google Sign-In -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="spotapp"
+                    android:host="auth-callback" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>
