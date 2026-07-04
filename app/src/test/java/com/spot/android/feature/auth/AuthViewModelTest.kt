@@ -10,6 +10,7 @@ import com.spot.android.data.auth.FakeAuthRepository
 import com.spot.android.data.auth.FakeUserSessionRepository
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.auth.UserSessionSnapshot
+import com.spot.android.data.terms.FakeTermsRepository
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.gotrue.user.UserInfo
 import io.github.jan.supabase.gotrue.user.UserSession
@@ -38,6 +39,7 @@ class AuthViewModelTest {
 
     private lateinit var fakeAuthRepository: FakeAuthRepository
     private lateinit var fakeUserSessionRepository: FakeUserSessionRepository
+    private lateinit var fakeTermsRepository: FakeTermsRepository
     private lateinit var userSessionHolder: UserSessionHolder
     private lateinit var mockAuth: Auth
     private lateinit var sessionBridge: SessionBridge
@@ -49,6 +51,7 @@ class AuthViewModelTest {
 
         fakeAuthRepository = FakeAuthRepository()
         fakeUserSessionRepository = FakeUserSessionRepository()
+        fakeTermsRepository = FakeTermsRepository()
         userSessionHolder = UserSessionHolder()
 
         mockAuth = mockk(relaxed = true)
@@ -67,6 +70,7 @@ class AuthViewModelTest {
         viewModel = AuthViewModel(
             authRepository = fakeAuthRepository,
             userSessionRepository = fakeUserSessionRepository,
+            termsRepository = fakeTermsRepository,
             sessionBridge = sessionBridge,
             userSessionHolder = userSessionHolder,
             logger = logger,
@@ -82,6 +86,7 @@ class AuthViewModelTest {
     fun `loading session shows loading state`() = runTest {
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isLoading)
+        assertTrue(viewModel.uiState.value.isResolvingLaunchGates)
         assertFalse(viewModel.uiState.value.isAuthenticated)
     }
 
@@ -93,6 +98,7 @@ class AuthViewModelTest {
 
         val state = viewModel.uiState.value
         assertFalse(state.isLoading)
+        assertFalse(state.isResolvingLaunchGates)
         assertFalse(state.isAuthenticated)
         assertNull(state.userId)
     }
@@ -120,11 +126,13 @@ class AuthViewModelTest {
         assertTrue(state.isAuthenticated)
         assertEquals("user-123", state.userId)
         assertTrue(state.isEmailVerified)
+        assertFalse(state.isResolvingLaunchGates)
         assertEquals("testuser", state.currentUserUsername)
         assertEquals(setOf("spot-1"), state.likedSpots)
         assertEquals(setOf("spot-2"), state.bookmarkedSpots)
         assertEquals(setOf("user-blocked"), state.blockedUsers)
         assertEquals(1, fakeUserSessionRepository.loadCalls)
+        assertEquals(1, fakeTermsRepository.checkCalls)
     }
 
     @Test
@@ -198,6 +206,28 @@ class AuthViewModelTest {
         advanceUntilIdle()
 
         assertEquals(AuthError.InvalidCredentials, viewModel.uiState.value.authError)
+    }
+
+    @Test
+    fun `terms not accepted sets needs terms acceptance`() = runTest {
+        fakeTermsRepository.hasAcceptedResult = Result.success(false)
+        setAuthenticatedSession(userId = "user-terms", email = "terms@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.needsTermsAcceptance)
+    }
+
+    @Test
+    fun `terms check failure fails open`() = runTest {
+        fakeTermsRepository.hasAcceptedResult = Result.failure(RuntimeException("network"))
+        setAuthenticatedSession(userId = "user-failopen", email = "fail@example.com")
+        fakeAuthRepository.emailVerified = true
+        sessionBridge.refresh()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.needsTermsAcceptance)
     }
 
     @Test

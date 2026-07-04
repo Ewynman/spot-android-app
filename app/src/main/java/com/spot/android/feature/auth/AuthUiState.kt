@@ -23,5 +23,7 @@ data class AuthUiState(
     val currentUserProfileImageURL: String? = null,
     val currentUserUsername: String? = null,
     val needsUsernameSetup: Boolean = false,
+    val needsTermsAcceptance: Boolean = false,
+    val isResolvingLaunchGates: Boolean = true,
     val authError: AuthError? = null,
 )

@@ -12,6 +12,7 @@ import com.spot.android.data.auth.AuthRepository
 import com.spot.android.data.auth.SignUpResult
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.auth.UserSessionRepository
+import com.spot.android.data.terms.TermsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userSessionRepository: UserSessionRepository,
+    private val termsRepository: TermsRepository,
     private val sessionBridge: SessionBridge,
     private val userSessionHolder: UserSessionHolder,
     private val logger: SpotLogger,
@@ -128,13 +130,21 @@ class AuthViewModel @Inject constructor(
             authRepository.signOut()
             loadedSessionUserId = null
             userSessionHolder.clear()
-            _uiState.value = AuthUiState(isLoading = false)
+            _uiState.value = AuthUiState(isLoading = false, isResolvingLaunchGates = false)
         }
     }
 
     fun clearPendingVerification() {
         viewModelScope.launch {
             authRepository.clearPendingVerification()
+        }
+    }
+
+    fun refreshAuthGates() {
+        viewModelScope.launch {
+            val userId = sessionBridge.currentUserId ?: return@launch
+            if (!authRepository.isCurrentEmailVerified()) return@launch
+            refreshLaunchGates(userId)
         }
     }
 
@@ -160,7 +170,13 @@ class AuthViewModel @Inject constructor(
             }.collect { (sessionState, pendingEmail) ->
                 when (sessionState) {
                     SessionState.Loading -> {
-                        _uiState.update { it.copy(isLoading = true, isAuthenticated = false) }
+                        _uiState.update {
+                            it.copy(
+                                isLoading = true,
+                                isAuthenticated = false,
+                                isResolvingLaunchGates = true,
+                            )
+                        }
                     }
 
                     SessionState.Unauthenticated -> {
@@ -183,6 +199,8 @@ class AuthViewModel @Inject constructor(
                                 currentUserProfileImageURL = null,
                                 currentUserUsername = null,
                                 needsUsernameSetup = false,
+                                needsTermsAcceptance = false,
+                                isResolvingLaunchGates = false,
                             )
                         }
                     }
@@ -190,6 +208,8 @@ class AuthViewModel @Inject constructor(
                     is SessionState.Authenticated -> {
                         val emailVerified = authRepository.isCurrentEmailVerified()
                         val awaitingVerification = pendingEmail != null || !emailVerified
+                        val needsGateResolution = !awaitingVerification &&
+                            loadedSessionUserId != sessionState.userId
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
@@ -198,6 +218,11 @@ class AuthViewModel @Inject constructor(
                                 isEmailVerified = emailVerified,
                                 awaitingEmailVerification = awaitingVerification,
                                 pendingVerificationEmail = pendingEmail,
+                                isResolvingLaunchGates = if (awaitingVerification) {
+                                    false
+                                } else {
+                                    needsGateResolution
+                                },
                             )
                         }
                         if (!awaitingVerification && loadedSessionUserId != sessionState.userId) {
@@ -263,21 +288,59 @@ class AuthViewModel @Inject constructor(
     }
 
     private suspend fun loadSessionSnapshot(userId: String) {
+        _uiState.update { it.copy(isResolvingLaunchGates = true) }
+
         userSessionRepository.loadSessionSnapshot(userId)
             .onSuccess { snapshot ->
                 loadedSessionUserId = userId
                 userSessionHolder.updateFromSnapshot(snapshot)
+                val needsTerms = resolveTermsAcceptance()
                 _uiState.update {
                     it.copy(
                         needsUsernameSetup = snapshot.needsUsernameSetup,
                         isEmailVerified = snapshot.emailVerified,
                         isAuthenticated = snapshot.emailVerified && !it.awaitingEmailVerification,
+                        needsTermsAcceptance = needsTerms,
+                        isResolvingLaunchGates = false,
                     )
                 }
             }
             .onFailure { error ->
                 logger.e(LogCategory.Auth, TAG, "Failed to refresh session snapshot", error)
+                _uiState.update { it.copy(isResolvingLaunchGates = false) }
             }
+    }
+
+    private suspend fun refreshLaunchGates(userId: String) {
+        userSessionRepository.loadSessionSnapshot(userId)
+            .onSuccess { snapshot ->
+                loadedSessionUserId = userId
+                userSessionHolder.updateFromSnapshot(snapshot)
+                val needsTerms = resolveTermsAcceptance()
+                _uiState.update {
+                    it.copy(
+                        needsUsernameSetup = snapshot.needsUsernameSetup,
+                        needsTermsAcceptance = needsTerms,
+                    )
+                }
+            }
+            .onFailure { error ->
+                logger.e(LogCategory.Auth, TAG, "Failed to refresh auth gates", error)
+            }
+    }
+
+    /**
+     * Fail-open on network error — do not lock users out of the app.
+     */
+    private suspend fun resolveTermsAcceptance(): Boolean {
+        return termsRepository.hasAcceptedActiveTerms()
+            .fold(
+                onSuccess = { accepted -> !accepted },
+                onFailure = {
+                    logger.w(LogCategory.Auth, TAG, "Terms check failed; failing open")
+                    false
+                },
+            )
     }
 
     private suspend fun handleSignUpSuccess(result: SignUpResult) {
