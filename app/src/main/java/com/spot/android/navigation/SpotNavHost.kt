@@ -73,7 +73,10 @@ fun SpotShell(
                         .padding(innerPadding),
                 ) {
                     composable(SpotRoutes.HOME) {
-                        HomeScreen(tabReselectBus = tabReselectBus)
+                        HomeScreen(
+                            tabReselectBus = tabReselectBus,
+                            overlayViewModel = overlayViewModel,
+                        )
                     }
                     composable(SpotRoutes.MAP) {
                         MapScreen(tabReselectBus = tabReselectBus)

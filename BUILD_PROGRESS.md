@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 3.1 (Home feed)
+**Next recommended**: 3.2 (Post flow)
 
 ---
 
@@ -57,12 +57,12 @@ Parallel after Phase 2.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **3.1** Home feed | ⬜ | — | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
+| **3.1** Home feed | ✅ | — | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
 | **3.2** Post flow | ⏳ | — | 2.x, 2.5 | 3-step composer, moderation pipeline |
 | **3.3** Map | ⏳ | — | 2.x, 1.5 | Google Maps, viewport loading, drawer |
 | **3.4** Search | ⏳ | — | 2.x, 1.5 | 3 segments, debounce, history |
 | **3.5** Profile & social | ⏳ | — | 2.x, 3.3 | Profile tabs, follow, privacy |
-| **3.6** Feed-event service | ⏳ | — | 3.1 | Coalescing emitter |
+| **3.6** Feed-event service | ⬜ | — | 3.1 | Coalescing emitter (basic in 3.1) |
 
 ---
 
@@ -93,13 +93,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 14 (50%)
+- **Completed**: 15 (54%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 14
+- **Not Started**: 13
 
 **Current Phase**: Phase 3 (Core Content Surfaces)  
-**Next Task**: 3.1 (Home feed)
+**Next Task**: 3.2 (Post flow)
 
 ---
 
