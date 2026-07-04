@@ -1,6 +1,7 @@
 package com.spot.android.feature.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.spot.android.core.design.component.Banner
+import com.spot.android.core.design.component.BannerType
 import com.spot.android.core.design.component.EmptyFeedCaughtUp
 import com.spot.android.core.design.component.EmptyFeedNoEligibleSpots
 import com.spot.android.core.design.component.EmptyFeedNoSpotsGlobal
@@ -34,6 +37,7 @@ import com.spot.android.core.design.component.Toast
 import com.spot.android.core.design.component.ToastType
 import com.spot.android.core.design.component.TopNavigationView
 import com.spot.android.data.feed.HomeFeedEmptyReason
+import com.spot.android.data.post.PublishCoordinatorState
 import com.spot.android.feature.safety.LocalSafetyActions
 import com.spot.android.navigation.OverlayHostViewModel
 import com.spot.android.navigation.SpotTab
@@ -116,12 +120,21 @@ fun HomeScreen(
         modifier = modifier.testTag("home.feedRoot"),
         topBar = { TopNavigationView() },
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .pullRefresh(pullRefreshState),
+                .padding(innerPadding),
         ) {
+            PublishBanner(
+                state = uiState.publishState,
+                onDismiss = viewModel::dismissPublishBanner,
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pullRefresh(pullRefreshState),
+            ) {
             when (uiState.loadState) {
                 FeedLoadState.LOADING_INITIAL -> {
                     LazyColumn(
@@ -197,7 +210,62 @@ fun HomeScreen(
                         .testTag("home.errorToast"),
                 )
             }
+
+            uiState.successToast?.let { message ->
+                Toast(
+                    message = message,
+                    type = ToastType.SUCCESS,
+                    visible = true,
+                    onDismiss = viewModel::clearSuccessToast,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                        .testTag("home.successToast"),
+                )
+            }
         }
+        }
+    }
+}
+
+@Composable
+private fun PublishBanner(
+    state: PublishCoordinatorState,
+    onDismiss: () -> Unit,
+) {
+    when (state) {
+        PublishCoordinatorState.Uploading -> Banner(
+            message = "Uploading your spot…",
+            type = BannerType.LOADING,
+            showProgress = true,
+            modifier = Modifier.testTag("home.publishBanner"),
+        )
+        PublishCoordinatorState.Moderating -> Banner(
+            message = "Checking your images…",
+            type = BannerType.LOADING,
+            showProgress = true,
+            modifier = Modifier.testTag("home.publishBanner"),
+        )
+        PublishCoordinatorState.Publishing -> Banner(
+            message = "Publishing your spot…",
+            type = BannerType.LOADING,
+            showProgress = true,
+            modifier = Modifier.testTag("home.publishBanner"),
+        )
+        is PublishCoordinatorState.Failed -> {
+            Banner(
+                message = state.message,
+                type = BannerType.ERROR,
+                modifier = Modifier.testTag("home.publishBanner"),
+            )
+            LaunchedEffect(state) {
+                kotlinx.coroutines.delay(5000)
+                onDismiss()
+            }
+        }
+        PublishCoordinatorState.Idle,
+        is PublishCoordinatorState.Success,
+        -> Unit
     }
 }
 

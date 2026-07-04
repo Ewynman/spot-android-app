@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.spot.android.core.design.theme.SpotTheme
 import com.spot.android.feature.auth.AuthViewModel
 import com.spot.android.feature.launch.SpotAppRoot
+import com.spot.android.navigation.ShellNavigationBus
 import com.spot.android.navigation.TabReselectBus
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -27,6 +28,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var tabReselectBus: TabReselectBus
+
+    @Inject
+    lateinit var shellNavigationBus: ShellNavigationBus
 
     private val authViewModel: AuthViewModel by viewModels()
 
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     SpotAppRoot(
                         tabReselectBus = tabReselectBus,
+                        shellNavigationBus = shellNavigationBus,
                         authViewModel = authViewModel,
                     )
                 }
