@@ -17,7 +17,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.core.util.Constants
+import com.spot.android.feature.auth.AuthFlowHost
 import com.spot.android.feature.auth.AuthViewModel
+import com.spot.android.feature.auth.ConfirmEmailScreen
 import com.spot.android.navigation.OverlayHostViewModel
 import com.spot.android.navigation.SpotShell
 import com.spot.android.navigation.TabReselectBus
@@ -65,8 +67,23 @@ fun SpotAppRoot(
     ) { target ->
         when (target) {
             LaunchDestination.Splash -> LaunchSplashScreen(visible = showSplash)
-            LaunchDestination.Welcome -> WelcomePlaceholderScreen()
-            LaunchDestination.ConfirmEmail -> ConfirmEmailPlaceholderScreen()
+            LaunchDestination.Welcome -> AuthFlowHost(authViewModel = authViewModel)
+            LaunchDestination.ConfirmEmail -> ConfirmEmailScreen(
+                email = authState.pendingVerificationEmail.orEmpty(),
+                isLoading = authState.isLoading,
+                authError = authState.authError,
+                onBack = {
+                    authViewModel.clearPendingVerification()
+                    authViewModel.clearAuthError()
+                },
+                onVerify = { token ->
+                    val email = authState.pendingVerificationEmail.orEmpty()
+                    authViewModel.verifyEmailOtp(email, token)
+                },
+                onResend = {
+                    authState.pendingVerificationEmail?.let(authViewModel::resendEmailOtp)
+                },
+            )
             LaunchDestination.UsernameSetup -> UsernameSetupPlaceholderScreen()
             LaunchDestination.TermsUpdate -> TermsUpdatePlaceholderScreen()
             LaunchDestination.MainShell -> SpotShell(

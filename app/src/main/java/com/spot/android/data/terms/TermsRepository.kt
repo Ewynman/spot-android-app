@@ -11,4 +11,13 @@ interface TermsRepository {
      * Returns whether the authenticated caller has accepted the active terms version.
      */
     suspend fun hasAcceptedActiveTerms(): Result<Boolean>
+
+    /**
+     * Records acceptance of the active terms version for the authenticated caller.
+     */
+    suspend fun recordTermsAcceptance(
+        appVersion: String? = null,
+        buildNumber: String? = null,
+        deviceInfo: String? = null,
+    ): Result<Unit>
 }

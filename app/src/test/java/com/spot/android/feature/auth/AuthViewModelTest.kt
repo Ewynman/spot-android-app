@@ -9,6 +9,7 @@ import com.spot.android.data.auth.AuthException
 import com.spot.android.data.auth.FakeAuthRepository
 import com.spot.android.data.auth.FakeUserSessionRepository
 import com.spot.android.data.auth.UserSessionHolder
+import com.spot.android.data.auth.PreAuthTermsAgreementStore
 import com.spot.android.data.auth.UserSessionSnapshot
 import com.spot.android.data.terms.FakeTermsRepository
 import io.github.jan.supabase.gotrue.Auth
@@ -40,6 +41,7 @@ class AuthViewModelTest {
     private lateinit var fakeAuthRepository: FakeAuthRepository
     private lateinit var fakeUserSessionRepository: FakeUserSessionRepository
     private lateinit var fakeTermsRepository: FakeTermsRepository
+    private lateinit var preAuthTermsAgreementStore: PreAuthTermsAgreementStore
     private lateinit var userSessionHolder: UserSessionHolder
     private lateinit var mockAuth: Auth
     private lateinit var sessionBridge: SessionBridge
@@ -52,6 +54,8 @@ class AuthViewModelTest {
         fakeAuthRepository = FakeAuthRepository()
         fakeUserSessionRepository = FakeUserSessionRepository()
         fakeTermsRepository = FakeTermsRepository()
+        preAuthTermsAgreementStore = mockk(relaxed = true)
+        coEvery { preAuthTermsAgreementStore.hasAgreed() } returns false
         userSessionHolder = UserSessionHolder()
 
         mockAuth = mockk(relaxed = true)
@@ -71,6 +75,7 @@ class AuthViewModelTest {
             authRepository = fakeAuthRepository,
             userSessionRepository = fakeUserSessionRepository,
             termsRepository = fakeTermsRepository,
+            preAuthTermsAgreementStore = preAuthTermsAgreementStore,
             sessionBridge = sessionBridge,
             userSessionHolder = userSessionHolder,
             logger = logger,

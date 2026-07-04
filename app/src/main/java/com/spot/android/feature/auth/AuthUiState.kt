@@ -26,4 +26,6 @@ data class AuthUiState(
     val needsTermsAcceptance: Boolean = false,
     val isResolvingLaunchGates: Boolean = true,
     val authError: AuthError? = null,
+    val usernameAvailability: UsernameAvailability = UsernameAvailability.Unknown,
+    val passwordResetSent: Boolean = false,
 )

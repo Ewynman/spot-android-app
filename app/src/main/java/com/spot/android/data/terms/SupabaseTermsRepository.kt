@@ -30,6 +30,27 @@ class SupabaseTermsRepository @Inject constructor(
         }
     }
 
+    override suspend fun recordTermsAcceptance(
+        appVersion: String?,
+        buildNumber: String?,
+        deviceInfo: String?,
+    ): Result<Unit> {
+        return try {
+            postgrest.rpc(
+                function = "record_terms_acceptance_v1",
+                parameters = RecordTermsAcceptanceRpcParams(
+                    p_app_version = appVersion,
+                    p_build_number = buildNumber,
+                    p_device_info = deviceInfo,
+                ),
+            )
+            Result.success(Unit)
+        } catch (e: Exception) {
+            logger.e(LogCategory.Auth, TAG, "Failed to record terms acceptance", e)
+            Result.failure(e)
+        }
+    }
+
     private companion object {
         const val TAG = "SupabaseTermsRepository"
     }
