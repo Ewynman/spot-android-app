@@ -14,4 +14,5 @@ enum class LogCategory {
     DeepLink,
     Privacy,
     SpotCard,
+    Billing,
 }

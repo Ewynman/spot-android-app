@@ -25,6 +25,8 @@ import com.spot.android.feature.overlay.SpotUnavailableOverlay
 fun OverlayHost(
     overlay: AppOverlay,
     onDismiss: () -> Unit,
+    onShowProSuccess: () -> Unit = {},
+    onShowProOnboarding: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     when (overlay) {
@@ -59,10 +61,19 @@ fun OverlayHost(
             )
         }
 
+        AppOverlay.ProOnboarding -> {
+            ProOnboardingOverlay(
+                onDismiss = onDismiss,
+                modifier = modifier,
+            )
+        }
+
         is AppOverlay.Paywall -> {
             PaywallSheet(
                 entryPoint = overlay.entryPoint,
                 onDismiss = onDismiss,
+                onShowProSuccess = onShowProSuccess,
+                onShowProOnboarding = onShowProOnboarding,
                 modifier = modifier,
             )
         }
@@ -88,6 +99,8 @@ fun OverlayHostLayer(
             OverlayHost(
                 overlay = overlay,
                 onDismiss = viewModel::dismissOverlay,
+                onShowProSuccess = viewModel::showProSuccess,
+                onShowProOnboarding = viewModel::showProOnboarding,
             )
         }
     }

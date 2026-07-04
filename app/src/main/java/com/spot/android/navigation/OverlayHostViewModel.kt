@@ -44,6 +44,10 @@ class OverlayHostViewModel @Inject constructor() : ViewModel() {
         showOverlay(AppOverlay.ProSuccess)
     }
 
+    fun showProOnboarding() {
+        showOverlay(AppOverlay.ProOnboarding)
+    }
+
     fun showPaywall(entryPoint: String? = null) {
         showOverlay(AppOverlay.Paywall(entryPoint))
     }
