@@ -206,10 +206,15 @@ class BillingViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.restorePurchases()
-        advanceUntilIdle()
+        viewModel.uiState.test {
+            skipItems(1) // Skip initial state
+            
+            viewModel.restorePurchases()
+            advanceUntilIdle()
 
-        assertEquals(errorMsg, viewModel.uiState.value.userErrorMessage)
+            val state = awaitItem()
+            assertEquals(errorMsg, state.userErrorMessage)
+        }
     }
 
     @Test

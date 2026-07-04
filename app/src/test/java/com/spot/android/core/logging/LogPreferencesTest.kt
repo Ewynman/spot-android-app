@@ -26,6 +26,7 @@ class LogPreferencesTest {
             logDeepLink = true,
             logPrivacy = true,
             logSpotCard = true,
+            logBilling = true,
         )
 
         LogCategory.entries.forEach { category ->
