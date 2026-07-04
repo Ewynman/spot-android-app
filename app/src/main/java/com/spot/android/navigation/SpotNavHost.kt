@@ -17,6 +17,7 @@ import com.spot.android.feature.map.MapScreen
 import com.spot.android.feature.permissions.PermissionRequestHost
 import com.spot.android.feature.post.PostScreen
 import com.spot.android.feature.profile.ProfileScreen
+import com.spot.android.feature.safety.SafetyFlowHost
 import com.spot.android.feature.search.SearchScreen
 
 /**
@@ -38,54 +39,58 @@ fun SpotShell(
     val currentRoute = navBackStackEntry?.destination?.route
     val selectedTab = SpotTab.fromRoute(currentRoute) ?: SpotTab.DEFAULT
 
-    PermissionRequestHost(
+    SafetyFlowHost(
         modifier = modifier
             .fillMaxSize()
             .testTag("navigation.shell"),
     ) {
-        Scaffold(
+        PermissionRequestHost(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                SpotBottomBar(
-                    selectedTab = selectedTab,
-                    onTabSelected = { tab ->
-                        navController.navigate(tab.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                bottomBar = {
+                    SpotBottomBar(
+                        selectedTab = selectedTab,
+                        onTabSelected = { tab ->
+                            navController.navigate(tab.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onTabReselected = tabReselectBus::onTabReselected,
-                )
-            },
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = SpotRoutes.HOME,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-                composable(SpotRoutes.HOME) {
-                    HomeScreen(tabReselectBus = tabReselectBus)
-                }
-                composable(SpotRoutes.MAP) {
-                    MapScreen(tabReselectBus = tabReselectBus)
-                }
-                composable(SpotRoutes.POST) {
-                    PostScreen()
-                }
-                composable(SpotRoutes.SEARCH) {
-                    SearchScreen(tabReselectBus = tabReselectBus)
-                }
-                composable(SpotRoutes.PROFILE) {
-                    ProfileScreen()
+                        },
+                        onTabReselected = tabReselectBus::onTabReselected,
+                    )
+                },
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = SpotRoutes.HOME,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                ) {
+                    composable(SpotRoutes.HOME) {
+                        HomeScreen(tabReselectBus = tabReselectBus)
+                    }
+                    composable(SpotRoutes.MAP) {
+                        MapScreen(tabReselectBus = tabReselectBus)
+                    }
+                    composable(SpotRoutes.POST) {
+                        PostScreen()
+                    }
+                    composable(SpotRoutes.SEARCH) {
+                        SearchScreen(tabReselectBus = tabReselectBus)
+                    }
+                    composable(SpotRoutes.PROFILE) {
+                        ProfileScreen()
+                    }
                 }
             }
-        }
 
-        OverlayHostLayer(viewModel = overlayViewModel)
+            OverlayHostLayer(viewModel = overlayViewModel)
+        }
     }
 }
