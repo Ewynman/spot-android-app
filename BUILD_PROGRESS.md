@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 2.4 (Post-auth username + terms gate)
+**Next recommended**: 2.5 (Permissions framework)
 
 ---
 
@@ -45,7 +45,7 @@ Mostly sequential; gates the app.
 | **2.1** Auth repository + session VM | ✅ | [#9](https://github.com/Ewynman/spot-android-app/pull/9) | 1.2, 1.3 | AuthRepository, UserSessionHolder, AuthViewModel |
 | **2.2** Launch gate + splash | ✅ | [#11](https://github.com/Ewynman/spot-android-app/pull/11) | 2.1, 1.6 | Decision table routing |
 | **2.3** Welcome / sign-up / login / OTP | ✅ | [#12](https://github.com/Ewynman/spot-android-app/pull/12) | 2.1 | Auth screens + terms checkbox |
-| **2.4** Post-auth username + terms gate | ⏳ | — | 2.1 | record_terms_acceptance_v1 |
+| **2.4** Post-auth username + terms gate | ✅ | [#13](https://github.com/Ewynman/spot-android-app/pull/13) | 2.1 | UsernameSetup + TermsUpdate screens |
 | **2.5** Permissions framework | ⏳ | — | 1.5 | Pre-prompt + OS dialog |
 | **2.6** Safety flows (report + block) | ⏳ | — | 2.1, 1.5 | Report sheet, block dialog |
 
@@ -93,13 +93,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 11 (39%)
+- **Completed**: 12 (43%)
 - **In Progress**: 0
-- **Blocked (waiting on deps)**: 3
+- **Blocked (waiting on deps)**: 2
 - **Not Started**: 14
 
 **Current Phase**: Phase 2 (Auth, Session & Safety Spine)  
-**Next Task**: 2.4 (Post-auth username + terms gate)
+**Next Task**: 2.5 (Permissions framework)
 
 ---
 

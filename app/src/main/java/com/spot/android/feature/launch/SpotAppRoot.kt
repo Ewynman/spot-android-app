@@ -20,6 +20,8 @@ import com.spot.android.core.util.Constants
 import com.spot.android.feature.auth.AuthFlowHost
 import com.spot.android.feature.auth.AuthViewModel
 import com.spot.android.feature.auth.ConfirmEmailScreen
+import com.spot.android.feature.onboarding.TermsUpdateScreen
+import com.spot.android.feature.onboarding.UsernameSetupScreen
 import com.spot.android.navigation.OverlayHostViewModel
 import com.spot.android.navigation.SpotShell
 import com.spot.android.navigation.TabReselectBus
@@ -84,8 +86,20 @@ fun SpotAppRoot(
                     authState.pendingVerificationEmail?.let(authViewModel::resendEmailOtp)
                 },
             )
-            LaunchDestination.UsernameSetup -> UsernameSetupPlaceholderScreen()
-            LaunchDestination.TermsUpdate -> TermsUpdatePlaceholderScreen()
+            LaunchDestination.UsernameSetup -> UsernameSetupScreen(
+                isLoading = authState.isLoading,
+                authError = authState.authError,
+                usernameAvailability = authState.usernameAvailability,
+                existingUsername = authState.currentUserUsername,
+                onContinue = authViewModel::completeUsernameSetup,
+                onCheckUsername = authViewModel::checkUsernameAvailability,
+                onClearUsernameAvailability = authViewModel::clearUsernameAvailability,
+            )
+            LaunchDestination.TermsUpdate -> TermsUpdateScreen(
+                isLoading = authState.isLoading,
+                authError = authState.authError,
+                onAccept = authViewModel::acceptTermsUpdate,
+            )
             LaunchDestination.MainShell -> SpotShell(
                 tabReselectBus = tabReselectBus,
                 overlayViewModel = overlayViewModel,

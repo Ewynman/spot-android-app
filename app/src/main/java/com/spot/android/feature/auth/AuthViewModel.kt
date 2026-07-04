@@ -7,6 +7,7 @@ import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.core.supabase.SessionState
 import com.spot.android.data.auth.AuthError
+import com.spot.android.data.auth.SyncCurrentUserRequest
 import com.spot.android.data.auth.AuthException
 import com.spot.android.data.auth.AuthRepository
 import com.spot.android.BuildConfig
@@ -200,6 +201,70 @@ class AuthViewModel @Inject constructor(
 
     fun clearUsernameAvailability() {
         _uiState.update { it.copy(usernameAvailability = UsernameAvailability.Unknown) }
+    }
+
+    fun completeUsernameSetup(username: String) {
+        viewModelScope.launch {
+            setLoading(true)
+            clearAuthError()
+
+            val trimmed = username.trim()
+            if (!AuthValidation.isValidUsername(trimmed)) {
+                setAuthError(AuthError.Generic("Invalid username"))
+                setLoading(false)
+                return@launch
+            }
+
+            authRepository.isUsernameAvailable(trimmed)
+                .onSuccess { available ->
+                    if (!available) {
+                        setAuthError(AuthError.UsernameTaken)
+                        setLoading(false)
+                        return@launch
+                    }
+
+                    authRepository.syncCurrentUser(
+                        SyncCurrentUserRequest(
+                            username = trimmed,
+                            usernameLower = trimmed.lowercase(),
+                            email = authRepository.getCurrentAuthEmail(),
+                            emailVerified = authRepository.isCurrentEmailVerified(),
+                        ),
+                    ).onSuccess {
+                        termsRepository.recordTermsAcceptance(
+                            appVersion = BuildConfig.VERSION_NAME,
+                            buildNumber = BuildConfig.VERSION_CODE.toString(),
+                            deviceInfo = "android",
+                        ).onFailure { error ->
+                            logger.w(
+                                LogCategory.Auth,
+                                TAG,
+                                "Failed to record username-setup terms acceptance",
+                                error,
+                            )
+                        }
+                        refreshSessionSnapshot(force = true)
+                    }.onFailure { error -> setAuthError(error.toAuthError()) }
+                }
+                .onFailure { error -> setAuthError(error.toAuthError()) }
+
+            setLoading(false)
+        }
+    }
+
+    fun acceptTermsUpdate() {
+        viewModelScope.launch {
+            setLoading(true)
+            clearAuthError()
+            termsRepository.recordTermsAcceptance(
+                appVersion = BuildConfig.VERSION_NAME,
+                buildNumber = BuildConfig.VERSION_CODE.toString(),
+                deviceInfo = "android",
+            ).onSuccess {
+                _uiState.update { it.copy(needsTermsAcceptance = false) }
+            }.onFailure { error -> setAuthError(error.toAuthError()) }
+            setLoading(false)
+        }
     }
 
     fun refreshSessionSnapshot(force: Boolean = false) {

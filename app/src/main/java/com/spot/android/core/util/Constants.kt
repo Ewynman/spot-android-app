@@ -59,6 +59,7 @@ object Constants {
      */
     object Auth {
         const val OTP_LENGTH = 6
+        const val USERNAME_SETUP_LOAD_DELAY_MS = 350L
     }
 
     /**
