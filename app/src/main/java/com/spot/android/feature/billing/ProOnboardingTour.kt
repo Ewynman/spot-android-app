@@ -1,5 +1,6 @@
 package com.spot.android.feature.billing
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +48,7 @@ import kotlinx.coroutines.launch
  *
  * Reference: PRD/12-pro-subscription.md
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProOnboardingTour(
     onComplete: () -> Unit,

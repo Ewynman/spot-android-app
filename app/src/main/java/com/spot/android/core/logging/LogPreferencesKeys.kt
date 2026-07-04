@@ -18,4 +18,5 @@ object LogPreferencesKeys {
     val LOG_NETWORK_COMPONENT = booleanPreferencesKey("logNetworkComponent")
     val LOG_DEEP_LINK = booleanPreferencesKey("logDeepLink")
     val LOG_MAP = booleanPreferencesKey("logMap")
+    val LOG_BILLING = booleanPreferencesKey("logBilling")
 }

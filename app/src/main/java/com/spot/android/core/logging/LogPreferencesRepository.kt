@@ -41,6 +41,7 @@ class DataStoreLogPreferencesRepository @Inject constructor(
             logNetworkComponent = preferences[LogPreferencesKeys.LOG_NETWORK_COMPONENT] ?: false,
             logDeepLink = preferences[LogPreferencesKeys.LOG_DEEP_LINK] ?: false,
             logMap = preferences[LogPreferencesKeys.LOG_MAP] ?: false,
+            logBilling = preferences[LogPreferencesKeys.LOG_BILLING] ?: false,
         )
     }
 
@@ -71,5 +72,6 @@ class DataStoreLogPreferencesRepository @Inject constructor(
         LogCategory.DeepLink -> LogPreferencesKeys.LOG_DEEP_LINK
         LogCategory.Privacy -> LogPreferencesKeys.LOG_PRIVACY
         LogCategory.SpotCard -> LogPreferencesKeys.LOG_SPOT_CARD
+        LogCategory.Billing -> LogPreferencesKeys.LOG_BILLING
     }
 }

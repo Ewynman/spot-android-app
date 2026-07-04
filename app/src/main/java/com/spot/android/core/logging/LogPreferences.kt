@@ -16,6 +16,7 @@ data class LogPreferences(
     val logNetworkComponent: Boolean = false,
     val logDeepLink: Boolean = false,
     val logMap: Boolean = false,
+    val logBilling: Boolean = false,
 ) {
     fun isCategoryEnabled(category: LogCategory): Boolean {
         return when (category) {
@@ -27,6 +28,7 @@ data class LogPreferences(
             LogCategory.DeepLink -> logDeepLink
             LogCategory.Privacy -> logPrivacy
             LogCategory.SpotCard -> logSpotCard
+            LogCategory.Billing -> logBilling
         }
     }
 
