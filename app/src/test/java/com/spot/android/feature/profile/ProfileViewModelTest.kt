@@ -5,11 +5,13 @@ import com.spot.android.core.logging.SpotLogger
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.content.LocalContentRemovalBus
 import com.spot.android.data.feed.FakeEngagementRepository
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.FollowRelationship
 import com.spot.android.data.model.Spot
 import com.spot.android.data.model.User
 import com.spot.android.data.profile.FakeFollowRepository
 import com.spot.android.data.profile.FakeProfileRepository
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -103,6 +105,7 @@ class ProfileViewModelTest {
             profileRepository = fakeProfileRepository,
             followRepository = fakeFollowRepository,
             engagementRepository = fakeEngagementRepository,
+            feedEventService = mockk(relaxed = true),
             userSessionHolder = userSessionHolder,
             localContentRemovalBus = localContentRemovalBus,
             logger = logger,

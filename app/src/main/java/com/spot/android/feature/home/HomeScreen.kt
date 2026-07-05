@@ -106,9 +106,8 @@ fun HomeScreen(
             .distinctUntilChanged()
             .collect { indices ->
                 val spots = viewModel.uiState.value.spots
-                indices.forEach { index ->
-                    spots.getOrNull(index)?.let { viewModel.recordImpression(it.id) }
-                }
+                val visibleSpotIds = indices.mapNotNull { index -> spots.getOrNull(index)?.id }.toSet()
+                viewModel.syncVisibleSpots(visibleSpotIds)
             }
     }
 
@@ -182,7 +181,11 @@ fun HomeScreen(
                                 spot = spot,
                                 onLikeClick = { viewModel.toggleLike(spot) },
                                 onBookmarkClick = { viewModel.toggleBookmark(spot) },
-                                onUserClick = profileNavigationBus::openProfile,
+                                onUserClick = { userId ->
+                                    viewModel.recordProfileTap(spot.id)
+                                    profileNavigationBus.openProfile(userId)
+                                },
+                                onVibeClick = { viewModel.recordVibeTap(spot.id) },
                                 onMoreClick = safetyActions?.let { actions ->
                                     { actions.openSpotOverflowMenu(spot) }
                                 },

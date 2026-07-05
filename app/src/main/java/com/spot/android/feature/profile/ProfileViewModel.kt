@@ -8,9 +8,11 @@ import com.spot.android.core.util.Constants
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.content.LocalContentRemovalBus
 import com.spot.android.data.feed.EngagementRepository
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.FollowRelationship
 import com.spot.android.data.model.Spot
 import com.spot.android.data.model.User
+import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.profile.FollowRepository
 import com.spot.android.data.profile.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +38,7 @@ class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val followRepository: FollowRepository,
     private val engagementRepository: EngagementRepository,
+    private val feedEventService: FeedEventService,
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val logger: SpotLogger,
@@ -88,6 +91,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onSpotSelected(spot: Spot) {
+        feedEventService.recordEvent(
+            spotId = spot.id,
+            eventType = FeedEventType.DETAIL_OPEN,
+        )
         _uiState.update {
             it.copy(
                 mode = ProfileScreenMode.ExpandedSpot,
@@ -169,6 +176,7 @@ class ProfileViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = {
+                    emitFollowFeedEvent(relationship)
                     refreshFollowRelationship(user.id)
                 },
                 onFailure = {
@@ -458,6 +466,30 @@ class ProfileViewModel @Inject constructor(
                 },
             )
         }
+    }
+
+    private fun emitFollowFeedEvent(previousRelationship: FollowRelationship) {
+        val spotId = feedEventSpotContext() ?: return
+        val eventType = when (previousRelationship) {
+            FollowRelationship.NotFollowing,
+            FollowRelationship.CanRequest,
+            -> FeedEventType.FOLLOW_AUTHOR
+            FollowRelationship.Following,
+            FollowRelationship.FollowingPrivate,
+            -> FeedEventType.UNFOLLOW_AUTHOR
+            FollowRelationship.Requested,
+            FollowRelationship.Self,
+            -> return
+        }
+        feedEventService.recordEvent(
+            spotId = spotId,
+            eventType = eventType,
+        )
+    }
+
+    private fun feedEventSpotContext(): String? {
+        val state = _uiState.value
+        return state.expandedSpot?.id ?: state.spots.firstOrNull()?.id
     }
 
     private companion object {

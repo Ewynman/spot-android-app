@@ -164,6 +164,11 @@ class MapViewModel @Inject constructor(
                 ),
             )
         }
+
+        feedEventService.recordEvent(
+            spotId = spotId,
+            eventType = FeedEventType.MAP_PIN_TAP,
+        )
     }
 
     fun onDrawerClose() {

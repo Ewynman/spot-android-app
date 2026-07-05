@@ -7,7 +7,9 @@ import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.content.LocalContentRemovalBus
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.Spot
+import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
 import com.spot.android.data.safety.SafetyRepository
@@ -29,6 +31,7 @@ class SafetyViewModel @Inject constructor(
     private val safetyRepository: SafetyRepository,
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
+    private val feedEventService: FeedEventService,
     private val sessionBridge: SessionBridge,
     private val logger: SpotLogger,
 ) : ViewModel() {
@@ -159,6 +162,7 @@ class SafetyViewModel @Inject constructor(
                     if (sheet.blockRequested) {
                         applyLocalBlock(sheet.reportedUserId)
                     }
+                    emitFeedEventForReport(sheet)
                     logger.i(LogCategory.Privacy, TAG, "Report submitted successfully")
                     _uiState.update {
                         it.copy(
@@ -196,6 +200,7 @@ class SafetyViewModel @Inject constructor(
             result.fold(
                 onSuccess = {
                     applyLocalBlock(dialog.blockedUserId)
+                    emitFeedEventForBlock(dialog)
                     logger.i(LogCategory.Privacy, TAG, "User blocked successfully")
                     _uiState.update {
                         it.copy(
@@ -275,6 +280,29 @@ class SafetyViewModel @Inject constructor(
     private fun applyLocalBlock(userId: String) {
         userSessionHolder.addBlockedUser(userId)
         localContentRemovalBus.removeByAuthor(userId)
+    }
+
+    private fun emitFeedEventForReport(sheet: ReportSheetState) {
+        if (sheet.targetType != ReportTargetType.SPOT) return
+        feedEventService.recordEvent(
+            spotId = sheet.targetId,
+            eventType = FeedEventType.REPORT,
+        )
+        if (sheet.blockRequested) {
+            feedEventService.recordEvent(
+                spotId = sheet.targetId,
+                eventType = FeedEventType.BLOCK_AUTHOR,
+            )
+        }
+    }
+
+    private fun emitFeedEventForBlock(dialog: BlockDialogState) {
+        val spotId = dialog.sourceTargetId ?: return
+        if (dialog.sourceTargetType != ReportTargetType.SPOT) return
+        feedEventService.recordEvent(
+            spotId = spotId,
+            eventType = FeedEventType.BLOCK_AUTHOR,
+        )
     }
 
     private companion object {

@@ -13,6 +13,7 @@ import com.spot.android.data.feed.FeedDiversity
 import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.feed.FeedRepository
 import com.spot.android.data.feed.FeedSpotHydrator
+import com.spot.android.data.feed.FeedVisibilityTracker
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.location.ViewerLocationProvider
 import com.spot.android.data.model.Spot
@@ -45,6 +46,7 @@ class HomeFeedViewModel @Inject constructor(
     private val engagementRepository: EngagementRepository,
     private val feedSpotHydrator: FeedSpotHydrator,
     private val feedEventService: FeedEventService,
+    private val feedVisibilityTracker: FeedVisibilityTracker,
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val viewerLocationProvider: ViewerLocationProvider,
@@ -81,6 +83,7 @@ class HomeFeedViewModel @Inject constructor(
         loadMoreJob?.cancel()
         batchId = UUID.randomUUID().toString()
         hasMore = true
+        feedVisibilityTracker.resetSession()
         fetchFeed(
             isRefresh = true,
             isInitial = _uiState.value.spots.isEmpty(),
@@ -205,11 +208,21 @@ class HomeFeedViewModel @Inject constructor(
         }
     }
 
-    fun recordImpression(spotId: String) {
+    fun syncVisibleSpots(spotIds: Set<String>) {
+        feedVisibilityTracker.syncVisibleSpotIds(spotIds)
+    }
+
+    fun recordProfileTap(spotId: String) {
         feedEventService.recordEvent(
             spotId = spotId,
-            eventType = FeedEventType.IMPRESSION,
-            coalesceKey = "impression:$spotId",
+            eventType = FeedEventType.PROFILE_TAP,
+        )
+    }
+
+    fun recordVibeTap(spotId: String) {
+        feedEventService.recordEvent(
+            spotId = spotId,
+            eventType = FeedEventType.VIBE_TAP,
         )
     }
 

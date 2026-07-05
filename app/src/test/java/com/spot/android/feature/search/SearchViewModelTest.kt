@@ -4,6 +4,7 @@ import com.spot.android.core.logging.FakeLogWriter
 import com.spot.android.core.logging.SpotLogger
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.feed.FakeEngagementRepository
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.User
 import com.spot.android.data.model.VibeTag
 import com.spot.android.data.search.FakeSearchRepository
@@ -65,6 +66,7 @@ class SearchViewModelTest {
             searchHistoryStore = fakeHistoryStore,
             searchGridPageLoader = searchGridPageLoader,
             engagementRepository = FakeEngagementRepository(),
+            feedEventService = mockk(relaxed = true),
             userSessionHolder = userSessionHolder,
             logger = logger,
         )

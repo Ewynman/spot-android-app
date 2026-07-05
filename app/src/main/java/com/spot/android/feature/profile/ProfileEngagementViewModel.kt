@@ -8,7 +8,9 @@ import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.core.util.Constants
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.feed.EngagementRepository
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.Spot
+import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.profile.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 class ProfileEngagementViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val engagementRepository: EngagementRepository,
+    private val feedEventService: FeedEventService,
     private val userSessionHolder: UserSessionHolder,
     private val sessionBridge: SessionBridge,
     private val logger: SpotLogger,
@@ -70,6 +73,10 @@ class ProfileEngagementViewModel @Inject constructor(
     }
 
     fun onSpotSelected(spot: Spot) {
+        feedEventService.recordEvent(
+            spotId = spot.id,
+            eventType = FeedEventType.DETAIL_OPEN,
+        )
         _uiState.update { it.copy(expandedSpot = spot) }
     }
 
