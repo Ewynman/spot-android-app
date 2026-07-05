@@ -93,7 +93,10 @@ fun SpotShell(
                         )
                     }
                     composable(SpotRoutes.MAP) {
-                        MapScreen(tabReselectBus = tabReselectBus)
+                        MapScreen(
+                            tabReselectBus = tabReselectBus,
+                            overlayViewModel = overlayViewModel,
+                        )
                     }
                     composable(SpotRoutes.POST) {
                         PostScreen()
