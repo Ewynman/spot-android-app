@@ -62,7 +62,7 @@ Parallel after Phase 2.
 | **3.3** Map | ✅ | [#19](https://github.com/Ewynman/spot-android-app/pull/19) | 2.x, 1.5 | Google Maps, viewport loading, drawer |
 | **3.4** Search | ✅ | [#20](https://github.com/Ewynman/spot-android-app/pull/20) | 2.x, 1.5 | 3 segments, debounce, history, grids, Pro filters |
 | **3.5** Profile & social | ✅ | [#21](https://github.com/Ewynman/spot-android-app/pull/21) | 2.x, 3.3 | Profile tabs, follow, privacy, likes/bookmarks |
-| **3.6** Feed-event service | ✅ | — | 3.1 | Coalescing emitter, dwell tracking, cross-surface events |
+| **3.6** Feed-event service | ✅ | [#22](https://github.com/Ewynman/spot-android-app/pull/22) | 3.1 | Coalescing emitter, dwell tracking, cross-surface events |
 
 **Phase 3 Complete** ✅
 
