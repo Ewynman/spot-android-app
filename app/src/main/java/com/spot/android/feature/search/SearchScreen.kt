@@ -17,8 +17,10 @@ import com.spot.android.core.design.component.Toast
 import com.spot.android.core.design.component.ToastType
 import com.spot.android.core.design.component.TopNavigationView
 import com.spot.android.data.search.SearchSegment
+import com.spot.android.feature.profile.ProfileContentHost
 import com.spot.android.feature.safety.LocalSafetyActions
 import com.spot.android.navigation.OverlayHostViewModel
+import com.spot.android.navigation.ProfileNavigationBus
 import com.spot.android.navigation.SpotTab
 import com.spot.android.navigation.TabReselectBus
 
@@ -31,6 +33,7 @@ import com.spot.android.navigation.TabReselectBus
 fun SearchScreen(
     tabReselectBus: TabReselectBus,
     overlayViewModel: OverlayHostViewModel,
+    profileNavigationBus: ProfileNavigationBus,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
 ) {
@@ -107,10 +110,13 @@ fun SearchScreen(
         SearchScreenMode.UserProfile -> {
             val user = uiState.selectedUser
             if (user != null) {
-                SearchUserProfileView(
-                    user = user,
+                ProfileContentHost(
+                    userId = user.id,
+                    showBackButton = true,
                     onBack = viewModel::onBackFromUserProfile,
-                    modifier = modifier,
+                    overlayViewModel = overlayViewModel,
+                    profileNavigationBus = profileNavigationBus,
+                    modifier = modifier.testTag("search.userProfile"),
                 )
             }
         }

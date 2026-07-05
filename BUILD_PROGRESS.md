@@ -32,7 +32,7 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 3.5 (Profile & social)
+**Next recommended**: 3.6 (Feed-event service)
 
 ---
 
@@ -60,9 +60,11 @@ Parallel after Phase 2.
 | **3.1** Home feed | ✅ | [#16](https://github.com/Ewynman/spot-android-app/pull/16) | 2.x, 1.5 | get_home_feed_v1, pagination, like/bookmark |
 | **3.2** Post flow | ✅ | [#17](https://github.com/Ewynman/spot-android-app/pull/17) | 2.x, 2.5 | 3-step composer, moderation pipeline |
 | **3.3** Map | ✅ | [#19](https://github.com/Ewynman/spot-android-app/pull/19) | 2.x, 1.5 | Google Maps, viewport loading, drawer |
-| **3.4** Search | ✅ | — | 2.x, 1.5 | 3 segments, debounce, history, grids, Pro filters |
-| **3.5** Profile & social | ⏳ | — | 2.x, 3.3 | Profile tabs, follow, privacy |
+| **3.4** Search | ✅ | [#20](https://github.com/Ewynman/spot-android-app/pull/20) | 2.x, 1.5 | 3 segments, debounce, history, grids, Pro filters |
+| **3.5** Profile & social | ✅ | — | 2.x, 3.3 | Profile tabs, follow, privacy, likes/bookmarks |
 | **3.6** Feed-event service | ⬜ | — | 3.1 | Coalescing emitter (basic in 3.1) |
+
+**Next recommended**: 3.6 (Feed-event service)
 
 ---
 
@@ -93,13 +95,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 18 (64%)
+- **Completed**: 19 (68%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 10
+- **Not Started**: 9
 
 **Current Phase**: Phase 3 (Core Content Surfaces)  
-**Next Task**: 3.5 (Profile & social)
+**Next Task**: 3.6 (Feed-event service)
 
 ---
 
