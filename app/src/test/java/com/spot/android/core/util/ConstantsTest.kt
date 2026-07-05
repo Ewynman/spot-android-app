@@ -60,6 +60,7 @@ class ConstantsTest {
         assertEquals("Search debounce should be 300ms", 300L, Constants.Search.DEBOUNCE_MS)
         assertEquals("History max per segment should be 20", 20, Constants.Search.HISTORY_MAX_PER_SEGMENT)
         assertEquals("Grid page target should be 24", 24, Constants.Search.GRID_PAGE_TARGET)
+        assertEquals("Grid max fetch attempts should be 5", 5, Constants.Search.GRID_MAX_FETCH_ATTEMPTS)
     }
     
     @Test

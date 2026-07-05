@@ -102,7 +102,10 @@ fun SpotShell(
                         PostScreen()
                     }
                     composable(SpotRoutes.SEARCH) {
-                        SearchScreen(tabReselectBus = tabReselectBus)
+                        SearchScreen(
+                            tabReselectBus = tabReselectBus,
+                            overlayViewModel = overlayViewModel,
+                        )
                     }
                     composable(SpotRoutes.PROFILE) {
                         ProfileScreen()
