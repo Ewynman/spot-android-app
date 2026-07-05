@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.spot.android.core.design.theme.SpotTheme
 import com.spot.android.feature.auth.AuthViewModel
 import com.spot.android.feature.launch.SpotAppRoot
+import com.spot.android.navigation.ProfileNavigationBus
 import com.spot.android.navigation.ShellNavigationBus
 import com.spot.android.navigation.TabReselectBus
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +33,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var shellNavigationBus: ShellNavigationBus
 
+    @Inject
+    lateinit var profileNavigationBus: ProfileNavigationBus
+
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     SpotAppRoot(
                         tabReselectBus = tabReselectBus,
                         shellNavigationBus = shellNavigationBus,
+                        profileNavigationBus = profileNavigationBus,
                         authViewModel = authViewModel,
                     )
                 }

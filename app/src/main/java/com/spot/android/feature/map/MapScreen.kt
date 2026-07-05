@@ -46,6 +46,7 @@ import com.spot.android.data.permissions.PermissionState
 import com.spot.android.feature.permissions.PermissionsViewModel
 import com.spot.android.feature.safety.LocalSafetyActions
 import com.spot.android.navigation.OverlayHostViewModel
+import com.spot.android.navigation.ProfileNavigationBus
 import com.spot.android.navigation.SpotTab
 import com.spot.android.navigation.TabReselectBus
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -61,6 +62,7 @@ import kotlinx.coroutines.flow.filter
 fun MapScreen(
     tabReselectBus: TabReselectBus,
     overlayViewModel: OverlayHostViewModel,
+    profileNavigationBus: ProfileNavigationBus,
     modifier: Modifier = Modifier,
     viewModel: MapViewModel = hiltViewModel(),
     permissionsViewModel: PermissionsViewModel = hiltViewModel(),
@@ -237,7 +239,7 @@ fun MapScreen(
                     drawerState = uiState.drawerState,
                     onClose = viewModel::onDrawerClose,
                     onExpandToggle = viewModel::onDrawerExpandToggle,
-                    onUserClick = { /* Profile navigation in Phase 3.5 */ },
+                    onUserClick = profileNavigationBus::openProfile,
                     onLikeClick = { viewModel.toggleLike(spot) },
                     onBookmarkClick = { viewModel.toggleBookmark(spot) },
                     onMoreClick = { safetyActions?.openSpotOverflowMenu(spot) },

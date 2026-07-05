@@ -1,5 +1,6 @@
 package com.spot.android.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,10 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.feature.home.HomeScreen
 import com.spot.android.feature.map.MapScreen
 import com.spot.android.feature.permissions.PermissionRequestHost
 import com.spot.android.feature.post.PostScreen
+import com.spot.android.feature.profile.ProfileOverlayScreen
 import com.spot.android.feature.profile.ProfileScreen
 import com.spot.android.feature.safety.SafetyFlowHost
 import com.spot.android.feature.search.SearchScreen
@@ -33,6 +36,7 @@ import com.spot.android.feature.search.SearchScreen
 fun SpotShell(
     tabReselectBus: TabReselectBus,
     shellNavigationBus: ShellNavigationBus,
+    profileNavigationBus: ProfileNavigationBus,
     overlayViewModel: OverlayHostViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -40,6 +44,7 @@ fun SpotShell(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val selectedTab = SpotTab.fromRoute(currentRoute) ?: SpotTab.DEFAULT
+    val overlayProfileUserId by profileNavigationBus.activeUserId.collectAsStateWithLifecycle()
 
     LaunchedEffect(shellNavigationBus) {
         shellNavigationBus.tabRequests.collect { tab ->
@@ -90,12 +95,14 @@ fun SpotShell(
                         HomeScreen(
                             tabReselectBus = tabReselectBus,
                             overlayViewModel = overlayViewModel,
+                            profileNavigationBus = profileNavigationBus,
                         )
                     }
                     composable(SpotRoutes.MAP) {
                         MapScreen(
                             tabReselectBus = tabReselectBus,
                             overlayViewModel = overlayViewModel,
+                            profileNavigationBus = profileNavigationBus,
                         )
                     }
                     composable(SpotRoutes.POST) {
@@ -105,15 +112,33 @@ fun SpotShell(
                         SearchScreen(
                             tabReselectBus = tabReselectBus,
                             overlayViewModel = overlayViewModel,
+                            profileNavigationBus = profileNavigationBus,
                         )
                     }
                     composable(SpotRoutes.PROFILE) {
-                        ProfileScreen()
+                        ProfileScreen(
+                            tabReselectBus = tabReselectBus,
+                            overlayViewModel = overlayViewModel,
+                        )
                     }
                 }
             }
 
             OverlayHostLayer(viewModel = overlayViewModel)
+
+            overlayProfileUserId?.let { userId ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("profile.overlay"),
+                ) {
+                    ProfileOverlayScreen(
+                        userId = userId,
+                        profileNavigationBus = profileNavigationBus,
+                        overlayViewModel = overlayViewModel,
+                    )
+                }
+            }
         }
     }
 }

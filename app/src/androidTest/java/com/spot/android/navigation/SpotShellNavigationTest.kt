@@ -25,6 +25,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -42,6 +43,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -61,6 +63,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -77,6 +80,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -93,6 +97,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -109,6 +114,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -125,6 +131,7 @@ class SpotShellNavigationTest {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
                     shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = OverlayHostViewModel(),
                 )
             }
@@ -144,6 +151,8 @@ class SpotShellNavigationTest {
             SpotTheme {
                 SpotShell(
                     tabReselectBus = TabReselectBus(),
+                    shellNavigationBus = ShellNavigationBus(),
+                    profileNavigationBus = ProfileNavigationBus(),
                     overlayViewModel = overlayViewModel,
                 )
             }

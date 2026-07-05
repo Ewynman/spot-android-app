@@ -40,6 +40,7 @@ import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.post.PublishCoordinatorState
 import com.spot.android.feature.safety.LocalSafetyActions
 import com.spot.android.navigation.OverlayHostViewModel
+import com.spot.android.navigation.ProfileNavigationBus
 import com.spot.android.navigation.SpotTab
 import com.spot.android.navigation.TabReselectBus
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -54,6 +55,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun HomeScreen(
     tabReselectBus: TabReselectBus,
     overlayViewModel: OverlayHostViewModel,
+    profileNavigationBus: ProfileNavigationBus,
     modifier: Modifier = Modifier,
     viewModel: HomeFeedViewModel = hiltViewModel(),
 ) {
@@ -180,6 +182,7 @@ fun HomeScreen(
                                 spot = spot,
                                 onLikeClick = { viewModel.toggleLike(spot) },
                                 onBookmarkClick = { viewModel.toggleBookmark(spot) },
+                                onUserClick = profileNavigationBus::openProfile,
                                 onMoreClick = safetyActions?.let { actions ->
                                     { actions.openSpotOverflowMenu(spot) }
                                 },
