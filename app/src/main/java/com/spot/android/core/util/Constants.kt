@@ -146,6 +146,48 @@ object Constants {
     }
 
     /**
+     * Map tuning constants mirroring iOS `Constants.MapDesign`.
+     *
+     * Reference: PRD/07-map.md
+     */
+    object MapDesign {
+        const val INITIAL_RADIUS_METERS = 4_000.0
+        const val INITIAL_NEIGHBORHOOD_RADIUS_METERS = 3_200.0
+        const val LOCAL_SPAN = 0.04
+        const val CITY_SPAN = 0.30
+        const val VISIBLE_SPOTS_CAP = 250
+        const val FAR_ZOOM_PIN_CAP = 60
+        const val PIN_SIZE_DP = 22
+        const val PIN_SELECTED_SCALE = 1.28f
+        const val PIN_PRESSED_SCALE = 0.92f
+        const val AVATAR_MARKER_SIZE_DP = 38
+        const val AVATAR_RING_WIDTH_DP = 3
+        const val PIN_ENTRY_DURATION_MS = 280L
+        const val PIN_STAGGER_STEP_MS = 12L
+        const val PIN_STAGGER_CAP_MS = 250L
+        const val SELECT_SPRING_RESPONSE = 0.32f
+        const val SELECT_SPRING_DAMPING = 0.82f
+        const val REGION_DEBOUNCE_FAST_MS = 180L
+        const val REGION_DEBOUNCE_SLOW_MS = 380L
+        const val VIEWPORT_FETCH_DEBOUNCE_MS = 250L
+        const val SELECTED_PIN_CAMERA_LIFT_METERS = 90.0
+        const val OVERLAP_BUCKET_SIZE = 0.00005
+        const val OVERLAP_OFFSET_METERS = 12.0
+        const val PANEL_MAX_SCREEN_FRACTION = 0.65f
+        const val PANEL_MIN_HEIGHT_DP = 280
+        const val MAP_DRAWER_TOP_CORNER_RADIUS_DP = 22
+        const val MAP_DRAWER_GAP_BELOW_FILTER_PILLS_DP = 5
+        const val MAP_MOVED_DISMISS_THRESHOLD_METERS = 150.0
+
+        // Default continental-US fallback when location is denied.
+        const val FALLBACK_LATITUDE = 39.8283
+        const val FALLBACK_LONGITUDE = -98.5795
+        const val FALLBACK_ZOOM = 4f
+        const val NEIGHBORHOOD_ZOOM = 13f
+        const val DEFAULT_ZOOM = 12f
+    }
+
+    /**
      * Analytics event names mirroring iOS `Constants.Analytics`.
      *
      * Reference: PRD/17-non-functional-testing.md
