@@ -85,6 +85,7 @@ object Constants {
         const val DEBOUNCE_MS = 300L
         const val HISTORY_MAX_PER_SEGMENT = 20
         const val GRID_PAGE_TARGET = 24
+        const val GRID_MAX_FETCH_ATTEMPTS = 5
     }
     
     /**
