@@ -32,8 +32,6 @@ These can run in parallel after Phase 0.
 
 **Phase 1 Complete** ✅
 
-**Next recommended**: 3.6 (Feed-event service)
-
 ---
 
 ## Phase 2 — Auth, Session & Safety Spine
@@ -51,6 +49,8 @@ Mostly sequential; gates the app.
 
 **Phase 2 Complete** ✅
 
+---
+
 ## Phase 3 — Core Content Surfaces
 
 Parallel after Phase 2.
@@ -62,9 +62,11 @@ Parallel after Phase 2.
 | **3.3** Map | ✅ | [#19](https://github.com/Ewynman/spot-android-app/pull/19) | 2.x, 1.5 | Google Maps, viewport loading, drawer |
 | **3.4** Search | ✅ | [#20](https://github.com/Ewynman/spot-android-app/pull/20) | 2.x, 1.5 | 3 segments, debounce, history, grids, Pro filters |
 | **3.5** Profile & social | ✅ | [#21](https://github.com/Ewynman/spot-android-app/pull/21) | 2.x, 3.3 | Profile tabs, follow, privacy, likes/bookmarks |
-| **3.6** Feed-event service | ⬜ | — | 3.1 | Coalescing emitter (basic in 3.1) |
+| **3.6** Feed-event service | ✅ | — | 3.1 | Coalescing emitter, dwell tracking, cross-surface events |
 
-**Next recommended**: 3.6 (Feed-event service)
+**Phase 3 Complete** ✅
+
+**Next recommended**: 4.2 (Collections — Pro)
 
 ---
 
@@ -74,11 +76,11 @@ Parallel after Phase 3.
 
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
-| **4.1** Pro / billing | ⏳ | — | 3.x | Play Billing v6+, paywall, gates |
-| **4.2** Collections (Pro) | ⏳ | — | 4.1, 3.5 | Bookmark collections CRUD |
-| **4.3** Settings | ⏳ | — | 2.x, 4.1 | Account, security, subscription |
-| **4.4** Deep links | ⏳ | — | 1.6, 3.1 | App Links, spot detail overlays |
-| **4.5** Notifications | ⏳ | — | 2.5, 3.5 | Local notifications, channels |
+| **4.1** Pro / billing | ✅ | [#18](https://github.com/Ewynman/spot-android-app/pull/18) | 3.x | Play Billing v6+, paywall, gates |
+| **4.2** Collections (Pro) | ⬜ | — | 4.1, 3.5 | Bookmark collections CRUD |
+| **4.3** Settings | ⬜ | — | 2.x, 4.1 | Account, security, subscription |
+| **4.4** Deep links | ⬜ | — | 1.6, 3.1 | App Links, spot detail overlays |
+| **4.5** Notifications | ⬜ | — | 2.5, 3.5 | Local notifications, channels |
 
 ---
 
@@ -95,13 +97,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 19 (68%)
+- **Completed**: 21 (75%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 9
+- **Not Started**: 7
 
-**Current Phase**: Phase 3 (Core Content Surfaces)  
-**Next Task**: 3.6 (Feed-event service)
+**Current Phase**: Phase 4 (Monetization, Settings, Links, Notifications)  
+**Next Task**: 4.2 (Collections — Pro)
 
 ---
 

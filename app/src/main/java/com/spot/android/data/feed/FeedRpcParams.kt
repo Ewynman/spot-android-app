@@ -1,6 +1,7 @@
 package com.spot.android.data.feed
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 internal data class GetHomeFeedRpcParams(
@@ -16,4 +17,5 @@ internal data class RecordFeedEventRpcParams(
     val p_spot_id: String,
     val p_event_type: String,
     val p_dwell_ms: Int? = null,
+    val p_metadata: JsonObject = JsonObject(emptyMap()),
 )

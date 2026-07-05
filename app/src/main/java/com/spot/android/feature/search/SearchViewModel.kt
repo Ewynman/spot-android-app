@@ -7,9 +7,11 @@ import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.util.Constants
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.feed.EngagementRepository
+import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.model.Spot
 import com.spot.android.data.model.User
 import com.spot.android.data.model.VibeTag
+import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.search.SearchGridPageLoader
 import com.spot.android.data.search.SearchGridRequest
 import com.spot.android.data.search.SearchHistoryItem
@@ -47,6 +49,7 @@ class SearchViewModel @Inject constructor(
     private val searchHistoryStore: SearchHistoryStore,
     private val searchGridPageLoader: SearchGridPageLoader,
     private val engagementRepository: EngagementRepository,
+    private val feedEventService: FeedEventService,
     private val userSessionHolder: UserSessionHolder,
     private val logger: SpotLogger,
 ) : ViewModel() {
@@ -221,6 +224,10 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onGridSpotSelected(spot: Spot) {
+        feedEventService.recordEvent(
+            spotId = spot.id,
+            eventType = FeedEventType.DETAIL_OPEN,
+        )
         _uiState.update {
             it.copy(
                 mode = SearchScreenMode.ExpandedSpot,

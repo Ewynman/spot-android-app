@@ -10,6 +10,7 @@ import com.spot.android.data.content.LocalContentRemovalBus
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
 import com.spot.android.data.safety.FakeSafetyRepository
+import com.spot.android.data.feed.FeedEventService
 import io.github.jan.supabase.gotrue.Auth
 import io.mockk.every
 import io.mockk.mockk
@@ -62,6 +63,7 @@ class SafetyViewModelTest {
             safetyRepository = fakeSafetyRepository,
             userSessionHolder = userSessionHolder,
             localContentRemovalBus = localContentRemovalBus,
+            feedEventService = FeedEventService(mockProvider, logger),
             sessionBridge = sessionBridge,
             logger = logger,
         )

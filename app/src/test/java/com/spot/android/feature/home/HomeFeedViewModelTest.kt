@@ -10,6 +10,8 @@ import com.spot.android.data.dto.HomeFeedRowDto
 import com.spot.android.data.feed.FakeEngagementRepository
 import com.spot.android.data.feed.FakeFeedRepository
 import com.spot.android.data.feed.FeedEventService
+import com.spot.android.data.feed.FeedEventServiceDelegate
+import com.spot.android.data.feed.FeedVisibilityTracker
 import com.spot.android.data.feed.FeedSpotHydrator
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.feed.HomeFeedStatusDto
@@ -50,6 +52,7 @@ class HomeFeedViewModelTest {
     private lateinit var localContentRemovalBus: LocalContentRemovalBus
     private lateinit var feedSpotHydrator: FeedSpotHydrator
     private lateinit var feedEventService: FeedEventService
+    private lateinit var feedVisibilityTracker: FeedVisibilityTracker
     private lateinit var viewerLocationProvider: ViewerLocationProvider
     private lateinit var viewModel: HomeFeedViewModel
 
@@ -74,6 +77,7 @@ class HomeFeedViewModelTest {
             logWriter = FakeLogWriter(),
         )
         feedEventService = FeedEventService(mockProvider, logger)
+        feedVisibilityTracker = FeedVisibilityTracker(feedEventService)
 
         viewerLocationProvider = object : ViewerLocationProvider {
             override suspend fun getLocation() = null
@@ -84,6 +88,7 @@ class HomeFeedViewModelTest {
             engagementRepository = fakeEngagementRepository,
             feedSpotHydrator = feedSpotHydrator,
             feedEventService = feedEventService,
+            feedVisibilityTracker = feedVisibilityTracker,
             userSessionHolder = userSessionHolder,
             localContentRemovalBus = localContentRemovalBus,
             viewerLocationProvider = viewerLocationProvider,

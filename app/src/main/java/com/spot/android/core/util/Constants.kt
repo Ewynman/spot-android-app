@@ -189,6 +189,18 @@ object Constants {
     }
 
     /**
+     * Feed behavioral event timing and coalescing thresholds.
+     *
+     * Reference: PRD/06-home-feed.md, PRD/16-feed-ranking-algorithm.md
+     */
+    object FeedEvents {
+        const val VISIBLE_2S_MS = 2_000L
+        const val LONG_DWELL_MS = 8_000L
+        const val QUICK_SKIP_MAX_MS = 1_500L
+        const val COALESCE_MAX_ENTRIES = 256
+    }
+
+    /**
      * Analytics event names mirroring iOS `Constants.Analytics`.
      *
      * Reference: PRD/17-non-functional-testing.md
