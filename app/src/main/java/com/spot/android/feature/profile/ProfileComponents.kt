@@ -632,6 +632,25 @@ fun ProfileContentHost(
             onBack = viewModel::onBackFromSubScreen,
             modifier = modifier,
         )
+
+        ProfileScreenMode.Collections -> com.spot.android.feature.collections.CollectionsListScreen(
+            onBack = viewModel::onBackFromSubScreen,
+            onCollectionClick = viewModel::onCollectionSelected,
+            overlayViewModel = overlayViewModel,
+            modifier = modifier,
+        )
+
+        ProfileScreenMode.CollectionDetail -> {
+            val collectionId = uiState.selectedCollectionId
+            if (collectionId != null) {
+                com.spot.android.feature.collections.CollectionDetailScreen(
+                    collectionId = collectionId,
+                    onBack = viewModel::onBackFromCollectionDetail,
+                    overlayViewModel = overlayViewModel,
+                    modifier = modifier,
+                )
+            }
+        }
     }
 
     ProfileDeleteSpotDialog(

@@ -66,7 +66,7 @@ Parallel after Phase 2.
 
 **Phase 3 Complete** ✅
 
-**Next recommended**: 4.2 (Collections — Pro)
+**Next recommended**: 4.3 (Settings)
 
 ---
 
@@ -97,13 +97,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 21 (75%)
+- **Completed**: 22 (79%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 7
+- **Not Started**: 6
 
 **Current Phase**: Phase 4 (Monetization, Settings, Links, Notifications)  
-**Next Task**: 4.2 (Collections — Pro)
+**Next Task**: 4.3 (Settings)
 
 ---
 
