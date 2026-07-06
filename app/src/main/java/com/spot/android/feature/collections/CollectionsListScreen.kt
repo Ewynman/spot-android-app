@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -155,7 +156,7 @@ fun CollectionsListScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .testTag("collections.list"),
-                    contentPadding = Dimensions.Spacing.contentPadding,
+                    contentPadding = PaddingValues(Dimensions.Spacing.medium),
                     verticalArrangement = Arrangement.spacedBy(Dimensions.Spacing.small),
                 ) {
                     items(uiState.collections, key = { it.id }) { collection ->

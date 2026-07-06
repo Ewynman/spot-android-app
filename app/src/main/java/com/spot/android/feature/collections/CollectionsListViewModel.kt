@@ -68,7 +68,7 @@ class CollectionsListViewModel @Inject constructor(
                     _effects.send(CollectionsEffect.ShowToast("Collection created"))
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Feature, TAG, "Failed to create collection", error)
+                    logger.e(LogCategory.Network, TAG, "Failed to create collection", error)
                     _uiState.update { it.copy(isCreatingCollection = false) }
                     _effects.send(CollectionsEffect.ShowToast("Failed to create collection"))
                 },
@@ -88,7 +88,7 @@ class CollectionsListViewModel @Inject constructor(
                     _effects.send(CollectionsEffect.ShowToast("Collection deleted"))
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Feature, TAG, "Failed to delete collection", error)
+                    logger.e(LogCategory.Network, TAG, "Failed to delete collection", error)
                     _effects.send(CollectionsEffect.ShowToast("Failed to delete collection"))
                 },
             )

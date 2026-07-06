@@ -120,9 +120,9 @@ class SupabaseCollectionsRepository @Inject constructor(
 
     override suspend fun updateCollectionName(collectionId: String, name: String): Result<Unit> {
         return try {
-            postgrest.from("bookmark_collections").update(
-                update = mapOf("name" to name),
-            ) {
+            postgrest.from("bookmark_collections").update({
+                set("name", name)
+            }) {
                 filter { eq("id", collectionId) }
             }
             Result.success(Unit)
@@ -151,9 +151,9 @@ class SupabaseCollectionsRepository @Inject constructor(
     override suspend fun reorderCollections(collectionIds: List<String>): Result<Unit> {
         return try {
             collectionIds.forEachIndexed { index, id ->
-                postgrest.from("bookmark_collections").update(
-                    update = mapOf("sort_index" to index),
-                ) {
+                postgrest.from("bookmark_collections").update({
+                    set("sort_index", index)
+                }) {
                     filter { eq("id", id) }
                 }
             }
@@ -190,7 +190,6 @@ class SupabaseCollectionsRepository @Inject constructor(
             val rows = postgrest.from("bookmark_collection_spots")
                 .select(columns = Columns.list("id")) {
                     filter { eq("collection_id", collectionId) }
-                    count()
                 }
                 .decodeList<IdDto>()
             Result.success(rows.size)
@@ -265,9 +264,9 @@ class SupabaseCollectionsRepository @Inject constructor(
     ): Result<Unit> {
         return try {
             spotIds.forEachIndexed { index, spotId ->
-                postgrest.from("bookmark_collection_spots").update(
-                    update = mapOf("sort_index" to index),
-                ) {
+                postgrest.from("bookmark_collection_spots").update({
+                    set("sort_index", index)
+                }) {
                     filter {
                         eq("collection_id", collectionId)
                         eq("spot_id", spotId)

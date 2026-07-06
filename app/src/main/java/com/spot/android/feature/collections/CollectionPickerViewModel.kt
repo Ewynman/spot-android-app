@@ -62,7 +62,7 @@ class CollectionPickerViewModel @Inject constructor(
                 collectionsRepository.addSpotToCollection(collectionId, spotId)
             }
             result.onFailure { error ->
-                logger.e(LogCategory.Feature, TAG, "Failed to toggle collection", error)
+                logger.e(LogCategory.Network, TAG, "Failed to toggle collection", error)
                 _uiState.update { state ->
                     val newSelected = if (isCurrentlySelected) {
                         state.selectedCollectionIds + collectionId
@@ -101,7 +101,7 @@ class CollectionPickerViewModel @Inject constructor(
                             _effects.send(CollectionsEffect.ShowToast("Collection created"))
                         },
                         onFailure = { error ->
-                            logger.e(LogCategory.Feature, TAG, "Failed to add to new collection", error)
+                            logger.e(LogCategory.Network, TAG, "Failed to add to new collection", error)
                             _uiState.update { state ->
                                 state.copy(
                                     collections = state.collections + collection,
@@ -113,7 +113,7 @@ class CollectionPickerViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Feature, TAG, "Failed to create collection", error)
+                    logger.e(LogCategory.Network, TAG, "Failed to create collection", error)
                     _uiState.update { it.copy(isCreatingCollection = false) }
                     _effects.send(CollectionsEffect.ShowToast("Failed to create collection"))
                 },

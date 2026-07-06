@@ -86,11 +86,12 @@ fun CollectionDetailScreen(
     if (expandedSpot != null) {
         ProfileExpandedSpotView(
             spot = expandedSpot,
+            isOwnProfile = false,
             onBack = viewModel::onBackFromExpandedSpot,
-            onToggleLike = { viewModel.toggleLike(expandedSpot) },
-            onToggleBookmark = { viewModel.toggleBookmark(expandedSpot) },
-            canDelete = false,
-            onDelete = {},
+            onLikeClick = { viewModel.toggleLike(expandedSpot) },
+            onBookmarkClick = { viewModel.toggleBookmark(expandedSpot) },
+            onOverflowClick = null,
+            onDeleteClick = null,
             modifier = modifier,
         )
         return

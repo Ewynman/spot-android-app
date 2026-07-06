@@ -133,7 +133,7 @@ class CollectionDetailViewModel @Inject constructor(
                     _effects.send(CollectionsEffect.ShowToast("Removed from collection"))
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Feature, TAG, "Failed to remove spot", error)
+                    logger.e(LogCategory.Network, TAG, "Failed to remove spot", error)
                     _effects.send(CollectionsEffect.ShowToast("Failed to remove spot"))
                 },
             )
