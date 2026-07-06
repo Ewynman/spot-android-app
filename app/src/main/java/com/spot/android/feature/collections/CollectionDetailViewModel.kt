@@ -169,7 +169,7 @@ class CollectionDetailViewModel @Inject constructor(
                     _effects.send(CollectionsEffect.ShowToast("Collection renamed"))
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Feature, TAG, "Failed to rename collection", error)
+                    logger.e(LogCategory.Network, TAG, "Failed to rename collection", error)
                     _effects.send(CollectionsEffect.ShowToast("Failed to rename"))
                 },
             )
