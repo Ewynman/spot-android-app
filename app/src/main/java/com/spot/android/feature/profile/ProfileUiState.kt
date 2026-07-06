@@ -22,6 +22,8 @@ enum class ProfileScreenMode {
     FollowRequests,
     Likes,
     Bookmarks,
+    Collections,
+    CollectionDetail,
 }
 
 enum class ProfileOverflowAction {
@@ -52,6 +54,7 @@ data class ProfileUiState(
     val spotPendingDelete: Spot? = null,
     val showOverflowMenu: Boolean = false,
     val scrollToTopTrigger: Int = 0,
+    val selectedCollectionId: String? = null,
 )
 
 sealed interface ProfileEffect {

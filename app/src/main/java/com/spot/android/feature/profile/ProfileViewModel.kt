@@ -132,7 +132,10 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update { it.copy(mode = ProfileScreenMode.Likes) }
             }
             ProfileOverflowAction.YourBookmarks -> {
-                _uiState.update { it.copy(mode = ProfileScreenMode.Bookmarks) }
+                val isPro = userSessionHolder.isPro.value
+                _uiState.update {
+                    it.copy(mode = if (isPro) ProfileScreenMode.Collections else ProfileScreenMode.Bookmarks)
+                }
             }
             ProfileOverflowAction.FollowRequests -> {
                 _uiState.update { it.copy(mode = ProfileScreenMode.FollowRequests) }
@@ -151,9 +154,28 @@ class ProfileViewModel @Inject constructor(
             it.copy(
                 mode = ProfileScreenMode.Main,
                 expandedSpot = null,
+                selectedCollectionId = null,
             )
         }
         refreshPendingFollowRequestCount()
+    }
+
+    fun onCollectionSelected(collectionId: String) {
+        _uiState.update {
+            it.copy(
+                mode = ProfileScreenMode.CollectionDetail,
+                selectedCollectionId = collectionId,
+            )
+        }
+    }
+
+    fun onBackFromCollectionDetail() {
+        _uiState.update {
+            it.copy(
+                mode = ProfileScreenMode.Collections,
+                selectedCollectionId = null,
+            )
+        }
     }
 
     fun onFollowButtonClick() {
