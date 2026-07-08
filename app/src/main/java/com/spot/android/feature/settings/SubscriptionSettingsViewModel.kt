@@ -8,17 +8,21 @@ import androidx.lifecycle.viewModelScope
 import com.spot.android.BuildConfig
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
+import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.billing.BillingRepository
+import com.spot.android.data.billing.BillingResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -30,6 +34,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SubscriptionSettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val sessionBridge: SessionBridge,
     private val userSessionHolder: UserSessionHolder,
     private val billingRepository: BillingRepository,
     private val logger: SpotLogger,
@@ -49,7 +54,7 @@ class SubscriptionSettingsViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = SubscriptionSettingsUiState(),
     )
 
@@ -79,24 +84,26 @@ class SubscriptionSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             logger.d(LogCategory.Billing, TAG, "Restore purchases clicked")
             
-            val userId = userSessionHolder.currentUserId.value
+            val userId = sessionBridge.currentUserId
             if (userId == null) {
                 _localState.update { it.copy(isRestoringPurchases = false) }
                 _effects.send(SubscriptionSettingsEffect.ShowError("Not authenticated"))
                 return@launch
             }
 
-            val result = billingRepository.restorePurchases(userId)
-            _localState.update { it.copy(isRestoringPurchases = false) }
-
-            when {
-                result is com.spot.android.data.billing.BillingResult.Success -> {
+            when (val result = billingRepository.restorePurchases(userId)) {
+                is BillingResult.Success -> {
                     _effects.send(SubscriptionSettingsEffect.ShowSuccess("Purchases restored"))
                 }
-                result is com.spot.android.data.billing.BillingResult.Error -> {
+                is BillingResult.Error -> {
                     _effects.send(SubscriptionSettingsEffect.ShowError(result.message))
                 }
+                is BillingResult.Canceled -> {
+                    // Should not happen for restore
+                }
             }
+            
+            _localState.update { it.copy(isRestoringPurchases = false) }
         }
     }
 
@@ -104,7 +111,7 @@ class SubscriptionSettingsViewModel @Inject constructor(
         try {
             // Open Google Play subscriptions deep link
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://play.google.com/store/account/subscriptions?package=${context.packageName}&sku=${BuildConfig.PLAY_PRO_PRODUCT_ID}")
+                data = Uri.parse("https://play.google.com/store/account/subscriptions?package=${context.packageName}&sku=${BuildConfig.PRODUCT_ID_PRO_YEARLY}")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             context.startActivity(intent)
