@@ -9,8 +9,11 @@ import com.spot.android.data.dto.SpotLikeRowDto
 import com.spot.android.data.dto.UserBlockRowDto
 import com.spot.android.data.dto.UserRowDto
 import com.spot.android.data.mapper.UserMapper
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,9 +23,11 @@ import javax.inject.Singleton
 @Singleton
 class SupabaseUserSessionRepository @Inject constructor(
     private val supabaseProvider: SupabaseClientProvider,
+    private val userSessionHolder: UserSessionHolder,
     private val logger: SpotLogger,
 ) : UserSessionRepository {
 
+    private val client get() = supabaseProvider.client
     private val postgrest get() = supabaseProvider.client.postgrest
 
     override suspend fun loadSessionSnapshot(userId: String): Result<UserSessionSnapshot> {
@@ -75,10 +80,12 @@ class SupabaseUserSessionRepository @Inject constructor(
             Result.success(
                 UserSessionSnapshot(
                     username = user.username,
+                    email = user.email,
                     profileImageURL = user.profileImageURL,
                     isPro = user.isPro,
                     proUntil = user.proUntil,
                     emailVerified = user.emailVerified,
+                    isPrivate = user.isPrivate,
                     likedSpots = likedSpots,
                     bookmarkedSpots = bookmarkedSpots,
                     blockedUsers = blockedUsers,
@@ -87,9 +94,39 @@ class SupabaseUserSessionRepository @Inject constructor(
                 ),
             )
         } catch (e: Exception) {
-            logger.e(LogCategory.Auth, TAG, "Failed to load session snapshot", e)
+            logger.e(LogCategory.AUTH, "Failed to load session snapshot", e)
             Result.failure(e)
         }
+    }
+
+    override suspend fun updatePrivateAccount(isPrivate: Boolean): Result<Unit> = runCatching {
+        logger.d(LogCategory.AUTH, "Updating private account setting: $isPrivate")
+        
+        val currentUser = client.auth.currentUserOrNull()
+            ?: throw IllegalStateException("No authenticated user")
+
+        val params = buildJsonObject {
+            put("p_username", userSessionHolder.currentSession.value?.username ?: "")
+            put("p_username_lower", userSessionHolder.currentSession.value?.username?.lowercase() ?: "")
+            put("p_is_private", isPrivate)
+            currentUser.email?.let {
+                put("p_email", it)
+                put("p_email_verified", currentUser.emailConfirmedAt != null)
+            }
+        }
+
+        client.postgrest.rpc("sync_current_user_v1", params)
+        
+        // Update the session holder
+        userSessionHolder.currentSession.value?.let { session ->
+            userSessionHolder.currentSession.value = session.copy(isPrivate = isPrivate)
+        }
+
+        logger.d(LogCategory.AUTH, "Private account setting updated successfully")
+    }
+
+    override suspend fun isPrivateAccount(): Boolean? {
+        return userSessionHolder.currentSession.value?.isPrivate
     }
 
     private companion object {

@@ -7,10 +7,12 @@ package com.spot.android.data.auth
  */
 data class UserSessionSnapshot(
     val username: String,
+    val email: String?,
     val profileImageURL: String?,
     val isPro: Boolean,
     val proUntil: Long?,
     val emailVerified: Boolean,
+    val isPrivate: Boolean,
     val likedSpots: Set<String>,
     val bookmarkedSpots: Set<String>,
     val blockedUsers: Set<String>,

@@ -8,4 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface UserSessionRepository {
 
     suspend fun loadSessionSnapshot(userId: String): Result<UserSessionSnapshot>
+
+    suspend fun updatePrivateAccount(isPrivate: Boolean): Result<Unit>
+
+    suspend fun isPrivateAccount(): Boolean?
 }
