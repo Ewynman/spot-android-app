@@ -166,8 +166,8 @@ private fun SettingsSectionHeader(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = Dimensions.paddingMedium,
-                vertical = Dimensions.paddingSmall,
+                horizontal = Dimensions.Spacing.medium,
+                vertical = Dimensions.Spacing.small,
             ),
     )
 }
@@ -189,18 +189,18 @@ private fun SettingsRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = Dimensions.paddingMedium,
-                    vertical = Dimensions.paddingMedium,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+            .padding(
+                horizontal = Dimensions.Spacing.medium,
+                vertical = Dimensions.Spacing.medium,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
-            Spacer(modifier = Modifier.width(Dimensions.paddingMedium))
+            Spacer(modifier = Modifier.width(Dimensions.Spacing.medium))
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(

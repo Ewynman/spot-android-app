@@ -120,7 +120,7 @@ class SupabaseSafetyRepository @Inject constructor(
                         eq("blocked_user_id", userId)
                     }
                 }
-            logger.i(LogCategory.Privacy, "User unblocked: $userId")
+            logger.i(LogCategory.Privacy, TAG, "User unblocked: $userId")
             Result.success(Unit)
         } catch (e: Exception) {
             logger.e(LogCategory.Privacy, TAG, "Failed to unblock user", e)

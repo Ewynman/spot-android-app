@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
 import com.spot.android.data.auth.UserSessionRepository
-import com.spot.android.data.model.UserBrief
+import com.spot.android.data.model.User
 import com.spot.android.data.safety.SafetyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

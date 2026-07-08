@@ -146,7 +146,10 @@ fun SecuritySettingsScreen(
                     )
                 }
             } else {
-                items(uiState.blockedUsers) { user ->
+                items(
+                    items = uiState.blockedUsers,
+                    key = { user -> user.id }
+                ) { user ->
                     BlockedUserRow(
                         user = user,
                         onUnblock = { viewModel.onUnblockUser(user.id) },
