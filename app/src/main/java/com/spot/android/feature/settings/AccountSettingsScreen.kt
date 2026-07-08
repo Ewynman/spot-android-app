@@ -135,7 +135,7 @@ fun AccountSettingsScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.large))
                 HorizontalDivider()
             }
 

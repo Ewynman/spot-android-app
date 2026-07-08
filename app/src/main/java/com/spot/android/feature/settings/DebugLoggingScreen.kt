@@ -61,7 +61,7 @@ fun DebugLoggingScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+                contentPadding = PaddingValues(vertical = Dimensions.Spacing.medium),
             ) {
                 item {
                     LogCategoryToggle(
@@ -83,63 +83,63 @@ fun DebugLoggingScreen(
                     )
                 }
                 item {
-                    Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
-                    HorizontalDivider()
-                    Text(
-                        text = "Individual Categories",
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(Dimensions.paddingMedium),
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
+                HorizontalDivider()
+                Text(
+                    text = "Individual Categories",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(Dimensions.Spacing.medium),
                     )
                 }
-                item {
-                    LogCategoryToggle(
-                        title = "Spot Card",
-                        checked = uiState.logSpotCard,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.SPOT_CARD, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Privacy",
-                        checked = uiState.logPrivacy,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.PRIVACY, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Feed Component",
-                        checked = uiState.logFeedComponent,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.FEED_COMPONENT, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Post Flow",
-                        checked = uiState.logPostFlow,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.POST_FLOW, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Auth",
-                        checked = uiState.logAuth,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.AUTH, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Network Component",
-                        checked = uiState.logNetworkComponent,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.NETWORK_COMPONENT, it) },
-                    )
-                }
-                item {
-                    LogCategoryToggle(
-                        title = "Deep Link",
-                        checked = uiState.logDeepLink,
-                        onCheckedChange = { viewModel.onCategoryToggled(LogCategory.DEEP_LINK, it) },
-                    )
-                }
+            item {
+                LogCategoryToggle(
+                    title = "Spot Card",
+                    checked = uiState.logSpotCard,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.SpotCard, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Privacy",
+                    checked = uiState.logPrivacy,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.Privacy, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Feed Component",
+                    checked = uiState.logFeedComponent,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.Feed, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Post Flow",
+                    checked = uiState.logPostFlow,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.Post, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Auth",
+                    checked = uiState.logAuth,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.Auth, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Network Component",
+                    checked = uiState.logNetworkComponent,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.Network, it) },
+                )
+            }
+            item {
+                LogCategoryToggle(
+                    title = "Deep Link",
+                    checked = uiState.logDeepLink,
+                    onCheckedChange = { viewModel.onCategoryToggled(LogCategory.DeepLink, it) },
+                )
+            }
             }
         }
     }
@@ -157,8 +157,8 @@ private fun LogCategoryToggle(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = Dimensions.paddingMedium,
-                vertical = Dimensions.paddingSmall,
+                horizontal = Dimensions.Spacing.medium,
+                vertical = Dimensions.Spacing.small,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {

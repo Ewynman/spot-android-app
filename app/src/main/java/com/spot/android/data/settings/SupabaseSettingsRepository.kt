@@ -86,7 +86,7 @@ class SupabaseSettingsRepository @Inject constructor(
         }
 
         // Call the delete_my_account RPC
-        client.postgrest.rpc("delete_my_account")
+        postgrest.rpc("delete_my_account")
 
         // Sign out after deletion
         client.auth.signOut()
@@ -131,7 +131,7 @@ class SupabaseSettingsRepository @Inject constructor(
             }
         }
 
-        client.postgrest.rpc("sync_current_user_v1", params)
+        postgrest.rpc("sync_current_user_v1", params)
 
         logger.d(LogCategory.Auth, "Profile updated successfully")
     }

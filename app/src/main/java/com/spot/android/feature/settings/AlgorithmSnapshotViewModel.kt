@@ -56,7 +56,7 @@ class AlgorithmSnapshotViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                logger.e(LogCategory.NETWORK_COMPONENT, "Failed to load feed profile", e)
+                logger.e(LogCategory.Network, "Failed to load feed profile", e)
                 _uiState.update {
                     it.copy(
                         isLoading = false,

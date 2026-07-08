@@ -90,7 +90,7 @@ fun AlgorithmSnapshotScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(Dimensions.paddingMedium),
+                            .padding(Dimensions.Spacing.medium),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -105,13 +105,13 @@ fun AlgorithmSnapshotScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(Dimensions.paddingMedium),
+                            .padding(Dimensions.Spacing.medium),
                     ) {
                         Text(
                             text = "Feed Profile JSON:",
                             style = MaterialTheme.typography.titleMedium,
                         )
-                        Spacer(modifier = Modifier.height(Dimensions.paddingSmall))
+                        Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
                         Surface(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = MaterialTheme.shapes.small,
@@ -121,7 +121,7 @@ fun AlgorithmSnapshotScreen(
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontFamily = FontFamily.Monospace,
                                 ),
-                                modifier = Modifier.padding(Dimensions.paddingMedium),
+                                modifier = Modifier.padding(Dimensions.Spacing.medium),
                             )
                         }
                     }

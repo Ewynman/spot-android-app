@@ -174,11 +174,12 @@ class AccountSettingsViewModel @Inject constructor(
 
     private fun loadCurrentUser() {
         viewModelScope.launch {
-            val session = userSessionHolder.sessionSnapshot.value
+            val username = userSessionHolder.currentUserUsername.value ?: ""
+            val email = authRepository.getCurrentAuthEmail() ?: ""
             _uiState.update {
                 it.copy(
-                    username = session?.username ?: "",
-                    email = session?.email ?: "",
+                    username = username,
+                    email = email,
                     isLoading = false,
                 )
             }

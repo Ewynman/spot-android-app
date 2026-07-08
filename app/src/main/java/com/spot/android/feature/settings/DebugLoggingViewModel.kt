@@ -46,22 +46,14 @@ class DebugLoggingViewModel @Inject constructor(
 
     fun onCategoryToggled(category: LogCategory, enabled: Boolean) {
         viewModelScope.launch {
-            when (category) {
-                LogCategory.SPOT_CARD -> logPreferencesRepository.setLogSpotCard(enabled)
-                LogCategory.PRIVACY -> logPreferencesRepository.setLogPrivacy(enabled)
-                LogCategory.FEED_COMPONENT -> logPreferencesRepository.setLogFeedComponent(enabled)
-                LogCategory.POST_FLOW -> logPreferencesRepository.setLogPostFlow(enabled)
-                LogCategory.AUTH -> logPreferencesRepository.setLogAuth(enabled)
-                LogCategory.NETWORK_COMPONENT -> logPreferencesRepository.setLogNetworkComponent(enabled)
-                LogCategory.DEEP_LINK -> logPreferencesRepository.setLogDeepLink(enabled)
-            }
+            logPreferencesRepository.setCategoryEnabled(category, enabled)
             loadPreferences()
         }
     }
 
     private fun loadPreferences() {
         viewModelScope.launch {
-            logPreferencesRepository.getPreferences().collect { prefs ->
+            logPreferencesRepository.preferencesFlow.collect { prefs ->
                 _uiState.update {
                     it.copy(
                         isLoading = false,

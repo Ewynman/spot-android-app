@@ -104,10 +104,10 @@ class SupabaseUserSessionRepository @Inject constructor(
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
 
-        val sessionSnapshot = userSessionHolder.sessionSnapshot.value
+        val username = userSessionHolder.currentUserUsername.value
         val params = buildJsonObject {
-            put("p_username", sessionSnapshot?.username ?: "")
-            put("p_username_lower", sessionSnapshot?.username?.lowercase() ?: "")
+            put("p_username", username ?: "")
+            put("p_username_lower", username?.lowercase() ?: "")
             put("p_is_private", isPrivate)
             currentUser.email?.let {
                 put("p_email", it)
@@ -115,7 +115,7 @@ class SupabaseUserSessionRepository @Inject constructor(
             }
         }
 
-        client.postgrest.rpc("sync_current_user_v1", params)
+        postgrest.rpc("sync_current_user_v1", params)
         
         // Reload session to get updated state
         currentUser.id.let { userId ->
@@ -126,7 +126,21 @@ class SupabaseUserSessionRepository @Inject constructor(
     }
 
     override suspend fun isPrivateAccount(): Boolean? {
-        return userSessionHolder.sessionSnapshot.value?.isPrivate
+        // Query from the database since UserSessionHolder doesn't track isPrivate
+        val currentUser = client.auth.currentUserOrNull() ?: return null
+        return try {
+            val userRow = postgrest.from("users")
+                .select {
+                    filter {
+                        eq("id", currentUser.id)
+                    }
+                }
+                .decodeSingle<UserRowDto>()
+            userRow.is_private
+        } catch (e: Exception) {
+            logger.e(LogCategory.Auth, "Failed to check private status", e)
+            null
+        }
     }
 
     private companion object {
