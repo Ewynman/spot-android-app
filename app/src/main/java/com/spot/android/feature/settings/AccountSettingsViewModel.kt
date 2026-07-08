@@ -174,7 +174,7 @@ class AccountSettingsViewModel @Inject constructor(
 
     private fun loadCurrentUser() {
         viewModelScope.launch {
-            val session = userSessionHolder.currentSession.value
+            val session = userSessionHolder.sessionSnapshot.value
             _uiState.update {
                 it.copy(
                     username = session?.username ?: "",

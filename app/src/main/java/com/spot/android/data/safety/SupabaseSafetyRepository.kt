@@ -74,7 +74,7 @@ class SupabaseSafetyRepository @Inject constructor(
             logger.i(LogCategory.Privacy, TAG, "User blocked")
             Result.success(blockId)
         } catch (e: Exception) {
-            logger.e(LogCategory.PRIVACY, "Failed to block user", e)
+            logger.e(LogCategory.Privacy, "Failed to block user", e)
             Result.failure(e)
         }
     }
@@ -104,10 +104,10 @@ class SupabaseSafetyRepository @Inject constructor(
                 .decodeList<UserBriefRowDto>()
                 .map { UserMapper.fromUserBriefRow(it) }
 
-            logger.d(LogCategory.PRIVACY, "Loaded ${users.size} blocked users")
+            logger.d(LogCategory.Privacy, "Loaded ${users.size} blocked users")
             Result.success(users)
         } catch (e: Exception) {
-            logger.e(LogCategory.PRIVACY, "Failed to load blocked users", e)
+            logger.e(LogCategory.Privacy, "Failed to load blocked users", e)
             Result.failure(e)
         }
     }
@@ -120,10 +120,10 @@ class SupabaseSafetyRepository @Inject constructor(
                         eq("blocked_user_id", userId)
                     }
                 }
-            logger.i(LogCategory.PRIVACY, "User unblocked: $userId")
+            logger.i(LogCategory.Privacy, "User unblocked: $userId")
             Result.success(Unit)
         } catch (e: Exception) {
-            logger.e(LogCategory.PRIVACY, "Failed to unblock user", e)
+            logger.e(LogCategory.Privacy, "Failed to unblock user", e)
             Result.failure(e)
         }
     }

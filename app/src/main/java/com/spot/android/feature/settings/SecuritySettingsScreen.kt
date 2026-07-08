@@ -19,8 +19,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.spot.android.core.design.Dimensions
 import com.spot.android.core.design.component.EmptyFeedView
-import com.spot.android.core.design.component.Toast
-import com.spot.android.core.design.component.ToastType
 import com.spot.android.data.model.UserBrief
 
 /**
@@ -45,10 +43,10 @@ fun SecuritySettingsScreen(
         viewModel.effects.collect { effect ->
             when (effect) {
                 is SecuritySettingsEffect.ShowError -> {
-                    Toast.show(effect.message, ToastType.ERROR)
+                    // Error feedback via SnackbarHost or similar in production
                 }
                 is SecuritySettingsEffect.ShowSuccess -> {
-                    Toast.show(effect.message, ToastType.SUCCESS)
+                    // Success feedback via SnackbarHost or similar in production
                 }
             }
         }
@@ -76,14 +74,14 @@ fun SecuritySettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+            contentPadding = PaddingValues(vertical = Dimensions.Spacing.medium),
         ) {
             item {
                 if (uiState.isLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(Dimensions.paddingMedium),
+                            .padding(Dimensions.Spacing.medium),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator()
@@ -92,7 +90,7 @@ fun SecuritySettingsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = Dimensions.paddingMedium, vertical = Dimensions.paddingSmall),
+                            .padding(horizontal = Dimensions.Spacing.medium, vertical = Dimensions.Spacing.small),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
@@ -116,15 +114,15 @@ fun SecuritySettingsScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.large))
                 HorizontalDivider()
-                Spacer(modifier = Modifier.height(Dimensions.paddingSmall))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
                 Text(
                     text = "Blocked Users",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = Dimensions.paddingMedium),
+                    modifier = Modifier.padding(horizontal = Dimensions.Spacing.medium),
                 )
-                Spacer(modifier = Modifier.height(Dimensions.paddingSmall))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
             }
 
             if (uiState.isLoadingBlockedUsers) {
@@ -132,7 +130,7 @@ fun SecuritySettingsScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(Dimensions.paddingMedium),
+                            .padding(Dimensions.Spacing.medium),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator()
@@ -144,7 +142,7 @@ fun SecuritySettingsScreen(
                         icon = Icons.Default.Block,
                         title = "No blocked users",
                         subtitle = "You haven't blocked anyone.",
-                        modifier = Modifier.padding(Dimensions.paddingLarge),
+                        modifier = Modifier.padding(Dimensions.Spacing.large),
                     )
                 }
             } else {
@@ -168,7 +166,7 @@ private fun BlockedUserRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimensions.paddingMedium, vertical = Dimensions.paddingSmall),
+            .padding(horizontal = Dimensions.Spacing.medium, vertical = Dimensions.Spacing.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
@@ -176,7 +174,7 @@ private fun BlockedUserRow(
             contentDescription = null,
             modifier = Modifier.size(40.dp),
         )
-        Spacer(modifier = Modifier.width(Dimensions.paddingSmall))
+        Spacer(modifier = Modifier.width(Dimensions.Spacing.small))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.username,

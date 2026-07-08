@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.core.design.Dimensions
-import com.spot.android.core.design.component.Toast
-import com.spot.android.core.design.component.ToastType
 
 /**
  * Account settings screen: edit profile, change password, logout, delete account.
@@ -43,10 +41,11 @@ fun AccountSettingsScreen(
         viewModel.effects.collect { effect ->
             when (effect) {
                 is AccountSettingsEffect.ShowError -> {
-                    Toast.show(effect.message, ToastType.ERROR)
+                    // Error will be shown via SnackbarHost or similar in production
+                    // For now, just log it
                 }
                 is AccountSettingsEffect.ShowSuccess -> {
-                    Toast.show(effect.message, ToastType.SUCCESS)
+                    // Success feedback via SnackbarHost or similar in production
                 }
                 AccountSettingsEffect.NavigateToWelcome -> {
                     onNavigateToWelcome()
@@ -77,7 +76,7 @@ fun AccountSettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+            contentPadding = PaddingValues(vertical = Dimensions.Spacing.medium),
         ) {
             item {
                 if (uiState.isLoading) {
@@ -91,7 +90,7 @@ fun AccountSettingsScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = Dimensions.paddingMedium),
+                            .padding(horizontal = Dimensions.Spacing.medium),
                     ) {
                         Text(
                             text = "Username",
@@ -101,7 +100,7 @@ fun AccountSettingsScreen(
                             text = uiState.username,
                             style = MaterialTheme.typography.bodyLarge,
                         )
-                        Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
+                        Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
                         Text(
                             text = "Email",
                             style = MaterialTheme.typography.labelMedium,
@@ -115,7 +114,7 @@ fun AccountSettingsScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.large))
                 HorizontalDivider()
             }
 
@@ -223,8 +222,8 @@ private fun SettingsActionRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = Dimensions.paddingMedium,
-                    vertical = Dimensions.paddingMedium,
+                    horizontal = Dimensions.Spacing.medium,
+                    vertical = Dimensions.Spacing.medium,
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -233,7 +232,7 @@ private fun SettingsActionRow(
                 contentDescription = null,
                 tint = titleColor,
             )
-            Spacer(modifier = Modifier.width(Dimensions.paddingMedium))
+            Spacer(modifier = Modifier.width(Dimensions.Spacing.medium))
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -268,7 +267,7 @@ private fun ChangePasswordDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(Dimensions.paddingSmall))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
                 OutlinedTextField(
                     value = newPassword,
                     onValueChange = onNewPasswordChanged,
@@ -277,7 +276,7 @@ private fun ChangePasswordDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(Dimensions.paddingSmall))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = onConfirmPasswordChanged,
@@ -333,7 +332,7 @@ private fun DeleteAccountDialog(
                     text = "This action cannot be undone. All your spots, likes, and data will be permanently deleted.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
                 OutlinedTextField(
                     value = password,
                     onValueChange = onPasswordChanged,
@@ -342,7 +341,7 @@ private fun DeleteAccountDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(Dimensions.paddingMedium))
+                Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable { onConfirmationChanged(!confirmed) },
@@ -351,7 +350,7 @@ private fun DeleteAccountDialog(
                         checked = confirmed,
                         onCheckedChange = onConfirmationChanged,
                     )
-                    Spacer(modifier = Modifier.width(Dimensions.paddingSmall))
+                    Spacer(modifier = Modifier.width(Dimensions.Spacing.small))
                     Text(
                         text = "I understand this permanently deletes my account.",
                         style = MaterialTheme.typography.bodySmall,

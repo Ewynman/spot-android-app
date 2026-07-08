@@ -3,8 +3,6 @@ package com.spot.android.data.settings
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.supabase.SupabaseClientProvider
-import com.spot.android.data.auth.AuthRpcParams
-import com.spot.android.data.auth.SyncCurrentUserRequest
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.Google
 import io.github.jan.supabase.gotrue.user.UserInfo
@@ -31,7 +29,7 @@ class SupabaseSettingsRepository @Inject constructor(
         currentPassword: String,
         newPassword: String,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.AUTH, "Changing user password")
+        logger.d(LogCategory.Auth, "Changing user password")
         
         // Supabase requires re-authentication before password change
         val currentUser = client.auth.currentUserOrNull()
@@ -51,14 +49,14 @@ class SupabaseSettingsRepository @Inject constructor(
             password = newPassword
         }
 
-        logger.d(LogCategory.AUTH, "Password changed successfully")
+        logger.d(LogCategory.Auth, "Password changed successfully")
     }
 
     override suspend fun deleteAccount(
         password: String?,
         useOAuthReauth: Boolean,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.AUTH, "Deleting user account")
+        logger.d(LogCategory.Auth, "Deleting user account")
 
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
@@ -72,7 +70,7 @@ class SupabaseSettingsRepository @Inject constructor(
             if (identities.isEmpty()) {
                 throw IllegalStateException("OAuth re-authentication required")
             }
-            logger.d(LogCategory.AUTH, "OAuth user verified for deletion")
+            logger.d(LogCategory.Auth, "OAuth user verified for deletion")
         } else {
             // Password re-authentication
             if (password == null) {
@@ -93,17 +91,17 @@ class SupabaseSettingsRepository @Inject constructor(
         // Sign out after deletion
         client.auth.signOut()
 
-        logger.d(LogCategory.AUTH, "Account deleted successfully")
+        logger.d(LogCategory.Auth, "Account deleted successfully")
     }
 
     override suspend fun updateEmail(newEmail: String): Result<Unit> = runCatching {
-        logger.d(LogCategory.AUTH, "Updating user email")
+        logger.d(LogCategory.Auth, "Updating user email")
         
         client.auth.updateUser {
             email = newEmail
         }
 
-        logger.d(LogCategory.AUTH, "Email updated successfully")
+        logger.d(LogCategory.Auth, "Email updated successfully")
     }
 
     override suspend fun updateProfile(
@@ -112,7 +110,7 @@ class SupabaseSettingsRepository @Inject constructor(
         profileImageUrl: String?,
         profileImageAssetId: String?,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.AUTH, "Updating user profile")
+        logger.d(LogCategory.Auth, "Updating user profile")
 
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
@@ -135,6 +133,6 @@ class SupabaseSettingsRepository @Inject constructor(
 
         client.postgrest.rpc("sync_current_user_v1", params)
 
-        logger.d(LogCategory.AUTH, "Profile updated successfully")
+        logger.d(LogCategory.Auth, "Profile updated successfully")
     }
 }

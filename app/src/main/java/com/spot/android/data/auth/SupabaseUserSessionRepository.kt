@@ -2,14 +2,13 @@ package com.spot.android.data.auth
 
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
-import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.core.supabase.SupabaseClientProvider
 import com.spot.android.data.dto.SpotBookmarkRowDto
 import com.spot.android.data.dto.SpotLikeRowDto
 import com.spot.android.data.dto.UserBlockRowDto
 import com.spot.android.data.dto.UserRowDto
 import com.spot.android.data.mapper.UserMapper
-import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.json.buildJsonObject
@@ -94,20 +93,21 @@ class SupabaseUserSessionRepository @Inject constructor(
                 ),
             )
         } catch (e: Exception) {
-            logger.e(LogCategory.AUTH, "Failed to load session snapshot", e)
+            logger.e(LogCategory.Auth, "Failed to load session snapshot", e)
             Result.failure(e)
         }
     }
 
     override suspend fun updatePrivateAccount(isPrivate: Boolean): Result<Unit> = runCatching {
-        logger.d(LogCategory.AUTH, "Updating private account setting: $isPrivate")
+        logger.d(LogCategory.Auth, "Updating private account setting: $isPrivate")
         
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
 
+        val sessionSnapshot = userSessionHolder.sessionSnapshot.value
         val params = buildJsonObject {
-            put("p_username", userSessionHolder.currentSession.value?.username ?: "")
-            put("p_username_lower", userSessionHolder.currentSession.value?.username?.lowercase() ?: "")
+            put("p_username", sessionSnapshot?.username ?: "")
+            put("p_username_lower", sessionSnapshot?.username?.lowercase() ?: "")
             put("p_is_private", isPrivate)
             currentUser.email?.let {
                 put("p_email", it)
@@ -117,16 +117,16 @@ class SupabaseUserSessionRepository @Inject constructor(
 
         client.postgrest.rpc("sync_current_user_v1", params)
         
-        // Update the session holder
-        userSessionHolder.currentSession.value?.let { session ->
-            userSessionHolder.currentSession.value = session.copy(isPrivate = isPrivate)
+        // Reload session to get updated state
+        currentUser.id.let { userId ->
+            loadSessionSnapshot(userId)
         }
 
-        logger.d(LogCategory.AUTH, "Private account setting updated successfully")
+        logger.d(LogCategory.Auth, "Private account setting updated successfully")
     }
 
     override suspend fun isPrivateAccount(): Boolean? {
-        return userSessionHolder.currentSession.value?.isPrivate
+        return userSessionHolder.sessionSnapshot.value?.isPrivate
     }
 
     private companion object {
