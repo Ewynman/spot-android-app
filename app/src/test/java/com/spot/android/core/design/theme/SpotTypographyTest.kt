@@ -18,8 +18,8 @@ class SpotTypographyTest {
     fun `display large is configured for SPOT wordmark`() {
         val displayLarge = SpotTypography.displayLarge
         assertNotNull("Display large should be configured", displayLarge)
-        assertEquals("Display large should be bold for wordmark", FontWeight.Bold.weight, displayLarge.fontWeight!!.weight)
-        assertEquals("Display large should use appropriate size", 32f, displayLarge.fontSize.value, 0.001f)
+        assertEquals("Display large should be black weight for wordmark", FontWeight.Black.weight, displayLarge.fontWeight!!.weight)
+        assertEquals("Display large should use appropriate size", 36f, displayLarge.fontSize.value, 0.001f)
     }
     
     @Test
