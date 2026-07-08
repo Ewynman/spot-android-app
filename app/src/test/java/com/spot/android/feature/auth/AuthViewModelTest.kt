@@ -159,7 +159,9 @@ class AuthViewModelTest {
         fakeUserSessionRepository.snapshot = Result.success(
             UserSessionSnapshot(
                 username = "",
+                email = null,
                 profileImageURL = null,
+                isPrivate = false,
                 isPro = false,
                 proUntil = null,
                 emailVerified = true,
@@ -240,7 +242,9 @@ class AuthViewModelTest {
         fakeUserSessionRepository.snapshot = Result.success(
             UserSessionSnapshot(
                 username = "",
+                email = null,
                 profileImageURL = null,
+                isPrivate = false,
                 isPro = false,
                 proUntil = null,
                 emailVerified = true,
@@ -261,7 +265,9 @@ class AuthViewModelTest {
         fakeUserSessionRepository.snapshot = Result.success(
             UserSessionSnapshot(
                 username = "newoauth",
+                email = "oauth@example.com",
                 profileImageURL = null,
+                isPrivate = false,
                 isPro = false,
                 proUntil = null,
                 emailVerified = true,

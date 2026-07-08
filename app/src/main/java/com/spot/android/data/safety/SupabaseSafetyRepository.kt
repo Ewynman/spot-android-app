@@ -3,9 +3,15 @@ package com.spot.android.data.safety
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.supabase.SupabaseClientProvider
+import com.spot.android.data.dto.UserBriefRowDto
+import com.spot.android.data.dto.UserBlockRowDto
+import com.spot.android.data.mapper.UserMapper
+import com.spot.android.data.model.User
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.rpc
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -69,6 +75,55 @@ class SupabaseSafetyRepository @Inject constructor(
             Result.success(blockId)
         } catch (e: Exception) {
             logger.e(LogCategory.Privacy, TAG, "Failed to block user", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getBlockedUsers(): Result<List<User>> {
+        return try {
+            // Get blocked user IDs
+            val blockRows = postgrest.from("user_blocks")
+                .select(columns = Columns.list("blocked_user_id")) {
+                    // RLS automatically filters to current user's blocks
+                }
+                .decodeList<UserBlockRowDto>()
+
+            val blockedUserIds = blockRows.map { it.blocked_user_id }
+
+            if (blockedUserIds.isEmpty()) {
+                return Result.success(emptyList())
+            }
+
+            // Fetch user details from users_public
+            val users = postgrest.from("users_public")
+                .select {
+                    filter {
+                        isIn("user_id", blockedUserIds)
+                    }
+                }
+                .decodeList<UserBriefRowDto>()
+                .map { UserMapper.fromUserBriefRow(it) }
+
+            logger.d(LogCategory.Privacy, TAG, "Loaded ${users.size} blocked users")
+            Result.success(users)
+        } catch (e: Exception) {
+            logger.e(LogCategory.Privacy, TAG, "Failed to load blocked users", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun unblockUser(userId: String): Result<Unit> {
+        return try {
+            postgrest.from("user_blocks")
+                .delete {
+                    filter {
+                        eq("blocked_user_id", userId)
+                    }
+                }
+            logger.i(LogCategory.Privacy, TAG, "User unblocked: $userId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            logger.e(LogCategory.Privacy, TAG, "Failed to unblock user", e)
             Result.failure(e)
         }
     }

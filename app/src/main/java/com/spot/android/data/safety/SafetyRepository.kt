@@ -1,5 +1,6 @@
 package com.spot.android.data.safety
 
+import com.spot.android.data.model.User
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
 
@@ -25,4 +26,8 @@ interface SafetyRepository {
         sourceTargetId: String? = null,
         reason: String? = null,
     ): Result<String>
+
+    suspend fun getBlockedUsers(): Result<List<User>>
+
+    suspend fun unblockUser(userId: String): Result<Unit>
 }
