@@ -24,6 +24,7 @@ enum class ProfileScreenMode {
     Bookmarks,
     Collections,
     CollectionDetail,
+    Settings,
 }
 
 enum class ProfileOverflowAction {

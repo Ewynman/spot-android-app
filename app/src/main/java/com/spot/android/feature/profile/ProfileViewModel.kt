@@ -141,7 +141,7 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update { it.copy(mode = ProfileScreenMode.FollowRequests) }
             }
             ProfileOverflowAction.Settings -> {
-                viewModelScope.launch { _effects.send(ProfileEffect.OpenSettings) }
+                _uiState.update { it.copy(mode = ProfileScreenMode.Settings) }
             }
             ProfileOverflowAction.ReportUser,
             ProfileOverflowAction.BlockUser,
