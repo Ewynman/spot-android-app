@@ -60,7 +60,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+            contentPadding = PaddingValues(vertical = Dimensions.Spacing.medium),
         ) {
             item {
                 SettingsSectionHeader(title = "Account")

@@ -51,7 +51,7 @@ fun PermissionsSettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+            contentPadding = PaddingValues(vertical = Dimensions.Spacing.medium),
         ) {
             item {
                 PermissionRow(
@@ -110,8 +110,8 @@ private fun PermissionRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = Dimensions.paddingMedium,
-                vertical = Dimensions.paddingMedium,
+                horizontal = Dimensions.Spacing.medium,
+                vertical = Dimensions.Spacing.medium,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -120,7 +120,7 @@ private fun PermissionRow(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
         )
-        Spacer(modifier = Modifier.width(Dimensions.paddingMedium))
+            Spacer(modifier = Modifier.width(Dimensions.Spacing.medium))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,

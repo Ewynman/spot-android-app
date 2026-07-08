@@ -67,7 +67,7 @@ class SecuritySettingsViewModel @Inject constructor(
                 onSuccess = {
                     _uiState.update { state ->
                         state.copy(
-                            blockedUsers = state.blockedUsers.filter { it.userId != userId },
+                            blockedUsers = state.blockedUsers.filter { it.id != userId },
                         )
                     }
                     _effects.send(SecuritySettingsEffect.ShowSuccess("User unblocked"))
@@ -105,7 +105,7 @@ class SecuritySettingsViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.NETWORK_COMPONENT, "Failed to load blocked users", error)
+                    logger.e(LogCategory.Network, "Failed to load blocked users", error)
                     _uiState.update { it.copy(isLoadingBlockedUsers = false) }
                 },
             )
@@ -117,7 +117,7 @@ data class SecuritySettingsUiState(
     val isLoading: Boolean = true,
     val isPrivateAccount: Boolean = false,
     val isUpdatingPrivacy: Boolean = false,
-    val blockedUsers: List<UserBrief> = emptyList(),
+    val blockedUsers: List<User> = emptyList(),
     val isLoadingBlockedUsers: Boolean = true,
 )
 

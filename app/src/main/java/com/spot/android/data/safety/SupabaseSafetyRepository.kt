@@ -6,7 +6,7 @@ import com.spot.android.core.supabase.SupabaseClientProvider
 import com.spot.android.data.dto.UserBriefRowDto
 import com.spot.android.data.dto.UserBlockRowDto
 import com.spot.android.data.mapper.UserMapper
-import com.spot.android.data.model.UserBrief
+import com.spot.android.data.model.User
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
 import io.github.jan.supabase.postgrest.from
@@ -79,7 +79,7 @@ class SupabaseSafetyRepository @Inject constructor(
         }
     }
 
-    override suspend fun getBlockedUsers(): Result<List<UserBrief>> {
+    override suspend fun getBlockedUsers(): Result<List<User>> {
         return try {
             // Get blocked user IDs
             val blockRows = postgrest.from("user_blocks")

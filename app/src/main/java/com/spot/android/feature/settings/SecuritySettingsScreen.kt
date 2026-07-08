@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.spot.android.core.design.Dimensions
 import com.spot.android.core.design.component.EmptyFeedView
-import com.spot.android.data.model.UserBrief
+import com.spot.android.data.model.User
 
 /**
  * Security settings screen: private account toggle and blocked users list.
@@ -149,7 +149,7 @@ fun SecuritySettingsScreen(
                 items(uiState.blockedUsers) { user ->
                     BlockedUserRow(
                         user = user,
-                        onUnblock = { viewModel.onUnblockUser(user.userId) },
+                        onUnblock = { viewModel.onUnblockUser(user.id) },
                     )
                 }
             }
@@ -159,7 +159,7 @@ fun SecuritySettingsScreen(
 
 @Composable
 private fun BlockedUserRow(
-    user: UserBrief,
+    user: User,
     onUnblock: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -170,7 +170,7 @@ private fun BlockedUserRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
-            model = user.profileImageUrl,
+            model = user.profileImageURL,
             contentDescription = null,
             modifier = Modifier.size(40.dp),
         )
@@ -180,13 +180,7 @@ private fun BlockedUserRow(
                 text = user.username,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            user.displayName?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            // User model doesn't have displayName, skip it
         }
         TextButton(onClick = onUnblock) {
             Text("Unblock")
