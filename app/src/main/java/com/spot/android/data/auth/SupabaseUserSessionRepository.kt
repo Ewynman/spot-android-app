@@ -94,13 +94,13 @@ class SupabaseUserSessionRepository @Inject constructor(
                 ),
             )
         } catch (e: Exception) {
-            logger.e(LogCategory.Auth, "Failed to load session snapshot", e)
+            logger.e(LogCategory.Auth, "SessionRepo", "Failed to load session snapshot", e)
             Result.failure(e)
         }
     }
 
     override suspend fun updatePrivateAccount(isPrivate: Boolean): Result<Unit> = runCatching {
-        logger.d(LogCategory.Auth, "Updating private account setting: $isPrivate")
+        logger.d(LogCategory.Auth, "SessionRepo", "Updating private account setting: $isPrivate")
         
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
@@ -123,7 +123,7 @@ class SupabaseUserSessionRepository @Inject constructor(
             loadSessionSnapshot(userId)
         }
 
-        logger.d(LogCategory.Auth, "Private account setting updated successfully")
+        logger.i(LogCategory.Auth, "SessionRepo", "Private account setting updated successfully")
     }
 
     override suspend fun isPrivateAccount(): Boolean? {
@@ -139,7 +139,7 @@ class SupabaseUserSessionRepository @Inject constructor(
                 .decodeSingle<UserRowDto>()
             userRow.is_private
         } catch (e: Exception) {
-            logger.e(LogCategory.Auth, "Failed to check private status", e)
+            logger.e(LogCategory.Auth, "SessionRepo", "Failed to check private status", e)
             null
         }
     }

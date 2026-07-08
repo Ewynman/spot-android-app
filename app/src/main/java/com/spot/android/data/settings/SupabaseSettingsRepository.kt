@@ -25,12 +25,13 @@ class SupabaseSettingsRepository @Inject constructor(
 ) : SettingsRepository {
 
     private val client get() = supabaseClientProvider.client
+    private val postgrest get() = client.postgrest
 
     override suspend fun changePassword(
         currentPassword: String,
         newPassword: String,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.Auth, "Changing user password")
+        logger.d(LogCategory.Auth, TAG, "Changing user password")
         
         // Supabase requires re-authentication before password change
         val currentUser = client.auth.currentUserOrNull()
@@ -50,14 +51,14 @@ class SupabaseSettingsRepository @Inject constructor(
             password = newPassword
         }
 
-        logger.d(LogCategory.Auth, "Password changed successfully")
+        logger.d(LogCategory.Auth, TAG, "Password changed successfully")
     }
 
     override suspend fun deleteAccount(
         password: String?,
         useOAuthReauth: Boolean,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.Auth, "Deleting user account")
+        logger.d(LogCategory.Auth, TAG, "Deleting user account")
 
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
@@ -67,11 +68,11 @@ class SupabaseSettingsRepository @Inject constructor(
             // OAuth re-authentication
             // Note: This requires platform-specific OAuth flow
             // For now, we'll just verify the user is authenticated via OAuth
-            val identities = currentUser.identities
+            val identities = currentUser.identities ?: emptyList()
             if (identities.isEmpty()) {
                 throw IllegalStateException("OAuth re-authentication required")
             }
-            logger.d(LogCategory.Auth, "OAuth user verified for deletion")
+            logger.d(LogCategory.Auth, TAG, "OAuth user verified for deletion")
         } else {
             // Password re-authentication
             if (password == null) {
@@ -92,17 +93,17 @@ class SupabaseSettingsRepository @Inject constructor(
         // Sign out after deletion
         client.auth.signOut()
 
-        logger.d(LogCategory.Auth, "Account deleted successfully")
+        logger.d(LogCategory.Auth, TAG, "Account deleted successfully")
     }
 
     override suspend fun updateEmail(newEmail: String): Result<Unit> = runCatching {
-        logger.d(LogCategory.Auth, "Updating user email")
+        logger.d(LogCategory.Auth, TAG, "Updating user email")
         
         client.auth.updateUser {
             email = newEmail
         }
 
-        logger.d(LogCategory.Auth, "Email updated successfully")
+        logger.d(LogCategory.Auth, TAG, "Email updated successfully")
     }
 
     override suspend fun updateProfile(
@@ -111,7 +112,7 @@ class SupabaseSettingsRepository @Inject constructor(
         profileImageUrl: String?,
         profileImageAssetId: String?,
     ): Result<Unit> = runCatching {
-        logger.d(LogCategory.Auth, "Updating user profile")
+        logger.d(LogCategory.Auth, TAG, "Updating user profile")
 
         val currentUser = client.auth.currentUserOrNull()
             ?: throw IllegalStateException("No authenticated user")
@@ -134,6 +135,10 @@ class SupabaseSettingsRepository @Inject constructor(
 
         postgrest.rpc("sync_current_user_v1", params)
 
-        logger.d(LogCategory.Auth, "Profile updated successfully")
+        logger.d(LogCategory.Auth, TAG, "Profile updated successfully")
+    }
+
+    private companion object {
+        const val TAG = "SupabaseSettingsRepository"
     }
 }
