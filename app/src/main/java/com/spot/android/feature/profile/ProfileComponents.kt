@@ -651,6 +651,13 @@ fun ProfileContentHost(
                 )
             }
         }
+
+        ProfileScreenMode.Settings -> com.spot.android.feature.settings.SettingsNavigationHost(
+            onNavigateBack = viewModel::onBackFromSubScreen,
+            onNavigateToWelcome = { /* TODO: handle sign out navigation */ },
+            onShowPaywall = { overlayViewModel.showPaywall(entryPoint = "settings") },
+            modifier = modifier,
+        )
     }
 
     ProfileDeleteSpotDialog(

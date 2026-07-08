@@ -66,8 +66,6 @@ Parallel after Phase 2.
 
 **Phase 3 Complete** ✅
 
-**Next recommended**: 4.3 (Settings)
-
 ---
 
 ## Phase 4 — Monetization, Settings, Links, Notifications
@@ -78,7 +76,7 @@ Parallel after Phase 3.
 |------|--------|----|--------------|----|
 | **4.1** Pro / billing | ✅ | [#18](https://github.com/Ewynman/spot-android-app/pull/18) | 3.x | Play Billing v6+, paywall, gates |
 | **4.2** Collections (Pro) | ⬜ | — | 4.1, 3.5 | Bookmark collections CRUD |
-| **4.3** Settings | ⬜ | — | 2.x, 4.1 | Account, security, subscription |
+|| **4.3** Settings | ✅ | [#26](https://github.com/Ewynman/spot-android-app/pull/26) | 2.x, 4.1 | Account, security, subscription, all screens + navigation |
 | **4.4** Deep links | ⬜ | — | 1.6, 3.1 | App Links, spot detail overlays |
 | **4.5** Notifications | ⬜ | — | 2.5, 3.5 | Local notifications, channels |
 
@@ -97,13 +95,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 22 (79%)
+- **Completed**: 23 (82%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 6
+- **Not Started**: 5
 
 **Current Phase**: Phase 4 (Monetization, Settings, Links, Notifications)  
-**Next Task**: 4.3 (Settings)
+**Next Task**: 4.2 (Collections) or 4.4 (Deep links)
 
 ---
 
