@@ -105,7 +105,7 @@ class SecuritySettingsViewModel @Inject constructor(
                     }
                 },
                 onFailure = { error ->
-                    logger.e(LogCategory.Network, "Failed to load blocked users", error)
+                    logger.e(LogCategory.Network, "SecuritySettings", "Failed to load blocked users", error)
                     _uiState.update { it.copy(isLoadingBlockedUsers = false) }
                 },
             )

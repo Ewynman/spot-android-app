@@ -139,7 +139,6 @@ fun SecuritySettingsScreen(
             } else if (uiState.blockedUsers.isEmpty()) {
                 item {
                     EmptyFeedView(
-                        icon = Icons.Default.Block,
                         title = "No blocked users",
                         subtitle = "You haven't blocked anyone.",
                         modifier = Modifier.padding(Dimensions.Spacing.large),

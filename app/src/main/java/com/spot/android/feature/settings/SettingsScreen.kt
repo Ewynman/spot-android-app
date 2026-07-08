@@ -208,7 +208,7 @@ private fun SettingsRow(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     if (showWarningBadge) {
-                        Spacer(modifier = Modifier.width(Dimensions.paddingSmall))
+                        Spacer(modifier = Modifier.width(Dimensions.Spacing.small))
                         Badge(
                             containerColor = MaterialTheme.colorScheme.error,
                         ) {
