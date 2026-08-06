@@ -12,6 +12,7 @@ import com.spot.android.data.model.Spot
 import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.model.enums.ReportReason
 import com.spot.android.data.model.enums.ReportTargetType
+import com.spot.android.data.profile.ProfileRepository
 import com.spot.android.data.safety.SafetyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SafetyViewModel @Inject constructor(
     private val safetyRepository: SafetyRepository,
+    private val profileRepository: ProfileRepository,
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val feedEventService: FeedEventService,
@@ -52,6 +54,33 @@ class SafetyViewModel @Inject constructor(
 
     fun dismissSpotOverflowMenu() {
         _uiState.update { it.copy(spotOverflowMenu = null) }
+    }
+
+    fun requestDeleteOwnSpot(spot: Spot) {
+        dismissSpotOverflowMenu()
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSubmitting = true, errorMessage = null) }
+            profileRepository.deleteOwnSpot(spot.id).fold(
+                onSuccess = {
+                    localContentRemovalBus.removeBySpotId(spot.id)
+                    _uiState.update {
+                        it.copy(
+                            isSubmitting = false,
+                            successToast = "Spot deleted.",
+                        )
+                    }
+                },
+                onFailure = {
+                    logger.e(LogCategory.Privacy, TAG, "Delete spot failed", it)
+                    _uiState.update {
+                        it.copy(
+                            isSubmitting = false,
+                            errorMessage = "Couldn't delete spot. Please try again.",
+                        )
+                    }
+                },
+            )
+        }
     }
 
     fun openProfileOverflowMenu(userId: String, username: String?) {

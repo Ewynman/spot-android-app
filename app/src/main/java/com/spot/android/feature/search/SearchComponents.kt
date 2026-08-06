@@ -1,5 +1,6 @@
 package com.spot.android.feature.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,9 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -49,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -66,29 +65,44 @@ import com.spot.android.data.model.VibeTag
 import com.spot.android.data.search.SearchHistoryItem
 import com.spot.android.data.search.SearchSegment
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchSegmentControl(
     selectedSegment: SearchSegment,
     onSegmentSelected: (SearchSegment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SingleChoiceSegmentedButtonRow(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .testTag("search.segmentControl"),
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        SearchSegment.entries.forEachIndexed { index, segment ->
-            SegmentedButton(
-                selected = selectedSegment == segment,
-                onClick = { onSegmentSelected(segment) },
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = SearchSegment.entries.size,
-                ),
-                modifier = Modifier.testTag("search.segment.${segment.rawValue}"),
+        SearchSegment.entries.forEach { segment ->
+            val selected = selectedSegment == segment
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onSegmentSelected(segment) }
+                    .padding(vertical = 8.dp)
+                    .testTag("search.segment.${segment.rawValue}"),
             ) {
-                Text(segment.title)
+                Text(
+                    text = segment.title,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    ),
+                    color = SpotColors.Primary,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.55f)
+                        .height(2.dp)
+                        .background(
+                            if (selected) SpotColors.Primary else Color.Transparent,
+                        ),
+                )
             }
         }
     }
@@ -106,9 +120,18 @@ fun SearchQueryField(
         modifier = modifier
             .fillMaxWidth()
             .testTag("search.queryField"),
-        placeholder = { Text("Search") },
+        placeholder = { Text("Search users, locations, vibes") },
         singleLine = true,
         shape = RoundedCornerShape(Dimensions.Radius.medium),
+        colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = SpotColors.Primary,
+            unfocusedBorderColor = SpotColors.Primary,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            cursorColor = SpotColors.Primary,
+            focusedTextColor = SpotColors.Primary,
+            unfocusedTextColor = SpotColors.Primary,
+        ),
     )
 }
 

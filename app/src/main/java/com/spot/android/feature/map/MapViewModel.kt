@@ -308,6 +308,12 @@ class MapViewModel @Inject constructor(
             }
         }
 
+        if (!currentlySaved && userSessionHolder.isPro.value) {
+            viewModelScope.launch {
+                _effects.send(MapEffect.ShowCollectionPicker(spotId = spot.id))
+            }
+        }
+
         updateSpot(spot.id) { it.copy(isSaved = !currentlySaved) }
 
         if (currentlySaved) {

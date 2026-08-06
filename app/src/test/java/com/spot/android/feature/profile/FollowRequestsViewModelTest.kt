@@ -46,6 +46,14 @@ class FollowRequestsViewModelTest {
         )
         viewModel = FollowRequestsViewModel(
             followRepository = fakeFollowRepository,
+            userSessionHolder = com.spot.android.data.auth.UserSessionHolder(),
+            sessionBridge = run {
+                val mockAuth = io.mockk.mockk<io.github.jan.supabase.gotrue.Auth>(relaxed = true)
+                val mockProvider = io.mockk.mockk<com.spot.android.core.supabase.SupabaseClientProvider>(relaxed = true)
+                io.mockk.every { mockProvider.auth } returns mockAuth
+                com.spot.android.core.supabase.SessionBridge(mockProvider)
+            },
+            notificationService = io.mockk.mockk(relaxed = true),
             logger = logger,
         )
     }

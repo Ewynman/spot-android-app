@@ -1,5 +1,6 @@
 package com.spot.android.feature.safety
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,9 +37,7 @@ val LocalSafetyActions = staticCompositionLocalOf<SafetyActions?> { null }
 /**
  * Host composable for report sheets, block dialogs, and overflow menus.
  *
- * Wrap app content with this to enable safety flows from any screen.
- *
- * Reference: PRD/13-moderation-safety.md
+ * Reference: PRD/13-moderation-safety.md, PRD/06-home-feed.md
  */
 @Composable
 fun SafetyFlowHost(
@@ -46,11 +46,22 @@ fun SafetyFlowHost(
     content: @Composable () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     val actions = object : SafetyActions {
         override fun openSpotOverflowMenu(spot: Spot) = viewModel.openSpotOverflowMenu(spot)
         override fun openProfileOverflowMenu(userId: String, username: String?) =
             viewModel.openProfileOverflowMenu(userId, username)
+    }
+
+    fun shareSpot(spotId: String) {
+        val shareUrl = "https://spotapp.online/s/$spotId"
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareUrl)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share Spot"))
+        viewModel.dismissSpotOverflowMenu()
     }
 
     CompositionLocalProvider(LocalSafetyActions provides actions) {
@@ -81,25 +92,45 @@ fun SafetyFlowHost(
     }
 
     uiState.spotOverflowMenu?.let { menu ->
-        if (!menu.isOwner) {
-            SafetyOverflowDialog(
-                title = "Spot options",
-                modifier = Modifier.testTag("safety.spotOverflowMenu"),
-                actions = listOf(
+        val actionsList = buildList {
+            add(
+                OverflowAction(
+                    label = "Share",
+                    testTag = "safety.spotOverflowMenu.share",
+                    onClick = { shareSpot(menu.spot.id) },
+                ),
+            )
+            if (menu.isOwner) {
+                add(
+                    OverflowAction(
+                        label = "Delete",
+                        testTag = "safety.spotOverflowMenu.delete",
+                        onClick = { viewModel.requestDeleteOwnSpot(menu.spot) },
+                    ),
+                )
+            } else {
+                add(
                     OverflowAction(
                         label = "Report",
                         testTag = "safety.spotOverflowMenu.report",
                         onClick = { viewModel.openReportSpot(menu.spot) },
                     ),
+                )
+                add(
                     OverflowAction(
                         label = "Block User",
                         testTag = "safety.spotOverflowMenu.block",
                         onClick = { viewModel.openBlockUserFromSpot(menu.spot) },
                     ),
-                ),
-                onDismiss = viewModel::dismissSpotOverflowMenu,
-            )
+                )
+            }
         }
+        SafetyOverflowDialog(
+            title = "Spot options",
+            modifier = Modifier.testTag("safety.spotOverflowMenu"),
+            actions = actionsList,
+            onDismiss = viewModel::dismissSpotOverflowMenu,
+        )
     }
 
     uiState.profileOverflowMenu?.let { menu ->

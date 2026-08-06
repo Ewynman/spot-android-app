@@ -173,6 +173,13 @@ class HomeFeedViewModel @Inject constructor(
             }
         }
 
+        // Pro users pick a collection when saving.
+        if (!currentlySaved && userSessionHolder.isPro.value) {
+            viewModelScope.launch {
+                _effects.send(HomeFeedEffect.ShowCollectionPicker(spotId = spot.id))
+            }
+        }
+
         updateSpot(spot.id) { it.copy(isSaved = !currentlySaved) }
 
         if (currentlySaved) {

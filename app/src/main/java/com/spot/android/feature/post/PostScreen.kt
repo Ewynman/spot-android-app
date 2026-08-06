@@ -15,6 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -44,6 +47,7 @@ fun PostScreen(
     overlayViewModel: OverlayHostViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var toastMessage by remember { mutableStateOf<Pair<String, ToastType>?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.onFirstAppear()
@@ -53,7 +57,9 @@ fun PostScreen(
         viewModel.effects.collect { effect ->
             when (effect) {
                 is PostEffect.ShowPaywall -> overlayViewModel.showPaywall(entryPoint = effect.entryPoint)
-                is PostEffect.ShowToast -> Unit
+                is PostEffect.ShowToast -> {
+                    toastMessage = effect.message to if (effect.isError) ToastType.ERROR else ToastType.SUCCESS
+                }
                 PostEffect.NavigateToHome,
                 PostEffect.OpenConfirmEmail,
                 -> Unit
@@ -134,6 +140,19 @@ fun PostScreen(
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 16.dp)
                         .testTag("post.validationToast"),
+                )
+            }
+
+            toastMessage?.let { (message, type) ->
+                Toast(
+                    message = message,
+                    type = type,
+                    visible = true,
+                    onDismiss = { toastMessage = null },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp)
+                        .testTag("post.effectToast"),
                 )
             }
         }

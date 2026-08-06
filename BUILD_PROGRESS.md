@@ -75,10 +75,10 @@ Parallel after Phase 3.
 | Task | Status | PR | Dependencies | Notes |
 |------|--------|----|--------------|----|
 | **4.1** Pro / billing | ✅ | [#18](https://github.com/Ewynman/spot-android-app/pull/18) | 3.x | Play Billing v6+, paywall, gates |
-| **4.2** Collections (Pro) | ⬜ | — | 4.1, 3.5 | Bookmark collections CRUD |
-|| **4.3** Settings | ✅ | [#26](https://github.com/Ewynman/spot-android-app/pull/26) | 2.x, 4.1 | Account, security, subscription, all screens + navigation |
-| **4.4** Deep links | ⬜ | — | 1.6, 3.1 | App Links, spot detail overlays |
-| **4.5** Notifications | ⬜ | — | 2.5, 3.5 | Local notifications, channels |
+| **4.2** Collections (Pro) | ✅ | — | 4.1, 3.5 | List/detail + CollectionPicker on Pro bookmark (home) |
+| **4.3** Settings | ✅ | [#26](https://github.com/Ewynman/spot-android-app/pull/26) | 2.x, 4.1 | Account, security, subscription, all screens + navigation |
+| **4.4** Deep links | ✅ | — | 1.6, 3.1 | Router, pending store, overlays, MainActivity wiring |
+| **4.5** Notifications | ✅ | — | 2.5, 3.5 | Channels + FOLLOW_ACCEPTED local notif + post-tour prompt |
 
 ---
 
@@ -95,13 +95,13 @@ Parallel after Phase 3.
 ## Summary
 
 - **Total tasks**: 28
-- **Completed**: 23 (82%)
+- **Completed**: 26 (93%)
 - **In Progress**: 0
 - **Blocked (waiting on deps)**: 0
-- **Not Started**: 5
+- **Not Started**: 2
 
-**Current Phase**: Phase 4 (Monetization, Settings, Links, Notifications)  
-**Next Task**: 4.2 (Collections) or 4.4 (Deep links)
+**Current Phase**: Phase 5 (Hardening & Release)  
+**Next Task**: 5.1 (Test pass) / first-run coach polish & Pro Edit spot sheet
 
 ---
 

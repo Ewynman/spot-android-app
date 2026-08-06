@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.core.util.Constants
+import com.spot.android.data.deeplink.DeepLinkCoordinator
 import com.spot.android.feature.auth.AuthFlowHost
 import com.spot.android.feature.auth.AuthViewModel
 import com.spot.android.feature.auth.ConfirmEmailScreen
@@ -42,6 +43,7 @@ fun SpotAppRoot(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = hiltViewModel(),
     overlayViewModel: OverlayHostViewModel = hiltViewModel(),
+    deepLinkCoordinator: DeepLinkCoordinator? = null,
 ) {
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -109,6 +111,7 @@ fun SpotAppRoot(
                 shellNavigationBus = shellNavigationBus,
                 profileNavigationBus = profileNavigationBus,
                 overlayViewModel = overlayViewModel,
+                deepLinkCoordinator = deepLinkCoordinator,
             )
         }
     }

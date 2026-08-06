@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import com.spot.android.core.design.component.ToastType
 import com.spot.android.core.design.component.TopNavigationView
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.post.PublishCoordinatorState
+import com.spot.android.feature.collections.CollectionPickerSheet
 import com.spot.android.feature.safety.LocalSafetyActions
 import com.spot.android.navigation.OverlayHostViewModel
 import com.spot.android.navigation.ProfileNavigationBus
@@ -62,6 +65,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val safetyActions = LocalSafetyActions.current
     val listState = rememberLazyListState()
+    var collectionPickerSpotId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.onFirstAppear()
@@ -86,6 +90,9 @@ fun HomeScreen(
             when (effect) {
                 is HomeFeedEffect.ShowPaywall -> {
                     overlayViewModel.showPaywall(entryPoint = effect.entryPoint)
+                }
+                is HomeFeedEffect.ShowCollectionPicker -> {
+                    collectionPickerSpotId = effect.spotId
                 }
             }
         }
@@ -231,6 +238,13 @@ fun HomeScreen(
             }
         }
         }
+    }
+
+    collectionPickerSpotId?.let { spotId ->
+        CollectionPickerSheet(
+            spotId = spotId,
+            onDismiss = { collectionPickerSpotId = null },
+        )
     }
 }
 

@@ -98,13 +98,16 @@ fun SpotUnavailableOverlay(
 
 /**
  * Full-screen spot detail overlay (deep link / in-app).
- *
- * Will render [SpotCard] once spot data is available (Phase 4.4).
  */
 @Composable
 fun SpotDetailOverlay(
     spotId: String,
+    spot: com.spot.android.data.model.Spot?,
     onBack: () -> Unit,
+    onUserClick: ((String) -> Unit)? = null,
+    onLikeClick: (() -> Unit)? = null,
+    onBookmarkClick: (() -> Unit)? = null,
+    onMoreClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -117,18 +120,28 @@ fun SpotDetailOverlay(
             showBackButton = true,
             onBackClick = onBack,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Spot detail\n($spotId)",
-                style = MaterialTheme.typography.bodyLarge,
-                color = SpotColors.Primary,
-                textAlign = TextAlign.Center,
+        if (spot != null) {
+            com.spot.android.core.design.component.SpotCard(
+                spot = spot,
+                onUserClick = onUserClick,
+                onLikeClick = onLikeClick,
+                onBookmarkClick = onBookmarkClick,
+                onMoreClick = onMoreClick,
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Loading spot…",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = SpotColors.Primary,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -178,6 +191,7 @@ fun PaywallSheet(
     onShowProOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -193,8 +207,22 @@ fun PaywallSheet(
         com.spot.android.feature.billing.PaywallScreen(
             entryPoint = entryPoint,
             onDismiss = onDismiss,
-            onNavigateToTerms = { /* TODO: navigate to terms */ },
-            onNavigateToPrivacy = { /* TODO: navigate to privacy */ },
+            onNavigateToTerms = {
+                context.startActivity(
+                    android.content.Intent(
+                        android.content.Intent.ACTION_VIEW,
+                        android.net.Uri.parse("https://spotapp.online/terms"),
+                    ),
+                )
+            },
+            onNavigateToPrivacy = {
+                context.startActivity(
+                    android.content.Intent(
+                        android.content.Intent.ACTION_VIEW,
+                        android.net.Uri.parse("https://spotapp.online/privacy"),
+                    ),
+                )
+            },
             onShowProSuccess = onShowProSuccess,
             onShowProOnboarding = onShowProOnboarding,
             modifier = Modifier

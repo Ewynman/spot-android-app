@@ -78,6 +78,7 @@ fun MapScreen(
     }
 
     var userInitiatedMove by remember { mutableStateOf(false) }
+    var collectionPickerSpotId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.onFirstAppear()
@@ -127,6 +128,9 @@ fun MapScreen(
             when (effect) {
                 is MapEffect.ShowPaywall -> {
                     overlayViewModel.showPaywall(entryPoint = effect.entryPoint)
+                }
+                is MapEffect.ShowCollectionPicker -> {
+                    collectionPickerSpotId = effect.spotId
                 }
                 is MapEffect.AnimateCamera -> {
                     val target = effect.target
@@ -276,6 +280,13 @@ fun MapScreen(
                 viewModel.applyVibeFilter(pendingVibes)
             },
             onDismiss = viewModel::onVibeFilterSheetDismissed,
+        )
+    }
+
+    collectionPickerSpotId?.let { spotId ->
+        com.spot.android.feature.collections.CollectionPickerSheet(
+            spotId = spotId,
+            onDismiss = { collectionPickerSpotId = null },
         )
     }
 }

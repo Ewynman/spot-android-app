@@ -28,6 +28,7 @@ fun OverlayHost(
     onDismiss: () -> Unit,
     onShowProSuccess: () -> Unit = {},
     onShowProOnboarding: () -> Unit = {},
+    detailSpot: com.spot.android.data.model.Spot? = null,
     modifier: Modifier = Modifier,
 ) {
     when (overlay) {
@@ -36,6 +37,7 @@ fun OverlayHost(
         is AppOverlay.SpotDetail -> {
             SpotDetailOverlay(
                 spotId = overlay.spotId,
+                spot = detailSpot,
                 onBack = onDismiss,
                 modifier = modifier,
             )
@@ -87,6 +89,7 @@ fun OverlayHost(
 @Composable
 fun OverlayHostLayer(
     viewModel: OverlayHostViewModel,
+    detailSpot: com.spot.android.data.model.Spot? = null,
     modifier: Modifier = Modifier,
 ) {
     val overlay by viewModel.overlayState.collectAsStateWithLifecycle()
@@ -102,6 +105,7 @@ fun OverlayHostLayer(
                 onDismiss = viewModel::dismissOverlay,
                 onShowProSuccess = viewModel::showProSuccess,
                 onShowProOnboarding = viewModel::showProOnboarding,
+                detailSpot = detailSpot,
             )
         }
     }
