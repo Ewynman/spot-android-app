@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
+import com.spot.android.core.supabase.SessionBridge
 import com.spot.android.core.util.Constants
+import com.spot.android.data.auth.UserSessionHolder
+import com.spot.android.data.notifications.SpotNotificationService
 import com.spot.android.data.profile.FollowRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,6 +25,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class FollowRequestsViewModel @Inject constructor(
     private val followRepository: FollowRepository,
+    private val userSessionHolder: UserSessionHolder,
+    private val sessionBridge: SessionBridge,
+    private val notificationService: SpotNotificationService,
     private val logger: SpotLogger,
 ) : ViewModel() {
 
@@ -67,6 +73,14 @@ class FollowRequestsViewModel @Inject constructor(
                             } else {
                                 state.loadState
                             },
+                        )
+                    }
+                    val username = userSessionHolder.currentUserUsername.value ?: "Someone"
+                    val acceptorUid = sessionBridge.currentUserId.orEmpty()
+                    if (acceptorUid.isNotEmpty()) {
+                        notificationService.notifyFollowAccepted(
+                            acceptorUsername = username,
+                            acceptorUid = acceptorUid,
                         )
                     }
                 },

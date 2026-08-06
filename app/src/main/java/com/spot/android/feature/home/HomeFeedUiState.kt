@@ -30,4 +30,5 @@ data class HomeFeedUiState(
 
 sealed interface HomeFeedEffect {
     data class ShowPaywall(val entryPoint: String) : HomeFeedEffect
+    data class ShowCollectionPicker(val spotId: String) : HomeFeedEffect
 }

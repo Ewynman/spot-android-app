@@ -48,6 +48,7 @@ data class MapUiState(
 
 sealed interface MapEffect {
     data class ShowPaywall(val entryPoint: String) : MapEffect
+    data class ShowCollectionPicker(val spotId: String) : MapEffect
     data class AnimateCamera(
         val target: LatLng,
         val zoom: Float? = null,

@@ -1,5 +1,7 @@
 package com.spot.android.feature.profile
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +36,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,9 +46,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.spot.android.core.design.Dimensions
@@ -128,10 +129,9 @@ private fun ProfileGridCover(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val aspectRatio = spot.mediaDisplayAspectRatio.takeIf { it > 0.0 }?.toFloat() ?: 1f
     Box(
         modifier = modifier
-            .aspectRatio(aspectRatio.coerceIn(0.75f, 1.5f))
+            .aspectRatio(1f)
             .clip(RoundedCornerShape(Dimensions.Radius.medium))
             .clickable(onClick = onClick)
             .testTag("profile.gridSpot.${spot.id}"),
@@ -142,6 +142,24 @@ private fun ProfileGridCover(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
+        val location = spot.locationName
+        if (!location.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(SpotColors.Primary)
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+            ) {
+                Text(
+                    text = com.spot.android.core.util.cityStateFromLocation(location),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = SpotColors.ButtonText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
 }
 
@@ -158,50 +176,78 @@ fun ProfileHeader(
         modifier = modifier
             .fillMaxWidth()
             .testTag("profile.header"),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Avatar(
-                imageUrl = user.profileImageURL,
-                isPro = user.isPro,
-                contentDescription = "${user.username} avatar",
-                modifier = Modifier
-                    .size(100.dp)
-                    .testTag("profile.avatar"),
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = user.username,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = SpotColors.Primary,
-                    modifier = Modifier.testTag("profile.username"),
-                )
-                Text(
-                    text = "${user.spotsCount} spots shared",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = SpotColors.Primary.copy(alpha = 0.7f),
+        Box(modifier = Modifier.fillMaxWidth()) {
+            if (user.isCurrentUser) {
+                OutlinedButton(
+                    onClick = onOverflowClick,
                     modifier = Modifier
-                        .padding(top = 4.dp)
-                        .testTag("profile.spotsCount"),
-                )
+                        .align(Alignment.TopEnd)
+                        .testTag("profile.overflow"),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = SpotColors.Primary),
+                    border = BorderStroke(1.dp, SpotColors.Primary),
+                    shape = RoundedCornerShape(Dimensions.Radius.large),
+                ) {
+                    Text("Menu")
+                }
+            } else {
+                IconButton(
+                    onClick = onOverflowClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .testTag("profile.overflow"),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "Profile options",
+                        tint = SpotColors.Primary,
+                    )
+                }
             }
+        }
 
-            IconButton(
-                onClick = onOverflowClick,
-                modifier = Modifier.testTag("profile.overflow"),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Profile options",
-                    tint = SpotColors.Primary,
+        Avatar(
+            imageUrl = user.profileImageURL,
+            isPro = user.isPro,
+            contentDescription = "${user.username} avatar",
+            modifier = Modifier
+                .size(100.dp)
+                .testTag("profile.avatar"),
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = user.username,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = SpotColors.Primary,
+                modifier = Modifier.testTag("profile.username"),
+            )
+            if (user.isPro) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "PRO",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    color = SpotColors.ButtonText,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(Dimensions.Radius.large))
+                        .background(SpotColors.Primary)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .testTag("profile.proBadge"),
                 )
             }
         }
+
+        Text(
+            text = "${user.spotsCount} spots shared",
+            style = MaterialTheme.typography.bodyMedium,
+            color = SpotColors.WelcomeMutedText,
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .testTag("profile.spotsCount"),
+        )
 
         if (!user.isCurrentUser) {
             FollowButton(
@@ -240,6 +286,9 @@ private fun FollowButton(
             onClick = onClick,
             enabled = !isLoading,
             modifier = modifier,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = SpotColors.Primary),
+            border = BorderStroke(1.dp, SpotColors.Primary),
+            shape = RoundedCornerShape(Dimensions.Radius.large),
         ) {
             Text(label)
         }
@@ -249,43 +298,56 @@ private fun FollowButton(
             enabled = enabled && !isLoading,
             modifier = modifier,
             colors = ButtonDefaults.buttonColors(
-                containerColor = SpotColors.Accent,
-                contentColor = SpotColors.Primary,
+                containerColor = SpotColors.Primary,
+                contentColor = SpotColors.ButtonText,
             ),
+            shape = RoundedCornerShape(Dimensions.Radius.large),
         ) {
             Text(label)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTabControl(
     selectedTab: ProfileTab,
     onTabSelected: (ProfileTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SingleChoiceSegmentedButtonRow(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .testTag("profile.tabControl"),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        ProfileTab.entries.forEachIndexed { index, tab ->
-            SegmentedButton(
-                selected = selectedTab == tab,
-                onClick = { onTabSelected(tab) },
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = ProfileTab.entries.size,
-                ),
-                modifier = Modifier.testTag("profile.tab.${tab.name.lowercase()}"),
+        ProfileTab.entries.forEach { tab ->
+            val selected = selectedTab == tab
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clickable { onTabSelected(tab) }
+                    .testTag("profile.tab.${tab.name.lowercase()}"),
             ) {
                 Text(
                     text = when (tab) {
                         ProfileTab.Spots -> "Spots"
                         ProfileTab.Map -> "Map"
                     },
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                    ),
+                    color = SpotColors.Primary,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Box(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .width(40.dp)
+                        .background(
+                            if (selected) SpotColors.Primary else Color.Transparent,
+                        ),
                 )
             }
         }

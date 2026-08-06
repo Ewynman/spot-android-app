@@ -39,6 +39,9 @@ class SpotApplication : Application(), ImageLoaderFactory {
 
     @Inject
     lateinit var crashlytics: FirebaseCrashlytics
+
+    @Inject
+    lateinit var notificationService: com.spot.android.data.notifications.SpotNotificationService
     
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     
@@ -47,6 +50,7 @@ class SpotApplication : Application(), ImageLoaderFactory {
         
         initializeSessionBridge()
         initializeLoggingAndAnalytics()
+        notificationService.ensureChannels()
     }
     
     /**

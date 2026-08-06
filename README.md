@@ -216,29 +216,27 @@ These values **must match iOS** to ensure consistent behavior:
 
 ## Documentation
 
-Comprehensive product requirements are in the `PRD/` folder:
+| Area | Location |
+|------|----------|
+| **Implementation docs** | [`docs/`](docs/README.md) — architecture, UI parity, deep links, coach, notifications, collections, safety |
+| **Product contracts (PRD)** | [`PRD/`](PRD/README.md) — behavior, schema, RPCs, limits |
+| **Build progress** | [`BUILD_PROGRESS.md`](BUILD_PROGRESS.md) |
+
+Start with [`docs/README.md`](docs/README.md) for reading paths. **Always read the relevant PRD doc before implementing a feature.**
+
+PRD highlights:
 
 - `PRD/00-overview.md` — Vision, personas, terminology
 - `PRD/01-architecture-android.md` — Stack, platform adaptations
 - `PRD/02-design-system.md` — Colors, typography, tokens, components
 - `PRD/03-data-model.md` — Full Supabase schema
 - `PRD/04-backend-api.md` — RPC catalog, storage, edge functions
-- `PRD/05-auth-onboarding.md` — Auth flows, OTP, terms gates
-- `PRD/06-home-feed.md` — Feed screen, actions, pagination
-- `PRD/07-map.md` — Map discovery, pins, drawer
-- `PRD/08-post-flow.md` — Composer, moderation pipeline
-- `PRD/09-search.md` — Search users, locations, vibes
-- `PRD/10-profile-social.md` — Profile, follows, privacy
-- `PRD/11-settings.md` — Account, security, subscription
-- `PRD/12-pro-subscription.md` — Pro entitlements, billing
-- `PRD/13-moderation-safety.md` — Moderation, reports, blocks
-- `PRD/14-notifications.md` — Local + push notifications
-- `PRD/15-deep-links.md` — App Links, custom scheme
+- `PRD/05-auth-onboarding.md` — Auth flows, OTP, terms gates, coach
+- `PRD/06`–`PRD/15` — Feed, map, post, search, profile, settings, Pro, safety, notifications, deep links
 - `PRD/16-feed-ranking-algorithm.md` — Server ranking logic
 - `PRD/17-non-functional-testing.md` — Performance, logging, testing
 - `PRD/18-build-order.md` — Execution layer, task graph
-
-**Always read the relevant PRD doc before implementing a feature.**
+- `PRD/18-logging.md` — Structured logging
 
 ## Design System
 
@@ -333,4 +331,4 @@ Every feature task must:
 
 ---
 
-**Note:** This is the scaffold phase (Phase 0.1). The app currently displays a placeholder screen. Features will be implemented according to the dependency order in `PRD/18-build-order.md`.
+**Note:** Track live feature status in [`BUILD_PROGRESS.md`](BUILD_PROGRESS.md). Implementation how-tos live under [`docs/`](docs/README.md); contracts live under [`PRD/`](PRD/README.md).

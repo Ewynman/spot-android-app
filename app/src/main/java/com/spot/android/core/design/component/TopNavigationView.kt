@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.spot.android.core.design.Dimensions
 import com.spot.android.core.design.theme.SpotColors
 import com.spot.android.core.design.theme.SpotTheme
@@ -78,8 +79,10 @@ fun TopNavigationView(
             
             Text(
                 text = "SPOT",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Black,
+                    fontSize = 24.sp,
+                    lineHeight = 28.sp,
                 ),
                 color = SpotColors.Primary,
                 modifier = Modifier.testTag("navigation.wordmark")

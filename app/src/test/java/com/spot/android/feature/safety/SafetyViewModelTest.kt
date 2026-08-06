@@ -61,6 +61,7 @@ class SafetyViewModelTest {
 
         viewModel = SafetyViewModel(
             safetyRepository = fakeSafetyRepository,
+            profileRepository = mockk(relaxed = true),
             userSessionHolder = userSessionHolder,
             localContentRemovalBus = localContentRemovalBus,
             feedEventService = FeedEventService(mockProvider, logger),

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.core.design.Dimensions
+import com.spot.android.core.design.theme.SpotColors
 import com.spot.android.data.billing.BillingState
 
 /**
@@ -89,7 +90,7 @@ fun PaywallScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(SpotColors.Background)
             .testTag("paywall.root")
     ) {
         Column(
@@ -108,7 +109,7 @@ fun PaywallScreen(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = SpotColors.Primary,
                 )
             }
 
@@ -119,7 +120,7 @@ fun PaywallScreen(
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.dp.value.toInt().sp,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = SpotColors.Primary,
                 modifier = Modifier.testTag("paywall.title"),
             )
 
@@ -129,7 +130,7 @@ fun PaywallScreen(
                 text = "Pro",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+                color = SpotColors.Primary,
                 modifier = Modifier.testTag("paywall.subtitle"),
             )
 
@@ -171,7 +172,7 @@ fun PaywallScreen(
                             text = "${product.formattedPrice} / year",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = SpotColors.Primary,
                             modifier = Modifier.testTag("paywall.price"),
                         )
 
@@ -190,7 +191,7 @@ fun PaywallScreen(
                             .height(56.dp)
                             .testTag("paywall.subscribeButton"),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                            containerColor = SpotColors.Primary,
                         ),
                         shape = RoundedCornerShape(Dimensions.Radius.medium),
                     ) {
@@ -246,14 +247,14 @@ fun PaywallScreen(
                     Text(
                         text = "Terms",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = SpotColors.WelcomeMutedText,
                     )
                 }
 
                 Text(
                     text = " • ",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = SpotColors.WelcomeMutedText,
                 )
 
                 TextButton(
@@ -263,7 +264,7 @@ fun PaywallScreen(
                     Text(
                         text = "Privacy",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = SpotColors.WelcomeMutedText,
                     )
                 }
             }
@@ -329,7 +330,7 @@ private fun ProFeatureItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = SpotColors.Primary,
             modifier = Modifier
                 .size(24.dp)
                 .align(Alignment.Top),
@@ -339,12 +340,12 @@ private fun ProFeatureItem(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = SpotColors.Primary,
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = SpotColors.WelcomeMutedText,
             )
         }
     }

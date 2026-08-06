@@ -14,15 +14,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.spot.android.feature.home.HomeScreen
 import com.spot.android.feature.map.MapScreen
+import com.spot.android.feature.onboarding.FirstRunOnboardingHost
 import com.spot.android.feature.permissions.PermissionRequestHost
+import com.spot.android.feature.permissions.PermissionsViewModel
 import com.spot.android.feature.post.PostScreen
 import com.spot.android.feature.profile.ProfileOverlayScreen
 import com.spot.android.feature.profile.ProfileScreen
 import com.spot.android.feature.safety.SafetyFlowHost
 import com.spot.android.feature.search.SearchScreen
+import com.spot.android.data.deeplink.DeepLinkCoordinator
 
 /**
  * Main app shell: 5-tab bottom bar + NavGraph + overlay host.
@@ -38,6 +42,7 @@ fun SpotShell(
     shellNavigationBus: ShellNavigationBus,
     profileNavigationBus: ProfileNavigationBus,
     overlayViewModel: OverlayHostViewModel,
+    deepLinkCoordinator: DeepLinkCoordinator? = null,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -45,6 +50,13 @@ fun SpotShell(
     val currentRoute = navBackStackEntry?.destination?.route
     val selectedTab = SpotTab.fromRoute(currentRoute) ?: SpotTab.DEFAULT
     val overlayProfileUserId by profileNavigationBus.activeUserId.collectAsStateWithLifecycle()
+    val permissionsViewModel: PermissionsViewModel = hiltViewModel()
+    val detailSpot = if (deepLinkCoordinator != null) {
+        val spot by deepLinkCoordinator.loadedSpot.collectAsStateWithLifecycle()
+        spot
+    } else {
+        null
+    }
 
     LaunchedEffect(shellNavigationBus) {
         shellNavigationBus.tabRequests.collect { tab ->
@@ -64,6 +76,7 @@ fun SpotShell(
             .testTag("navigation.shell"),
     ) {
         PermissionRequestHost(
+            viewModel = permissionsViewModel,
             modifier = Modifier.fillMaxSize(),
         ) {
             Scaffold(
@@ -124,7 +137,15 @@ fun SpotShell(
                 }
             }
 
-            OverlayHostLayer(viewModel = overlayViewModel)
+            OverlayHostLayer(
+                viewModel = overlayViewModel,
+                detailSpot = detailSpot,
+            )
+
+            FirstRunOnboardingHost(
+                selectedTab = selectedTab,
+                permissionsViewModel = permissionsViewModel,
+            )
 
             overlayProfileUserId?.let { userId ->
                 Box(
