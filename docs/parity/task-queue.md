@@ -60,7 +60,7 @@ derived from recent iOS shipping work.
 
 | # | Task | Date | Android PR |
 |---|------|------|------------|
-| 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | 2026-08-30 | _TBD — parity/12-map-photo-pins_ |
+| 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | 2026-08-30 | [#28](https://github.com/Ewynman/spot-android-app/pull/28) |
 
 Format:
 
