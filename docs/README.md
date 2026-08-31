@@ -2,7 +2,14 @@
 
 ## Purpose
 
-Central index for Android product, engineering, and diagram docs. Contracts and backend behavior live in [`PRD/`](../PRD/README.md); this tree documents **how Android implements** those contracts.
+Central index for Android product, engineering, parity, and diagram docs.
+
+**Building toward iOS parity?** Start at [`parity/README.md`](parity/README.md) —
+that's where the current work lives, sized for Cursor Cloud Agents.
+
+The parity docs replace the previous `PRD/` folder. Backend contracts and
+behavior spec are captured under [`parity/`](parity/); this tree documents
+**how Android implements** those contracts.
 
 ## Audience
 
@@ -14,10 +21,25 @@ Documented against the **iOS parity mega** implementation on branch `feature/ios
 
 ## Start here
 
-1. [Root README](../README.md) — setup, stack, constants  
-2. [PRD index](../PRD/README.md) — product contracts (source of truth for behavior)  
-3. [Cursor project rules](../.cursor/rules/project.mdc) — non-negotiable golden rules  
-4. Pick a reading path below  
+1. [Parity docs](parity/README.md) — the current source of truth for what to build
+2. [Parity task queue](parity/task-queue.md) — open work, sized for Cloud Agents
+3. [Parity constraints](parity/constraints.md) — non-negotiable rules
+4. [Root README](../README.md) — setup, stack, constants
+5. [Cursor project rules](../.cursor/rules/project.mdc) — non-negotiable golden rules
+6. Pick a reading path below
+
+## Parity
+
+| Doc | Topics |
+| --- | --- |
+| [parity/README.md](parity/README.md) | Master brief, index, how to use |
+| [parity/constraints.md](parity/constraints.md) | Non-negotiable rules distilled |
+| [parity/limits-constants.md](parity/limits-constants.md) | Every numeric limit, sourced |
+| [parity/data-contracts.md](parity/data-contracts.md) | RPCs, tables, storage, edge functions |
+| [parity/design-tokens.md](parity/design-tokens.md) | Colors, typography, spacing, copy |
+| [parity/screen-map.md](parity/screen-map.md) | iOS ↔ Android surface map |
+| [parity/agent-brief.md](parity/agent-brief.md) | Drop-in prompt for a Cloud Agent |
+| [parity/task-queue.md](parity/task-queue.md) | Open + shipped parity tasks |
 
 ## Product
 
@@ -50,22 +72,26 @@ Documented against the **iOS parity mega** implementation on branch `feature/ios
 
 ## Suggested reading paths
 
-**New developer:** [architecture](engineering/architecture.md) → [design-system](engineering/design-system.md) → [PRD/01](../PRD/01-architecture-android.md) → [BUILD_PROGRESS](../BUILD_PROGRESS.md).
+**New developer:** [parity/README](parity/README.md) → [parity/constraints](parity/constraints.md) → [engineering/architecture](engineering/architecture.md) → [engineering/design-system](engineering/design-system.md).
 
-**Cursor agent:** [.cursor/rules/project.mdc](../.cursor/rules/project.mdc) → relevant `PRD/NN-*.md` → matching `docs/engineering/*` before coding.
+**Cursor Cloud Agent:** [parity/agent-brief](parity/agent-brief.md) → pick a task from [parity/task-queue](parity/task-queue.md) → read the task file + [parity/constraints](parity/constraints.md) + [parity/limits-constants](parity/limits-constants.md) + [parity/data-contracts](parity/data-contracts.md).
 
-**Deep-link / share QA:** [deep-links](engineering/deep-links.md) → [PRD/15](../PRD/15-deep-links.md) → [diagrams/deep-link-flow](diagrams/deep-link-flow.md).
+**Deep-link / share QA:** [engineering/deep-links](engineering/deep-links.md) → [parity/tasks/04-verified-app-links](parity/tasks/04-verified-app-links.md) → [diagrams/deep-link-flow](diagrams/deep-link-flow.md).
 
-**Onboarding QA:** [product/onboarding](product/onboarding.md) → [first-run-onboarding](engineering/first-run-onboarding.md) → [PRD/05](../PRD/05-auth-onboarding.md).
+**Onboarding QA:** [product/onboarding](product/onboarding.md) → [engineering/first-run-onboarding](engineering/first-run-onboarding.md).
 
 ## Related
 
 - iOS reference docs: `../spot-ios-app/docs/` (when checked out beside this repo)
-- Build progress: [BUILD_PROGRESS.md](../BUILD_PROGRESS.md)
+- Parity work: [`parity/`](parity/README.md) — replaces the previous `PRD/` and `BUILD_PROGRESS.md`
 
 ## Open follow-ups
 
-- Pro **Edit spot** sheet (`update_spot_metadata_v1`) — overflow Share/Delete shipped; Edit UI not fully ported  
-- Collection picker on Search/Profile bookmark paths (Home + Map wired)  
-- Hosted `assetlinks.json` for verified App Links  
-- FCM remote “follow request received”  
+Tracked in [`parity/task-queue.md`](parity/task-queue.md). Highlights:
+
+- Task 01: Pro **Edit spot** sheet
+- Task 02: Collection picker on Search/Profile bookmark paths
+- Task 03: FCM remote "follow request received"
+- Task 04: Hosted `assetlinks.json` for verified App Links
+- Task 05: AlgorithmSnapshot ViewModel → repository layering
+- Task 06: Real Firebase config + App Check init
