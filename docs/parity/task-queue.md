@@ -15,7 +15,6 @@ derived from recent iOS shipping work.
 
 | # | Task | Size | iOS PR | Deps |
 |---|------|------|--------|------|
-| 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | Medium | [#92](https://github.com/Ewynman/spot-ios-app/pull/92) | — |
 | 13 | [Home place-first Spot card + map flip](tasks/13-home-card-place-first-flip.md) | Medium | [#90](https://github.com/Ewynman/spot-ios-app/pull/90) | — |
 | 14 | [Map compact preview + clustering audit](tasks/14-map-compact-preview-and-clustering.md) | Medium | [#88](https://github.com/Ewynman/spot-ios-app/pull/88) | — |
 | 15 | [Pro vibe-to-photo mapping (`PHOTO_SYNCED`)](tasks/15-pro-vibe-to-photo-mapping.md) | Medium | [#89](https://github.com/Ewynman/spot-ios-app/pull/89) | — |
@@ -59,7 +58,9 @@ derived from recent iOS shipping work.
 
 ## Shipped
 
-_None yet. When you ship a task, move its row here with the PR link._
+| # | Task | Date | Android PR |
+|---|------|------|------------|
+| 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | 2026-08-30 | _TBD — parity/12-map-photo-pins_ |
 
 Format:
 

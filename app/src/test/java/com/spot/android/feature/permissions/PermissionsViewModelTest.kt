@@ -170,4 +170,7 @@ private class FakeAnalyticsTracker : AnalyticsTracker {
     override fun trackAuthEmailInUse() = Unit
     override fun trackAuthDeleteByEmail() = Unit
     override fun trackDeepLink(origin: com.spot.android.core.analytics.DeepLinkOrigin, route: String) = Unit
+    override fun trackMapMarkerImpression(markerType: String) = Unit
+    override fun trackMapMarkerImageLoad(success: Boolean, cacheHit: Boolean) = Unit
+    override fun trackMapMarkerTapped(markerType: String, zoomLevel: Double) = Unit
 }

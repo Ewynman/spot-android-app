@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import com.spot.android.core.analytics.AnalyticsTracker
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
+import com.spot.android.core.media.MapMarkerImageCache
 import com.spot.android.core.util.Constants
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.content.ContentRemovalEvent
@@ -15,6 +17,7 @@ import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.location.MapLocationTracker
 import com.spot.android.data.location.ViewerLocation
 import com.spot.android.data.map.FollowingIdsRepository
+import com.spot.android.data.map.MapMarkerFeatureFlags
 import com.spot.android.data.map.MapPinLayout
 import com.spot.android.data.map.MapRepository
 import com.spot.android.data.map.MapSpotFilterEngine
@@ -51,11 +54,17 @@ class MapViewModel @Inject constructor(
     private val userSessionHolder: UserSessionHolder,
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val mapLocationTracker: MapLocationTracker,
+    private val mapMarkerFeatureFlags: MapMarkerFeatureFlags,
+    private val analyticsTracker: AnalyticsTracker,
+    val markerImageCache: MapMarkerImageCache,
     private val logger: SpotLogger,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
+
+    val photoPinMarkersEnabled: StateFlow<Boolean> =
+        mapMarkerFeatureFlags.photoPinMarkersEnabled
 
     private val _effects = Channel<MapEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
@@ -65,6 +74,9 @@ class MapViewModel @Inject constructor(
     private var followedUserIds: Set<String> = emptySet()
     private var initialLoadStarted = false
     private var profileUserIdFilter: String? = null
+
+    // Dedup for `map_marker_impression` — one event per marker per session.
+    private val impressedSpotIds = mutableSetOf<String>()
 
     init {
         observeSession()
@@ -143,6 +155,39 @@ class MapViewModel @Inject constructor(
     }
 
     fun onPinSelected(spotId: String) {
+        selectPin(spotId, zoomLevel = null, hasImage = null)
+    }
+
+    /**
+     * Task 12: photo-preview tap with zoom + marker type for analytics.
+     * Composable callers pass the camera zoom and whether the marker rendered
+     * as a photo pin (vs. teardrop).
+     */
+    fun onPinTapped(spotId: String, zoomLevel: Float, hasImage: Boolean) {
+        selectPin(spotId, zoomLevel = zoomLevel, hasImage = hasImage)
+    }
+
+    /**
+     * Records a `map_marker_impression`, deduped per session so a pin that
+     * gets re-attached during pan/zoom doesn't spam the event stream.
+     */
+    fun onPinImpression(spotId: String, hasImage: Boolean) {
+        if (impressedSpotIds.add(spotId)) {
+            analyticsTracker.trackMapMarkerImpression(markerTypeFor(hasImage))
+        }
+    }
+
+    /** Task 12: photo pin bitmap load finished successfully. */
+    fun onMarkerImageLoaded(cacheHit: Boolean) {
+        analyticsTracker.trackMapMarkerImageLoad(success = true, cacheHit = cacheHit)
+    }
+
+    /** Task 12: photo pin bitmap load failed; caller falls back to teardrop. */
+    fun onMarkerImageFailed() {
+        analyticsTracker.trackMapMarkerImageLoad(success = false, cacheHit = false)
+    }
+
+    private fun selectPin(spotId: String, zoomLevel: Float?, hasImage: Boolean?) {
         val currentSelection = _uiState.value.selectedSpotId
         if (currentSelection != null && currentSelection != spotId) {
             dismissDrawer(MapDrawerDismissReason.SPOT_SWITCH)
@@ -169,6 +214,26 @@ class MapViewModel @Inject constructor(
             spotId = spotId,
             eventType = FeedEventType.MAP_PIN_TAP,
         )
+
+        if (zoomLevel != null && hasImage != null) {
+            analyticsTracker.trackMapMarkerTapped(
+                markerType = markerTypeFor(hasImage),
+                zoomLevel = roundZoomToHalf(zoomLevel.toDouble()),
+            )
+        }
+    }
+
+    private fun markerTypeFor(hasImage: Boolean): String {
+        val flagOn = mapMarkerFeatureFlags.photoPinMarkersEnabled.value
+        return if (hasImage && flagOn) {
+            Constants.Analytics.Values.MARKER_TYPE_PHOTO_PIN
+        } else {
+            Constants.Analytics.Values.MARKER_TYPE_TEARDROP
+        }
+    }
+
+    private fun roundZoomToHalf(zoom: Double): Double {
+        return Math.round(zoom * 2.0) / 2.0
     }
 
     fun onDrawerClose() {
@@ -206,6 +271,7 @@ class MapViewModel @Inject constructor(
     fun onTabLeft() {
         _uiState.update { it.copy(showVibeFilterSheet = false) }
         dismissDrawer(MapDrawerDismissReason.TAB_LEFT)
+        impressedSpotIds.clear()
     }
 
     fun toggleFilter(filter: SpotMapFilter) {

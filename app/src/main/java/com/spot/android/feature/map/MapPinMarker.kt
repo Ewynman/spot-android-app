@@ -15,15 +15,58 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.spot.android.core.design.theme.SpotColors
+import com.spot.android.core.media.MapMarkerImageCache
 import com.spot.android.core.util.Constants
 
 /**
- * Branded map pin marker.
+ * Dispatch a spot to the right marker composable (task 12).
  *
- * Reference: PRD/07-map.md
+ * When [showPhotoPin] is true **and** [imageUrl] is non-null we render the
+ * new circular photo preview; otherwise we render the legacy branded
+ * teardrop. This keeps a single call-site for [MapScreen] while letting the
+ * feature flag short-circuit the whole thing.
  */
 @Composable
 fun MapPinMarker(
+    isSelected: Boolean,
+    showPhotoPin: Boolean,
+    imageUrl: String?,
+    imageCache: MapMarkerImageCache,
+    onImageLoaded: (cacheHit: Boolean) -> Unit,
+    onImageFailed: () -> Unit,
+    modifier: Modifier = Modifier,
+    testTag: String = "map.pin",
+    username: String? = null,
+    locationName: String? = null,
+) {
+    val usePhotoPin = showPhotoPin && !imageUrl.isNullOrBlank()
+    if (usePhotoPin) {
+        PhotoPinMarker(
+            imageUrl = imageUrl,
+            isSelected = isSelected,
+            imageCache = imageCache,
+            onImageLoaded = onImageLoaded,
+            onImageFailed = onImageFailed,
+            modifier = modifier,
+            testTag = testTag,
+            username = username,
+            locationName = locationName,
+        )
+    } else {
+        TeardropPinMarker(
+            isSelected = isSelected,
+            modifier = modifier,
+            testTag = testTag,
+        )
+    }
+}
+
+/**
+ * Branded green teardrop marker — the pre-photo-pin behaviour, retained as
+ * the fallback and for the profile-map surface (task 14 will migrate that).
+ */
+@Composable
+fun TeardropPinMarker(
     isSelected: Boolean,
     modifier: Modifier = Modifier,
     testTag: String = "map.pin",

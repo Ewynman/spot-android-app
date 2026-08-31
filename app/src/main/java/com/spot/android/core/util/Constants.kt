@@ -213,6 +213,9 @@ object Constants {
         const val AUTH_EMAIL_IN_USE = "Auth.EmailInUse"
         const val AUTH_DELETE_BY_EMAIL = "Auth.DeleteByEmail"
         const val DEEP_LINK = "DeepLink"
+        const val MAP_MARKER_IMPRESSION = "map_marker_impression"
+        const val MAP_MARKER_IMAGE_LOAD = "map_marker_image_load"
+        const val MAP_MARKER_TAPPED = "map_marker_tapped"
 
         object Params {
             const val PERMISSION_TYPE = "permission_type"
@@ -220,6 +223,42 @@ object Constants {
             const val SOURCE = "source"
             const val ORIGIN = "origin"
             const val ROUTE = "route"
+            const val MARKER_TYPE = "marker_type"
+            const val ZOOM_LEVEL = "zoom_level"
+            const val SUCCESS = "success"
+            const val CACHE_HIT = "cache_hit"
         }
+
+        object Values {
+            const val MARKER_TYPE_PHOTO_PIN = "photo_pin"
+            const val MARKER_TYPE_TEARDROP = "teardrop"
+        }
+    }
+
+    /**
+     * Photo-preview map pin (task 12).
+     *
+     * The bespoke marker image cache stores small downsampled bitmaps to keep
+     * memory bounded during aggressive pan/zoom; sizes and cap match the iOS
+     * "Concept 3" implementation.
+     */
+    object PhotoPin {
+        const val FRAME_WIDTH_DP = 44
+        const val FRAME_HEIGHT_DP = 56
+        const val CIRCLE_DIAMETER_DP = 44
+        const val TAIL_HEIGHT_DP = 12
+        const val TAIL_WIDTH_DP = 12
+        const val BORDER_DP = 2f
+        const val SELECTED_SCALE = 1.10f
+        const val SELECTED_Z_INDEX = 100f
+        const val SELECT_ANIM_MS = 150
+
+        const val IMAGE_CACHE_MAX_ENTRIES = 128
+
+        /** Base target size in px at mdpi (density = 1.0). 2× 44dp = 88px. */
+        const val IMAGE_TARGET_BASE_PX = 88
+
+        /** Hard upper bound for high-density displays. */
+        const val IMAGE_TARGET_MAX_PX = 176
     }
 }

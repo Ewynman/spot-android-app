@@ -18,4 +18,8 @@ interface AnalyticsTracker {
     fun trackAuthEmailInUse()
     fun trackAuthDeleteByEmail()
     fun trackDeepLink(origin: DeepLinkOrigin, route: String)
+
+    fun trackMapMarkerImpression(markerType: String)
+    fun trackMapMarkerImageLoad(success: Boolean, cacheHit: Boolean)
+    fun trackMapMarkerTapped(markerType: String, zoomLevel: Double)
 }

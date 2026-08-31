@@ -72,4 +72,31 @@ class FirebaseAnalyticsTracker @Inject constructor(
             ),
         )
     }
+
+    override fun trackMapMarkerImpression(markerType: String) {
+        logEvent(
+            name = Constants.Analytics.MAP_MARKER_IMPRESSION,
+            params = mapOf(Constants.Analytics.Params.MARKER_TYPE to markerType),
+        )
+    }
+
+    override fun trackMapMarkerImageLoad(success: Boolean, cacheHit: Boolean) {
+        logEvent(
+            name = Constants.Analytics.MAP_MARKER_IMAGE_LOAD,
+            params = mapOf(
+                Constants.Analytics.Params.SUCCESS to success,
+                Constants.Analytics.Params.CACHE_HIT to cacheHit,
+            ),
+        )
+    }
+
+    override fun trackMapMarkerTapped(markerType: String, zoomLevel: Double) {
+        logEvent(
+            name = Constants.Analytics.MAP_MARKER_TAPPED,
+            params = mapOf(
+                Constants.Analytics.Params.MARKER_TYPE to markerType,
+                Constants.Analytics.Params.ZOOM_LEVEL to zoomLevel,
+            ),
+        )
+    }
 }
