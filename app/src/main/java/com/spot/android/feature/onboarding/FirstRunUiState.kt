@@ -9,12 +9,12 @@ enum class FirstRunStep(val title: String, val body: String) {
         body = "Discover saved place recommendations from real people, organized by vibe.",
     ),
     SPOT_CARD(
-        title = "This is a Spot",
-        body = "A saved place recommendation from someone, centered around vibe and discovery.",
+        title = "Place first",
+        body = "Every Spot leads with its location and vibe so you know what it is before you scroll.",
     ),
     SPOT_DETAILS(
-        title = "Get the full context",
-        body = "Photos, location, creator, and activity help you decide what is worth saving.",
+        title = "Flip to the map",
+        body = "Tap the green marker under the photo to peek at where a Spot is, or jump straight into the map.",
     ),
     VIBE_TAG(
         title = "Vibe Tags are the magic",

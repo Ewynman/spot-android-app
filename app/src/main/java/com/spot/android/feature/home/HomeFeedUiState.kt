@@ -26,6 +26,12 @@ data class HomeFeedUiState(
     val publishState: PublishCoordinatorState = PublishCoordinatorState.Idle,
     val scrollToTopTrigger: Int = 0,
     val isRefreshing: Boolean = false,
+    /**
+     * Set by [MapFocusCoordinator][com.spot.android.data.map.MapFocusCoordinator]
+     * after "Open in Map" is tapped. HomeScreen consumes this to animate the
+     * list back to the originating card the next time the tab is visible.
+     */
+    val pendingReturnScrollSpotId: String? = null,
 )
 
 sealed interface HomeFeedEffect {

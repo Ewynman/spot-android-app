@@ -15,7 +15,6 @@ derived from recent iOS shipping work.
 
 | # | Task | Size | iOS PR | Deps |
 |---|------|------|--------|------|
-| 13 | [Home place-first Spot card + map flip](tasks/13-home-card-place-first-flip.md) | Medium | [#90](https://github.com/Ewynman/spot-ios-app/pull/90) | — |
 | 14 | [Map compact preview + clustering audit](tasks/14-map-compact-preview-and-clustering.md) | Medium | [#88](https://github.com/Ewynman/spot-ios-app/pull/88) | — |
 | 15 | [Pro vibe-to-photo mapping (`PHOTO_SYNCED`)](tasks/15-pro-vibe-to-photo-mapping.md) | Medium | [#89](https://github.com/Ewynman/spot-ios-app/pull/89) | — |
 | 01 | [Pro Edit spot sheet](tasks/01-edit-spot-sheet.md) | Medium | [#83](https://github.com/Ewynman/spot-ios-app/pull/83) | — |
@@ -60,6 +59,7 @@ derived from recent iOS shipping work.
 
 | # | Task | Date | Android PR |
 |---|------|------|------------|
+| 13 | [Home place-first Spot card + map flip](tasks/13-home-card-place-first-flip.md) | 2026-08-31 | [#29](https://github.com/Ewynman/spot-android-app/pull/29) |
 | 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | 2026-08-30 | [#28](https://github.com/Ewynman/spot-android-app/pull/28) |
 
 Format:

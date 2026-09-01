@@ -19,6 +19,7 @@ import com.spot.android.data.location.ViewerLocation
 import com.spot.android.data.map.FakeMapMarkerFeatureFlags
 import com.spot.android.data.map.FakeMapRepository
 import com.spot.android.data.map.FollowingIdsRepository
+import com.spot.android.data.map.MapFocusCoordinator
 import com.spot.android.data.map.MapSpotHydrator
 import com.spot.android.data.map.MapViewportBounds
 import io.github.jan.supabase.gotrue.Auth
@@ -52,6 +53,7 @@ class MapViewModelTest {
     private lateinit var fakeAnalytics: RecordingAnalyticsTracker
     private lateinit var fakeFeatureFlags: FakeMapMarkerFeatureFlags
     private lateinit var fakeMarkerCache: FakeMapMarkerImageCache
+    private lateinit var mapFocusCoordinator: MapFocusCoordinator
     private lateinit var viewModel: MapViewModel
 
     @Before
@@ -64,6 +66,7 @@ class MapViewModelTest {
         fakeAnalytics = RecordingAnalyticsTracker()
         fakeFeatureFlags = FakeMapMarkerFeatureFlags(photoPinEnabled = true)
         fakeMarkerCache = FakeMapMarkerImageCache()
+        mapFocusCoordinator = MapFocusCoordinator()
 
         val imageUrlSigner = mockk<ImageUrlSigner>()
         coEvery { imageUrlSigner.getImageUrl(any(), any()) } returns "https://signed.example/image.jpg"
@@ -94,6 +97,7 @@ class MapViewModelTest {
                 override fun stopTracking() = Unit
             },
             mapMarkerFeatureFlags = fakeFeatureFlags,
+            mapFocusCoordinator = mapFocusCoordinator,
             analyticsTracker = fakeAnalytics,
             markerImageCache = fakeMarkerCache,
             logger = logger,
@@ -237,6 +241,26 @@ class MapViewModelTest {
         val (type, zoom) = fakeAnalytics.taps.first()
         assertEquals(Constants.Analytics.Values.MARKER_TYPE_TEARDROP, type)
         assertEquals(12.0, zoom, 0.001)
+    }
+
+    @Test
+    fun `focus request selects spot once viewport hydrates it`() = runTest {
+        mapFocusCoordinator.openInMap(
+            spotId = "spot-1",
+            target = com.google.android.gms.maps.model.LatLng(40.7128, -74.0060),
+        )
+        advanceUntilIdle()
+
+        assertNull(viewModel.uiState.value.selectedSpotId)
+
+        viewModel.onFirstAppear()
+        viewModel.onCameraIdle(40.7128, -74.0060, 13f, userInitiated = false)
+        advanceTimeBy(300)
+        advanceUntilIdle()
+
+        assertEquals("spot-1", viewModel.uiState.value.selectedSpotId)
+        assertEquals(MapDrawerState.PEEK, viewModel.uiState.value.drawerState)
+        assertNull(mapFocusCoordinator.pendingFocus.value)
     }
 
     @Test

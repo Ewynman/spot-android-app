@@ -85,6 +85,15 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(uiState.pendingReturnScrollSpotId, uiState.spots) {
+        val pending = uiState.pendingReturnScrollSpotId ?: return@LaunchedEffect
+        val index = uiState.spots.indexOfFirst { it.id == pending }
+        if (index >= 0) {
+            listState.animateScrollToItem(index)
+            viewModel.consumeHomeReturnScroll()
+        }
+    }
+
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
             when (effect) {
@@ -196,6 +205,7 @@ fun HomeScreen(
                                 onMoreClick = safetyActions?.let { actions ->
                                     { actions.openSpotOverflowMenu(spot) }
                                 },
+                                onOpenInMap = { targetSpot -> viewModel.openInMap(targetSpot) },
                                 modifier = Modifier.padding(bottom = 16.dp),
                             )
                         }
