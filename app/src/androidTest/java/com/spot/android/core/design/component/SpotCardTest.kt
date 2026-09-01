@@ -11,7 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Instrumented tests for SpotCard component (iOS anatomy).
+ * Instrumented tests for SpotCard component (place-first + map flip; task 13).
  */
 class SpotCardTest {
 
@@ -51,7 +51,7 @@ class SpotCardTest {
         }
 
         composeTestRule.onNodeWithTag("spotCard.username").assertIsDisplayed()
-        composeTestRule.onNodeWithText("testuser").assertIsDisplayed()
+        composeTestRule.onNodeWithText("@testuser").assertIsDisplayed()
     }
 
     @Test
@@ -75,7 +75,7 @@ class SpotCardTest {
     }
 
     @Test
-    fun spotCard_displaysVibeTag_inActionBar() {
+    fun spotCard_displaysVibeChip_abovePhoto() {
         composeTestRule.setContent {
             SpotTheme {
                 SpotCard(spot = testSpot)
@@ -86,7 +86,7 @@ class SpotCardTest {
     }
 
     @Test
-    fun spotCard_displaysLocation() {
+    fun spotCard_displaysLocationName_atTop() {
         composeTestRule.setContent {
             SpotTheme {
                 SpotCard(spot = testSpot)
@@ -153,5 +153,40 @@ class SpotCardTest {
             }
         }
         composeTestRule.onNodeWithTag("spotCard.likesCount").assertDoesNotExist()
+    }
+
+    // -------- task 13: map-flip toggle --------
+
+    @Test
+    fun spotCard_hidesMapFlipToggle_whenOnOpenInMapNotProvided() {
+        composeTestRule.setContent {
+            SpotTheme {
+                SpotCard(spot = testSpot)
+            }
+        }
+        composeTestRule.onNodeWithTag("spotCard.mapFlipButton").assertDoesNotExist()
+    }
+
+    @Test
+    fun spotCard_showsMapFlipToggle_whenOnOpenInMapProvided() {
+        composeTestRule.setContent {
+            SpotTheme {
+                SpotCard(spot = testSpot, onOpenInMap = { /* no-op */ })
+            }
+        }
+        composeTestRule.onNodeWithTag("spotCard.mapFlipButton").assertIsDisplayed()
+    }
+
+    @Test
+    fun spotCard_hidesMapFlipToggle_whenCoordsInvalid() {
+        composeTestRule.setContent {
+            SpotTheme {
+                SpotCard(
+                    spot = testSpot.copy(latitude = 0.0, longitude = 0.0),
+                    onOpenInMap = { /* no-op */ },
+                )
+            }
+        }
+        composeTestRule.onNodeWithTag("spotCard.mapFlipButton").assertDoesNotExist()
     }
 }

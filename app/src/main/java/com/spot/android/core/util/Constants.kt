@@ -236,6 +236,20 @@ object Constants {
     }
 
     /**
+     * Home spot card back-face (map preview) tuning — task 13.
+     *
+     * Zoom is chosen to make the branded marker read as a place pin without
+     * revealing surrounding street clutter. Flip animation duration matches
+     * the iOS `SpotCard` implementation (400 ms rotate, ~200 ms crossfade
+     * under Reduce Motion).
+     */
+    object HomeMapPreview {
+        const val ZOOM_LEVEL = 15f
+        const val FLIP_ANIMATION_MS = 400
+        const val REDUCE_MOTION_CROSSFADE_MS = 200
+    }
+
+    /**
      * Photo-preview map pin (task 12).
      *
      * The bespoke marker image cache stores small downsampled bitmaps to keep

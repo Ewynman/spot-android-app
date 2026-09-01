@@ -16,7 +16,12 @@ import com.spot.android.data.feed.FeedSpotHydrator
 import com.spot.android.data.feed.FeedVisibilityTracker
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.location.ViewerLocationProvider
+import com.spot.android.data.map.MapFocusCoordinator
 import com.spot.android.data.model.Spot
+import com.spot.android.data.model.hasValidCoordinates
+import com.google.android.gms.maps.model.LatLng
+import com.spot.android.navigation.ShellNavigationBus
+import com.spot.android.navigation.SpotTab
 import com.spot.android.data.model.enums.FeedEventType
 import com.spot.android.data.post.PublishCoordinatorState
 import com.spot.android.data.post.SpotPublishCoordinator
@@ -52,6 +57,8 @@ class HomeFeedViewModel @Inject constructor(
     private val viewerLocationProvider: ViewerLocationProvider,
     private val spotPostedBus: SpotPostedBus,
     private val spotPublishCoordinator: SpotPublishCoordinator,
+    private val mapFocusCoordinator: MapFocusCoordinator,
+    private val shellNavigationBus: ShellNavigationBus,
     private val logger: SpotLogger,
 ) : ViewModel() {
 
@@ -71,6 +78,7 @@ class HomeFeedViewModel @Inject constructor(
         observeSessionEngagement()
         observeSpotPosted()
         observePublishState()
+        observePendingHomeReturnScroll()
     }
 
     fun onFirstAppear() {
@@ -231,6 +239,34 @@ class HomeFeedViewModel @Inject constructor(
             spotId = spotId,
             eventType = FeedEventType.VIBE_TAP,
         )
+    }
+
+    /**
+     * User tapped "Open in Map" on a Home spot card. We hand the target to
+     * [MapFocusCoordinator] (which also flags the same spot for a one-shot
+     * return scroll) and switch tabs. The Map tab will consume the focus
+     * request; Home will consume the return-scroll on next resume.
+     *
+     * No-ops when the spot lacks valid coordinates — the flip toggle should
+     * already be disabled in that case, but we defend anyway.
+     */
+    fun openInMap(spot: Spot) {
+        if (!spot.hasValidCoordinates) {
+            logger.w(LogCategory.Feed, TAG, "openInMap ignored: invalid coords for ${spot.id}")
+            return
+        }
+        mapFocusCoordinator.openInMap(
+            spotId = spot.id,
+            target = LatLng(spot.latitude, spot.longitude),
+        )
+        shellNavigationBus.navigateToTab(SpotTab.Map)
+    }
+
+    /** Called by [HomeScreen] once it has scrolled back to the pending spot. */
+    fun consumeHomeReturnScroll(): String? {
+        return mapFocusCoordinator.consumeHomeReturnScroll().also {
+            _uiState.update { state -> state.copy(pendingReturnScrollSpotId = null) }
+        }
     }
 
     fun dismissPublishBanner() {
@@ -467,6 +503,14 @@ class HomeFeedViewModel @Inject constructor(
         viewModelScope.launch {
             spotPublishCoordinator.state.collect { state ->
                 _uiState.update { it.copy(publishState = state) }
+            }
+        }
+    }
+
+    private fun observePendingHomeReturnScroll() {
+        viewModelScope.launch {
+            mapFocusCoordinator.pendingHomeReturnScroll.collect { spotId ->
+                _uiState.update { it.copy(pendingReturnScrollSpotId = spotId) }
             }
         }
     }

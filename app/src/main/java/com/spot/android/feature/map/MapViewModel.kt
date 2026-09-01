@@ -17,6 +17,7 @@ import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.location.MapLocationTracker
 import com.spot.android.data.location.ViewerLocation
 import com.spot.android.data.map.FollowingIdsRepository
+import com.spot.android.data.map.MapFocusCoordinator
 import com.spot.android.data.map.MapMarkerFeatureFlags
 import com.spot.android.data.map.MapPinLayout
 import com.spot.android.data.map.MapRepository
@@ -55,6 +56,7 @@ class MapViewModel @Inject constructor(
     private val localContentRemovalBus: LocalContentRemovalBus,
     private val mapLocationTracker: MapLocationTracker,
     private val mapMarkerFeatureFlags: MapMarkerFeatureFlags,
+    private val mapFocusCoordinator: MapFocusCoordinator,
     private val analyticsTracker: AnalyticsTracker,
     val markerImageCache: MapMarkerImageCache,
     private val logger: SpotLogger,
@@ -78,10 +80,16 @@ class MapViewModel @Inject constructor(
     // Dedup for `map_marker_impression` — one event per marker per session.
     private val impressedSpotIds = mutableSetOf<String>()
 
+    // When a Home card fires "Open in Map" we need to select the spot after the
+    // viewport fetch hydrates it. We hold the id here between the animate-camera
+    // effect and the moment [rebuildVisiblePins] first observes it.
+    private var pendingFocusSelectSpotId: String? = null
+
     init {
         observeSession()
         observeContentRemovals()
         observeLocationUpdates()
+        observePendingFocusRequests()
     }
 
     fun onFirstAppear() {
@@ -464,6 +472,43 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Consume [MapFocusCoordinator] focus requests raised by Home. We
+     * immediately animate the camera to the target, mark the spot for
+     * selection, and let [rebuildVisiblePins] finish the job once the
+     * viewport fetch hydrates it. The pending id is cleared as soon as the
+     * spot appears in [MapUiState.allSpots].
+     */
+    private fun observePendingFocusRequests() {
+        viewModelScope.launch {
+            mapFocusCoordinator.pendingFocus.collect { request ->
+                if (request == null) return@collect
+                pendingFocusSelectSpotId = request.spotId
+                _uiState.update { it.copy(userHasMovedMap = false) }
+                _effects.send(
+                    MapEffect.AnimateCamera(
+                        target = request.target,
+                        zoom = Constants.MapDesign.NEIGHBORHOOD_ZOOM,
+                    ),
+                )
+                // If the spot is already in cache we can select right away.
+                if (_uiState.value.allSpots.containsKey(request.spotId)) {
+                    selectPin(request.spotId, zoomLevel = null, hasImage = null)
+                    pendingFocusSelectSpotId = null
+                }
+                mapFocusCoordinator.consumeFocus()
+            }
+        }
+    }
+
+    private fun handlePendingFocusSelection() {
+        val pending = pendingFocusSelectSpotId ?: return
+        if (_uiState.value.allSpots.containsKey(pending)) {
+            selectPin(pending, zoomLevel = null, hasImage = null)
+            pendingFocusSelectSpotId = null
+        }
+    }
+
     private suspend fun fetchViewport(viewport: MapViewportBounds) {
         _uiState.update { it.copy(loadState = MapLoadState.LOADING) }
 
@@ -500,6 +545,7 @@ class MapViewModel @Inject constructor(
                 }
                 rebuildVisiblePins(viewport)
                 maybeDismissForSpotNoLongerVisible()
+                handlePendingFocusSelection()
             },
             onFailure = {
                 logger.w(LogCategory.Map, TAG, "Viewport fetch failed", it)

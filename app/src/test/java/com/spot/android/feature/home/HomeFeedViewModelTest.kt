@@ -16,7 +16,10 @@ import com.spot.android.data.feed.FeedSpotHydrator
 import com.spot.android.data.feed.HomeFeedEmptyReason
 import com.spot.android.data.feed.HomeFeedStatusDto
 import com.spot.android.data.location.ViewerLocationProvider
+import com.spot.android.data.map.MapFocusCoordinator
 import com.spot.android.data.post.SpotPostedBus
+import com.spot.android.navigation.ShellNavigationBus
+import com.spot.android.navigation.SpotTab
 import com.spot.android.data.post.SpotPublishCoordinator
 import com.spot.android.data.post.FakeSpotPublishRepository
 import com.spot.android.data.post.FakeVibeTagRepository
@@ -37,6 +40,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -54,6 +58,8 @@ class HomeFeedViewModelTest {
     private lateinit var feedEventService: FeedEventService
     private lateinit var feedVisibilityTracker: FeedVisibilityTracker
     private lateinit var viewerLocationProvider: ViewerLocationProvider
+    private lateinit var mapFocusCoordinator: MapFocusCoordinator
+    private lateinit var shellNavigationBus: ShellNavigationBus
     private lateinit var viewModel: HomeFeedViewModel
 
     @Before
@@ -83,6 +89,9 @@ class HomeFeedViewModelTest {
             override suspend fun getLocation() = null
         }
 
+        mapFocusCoordinator = MapFocusCoordinator()
+        shellNavigationBus = ShellNavigationBus()
+
         viewModel = HomeFeedViewModel(
             feedRepository = fakeFeedRepository,
             engagementRepository = fakeEngagementRepository,
@@ -100,6 +109,8 @@ class HomeFeedViewModelTest {
                 spotPostedBus = SpotPostedBus(),
                 logger = logger,
             ),
+            mapFocusCoordinator = mapFocusCoordinator,
+            shellNavigationBus = shellNavigationBus,
             logger = logger,
         )
     }
@@ -216,6 +227,66 @@ class HomeFeedViewModelTest {
     }
 
     @Test
+    fun `openInMap publishes focus request and navigates to Map tab`() = runTest {
+        fakeFeedRepository.homeFeedResult = Result.success(
+            listOf(sampleRow("spot-1", latitude = 40.7128, longitude = -74.006)),
+        )
+        viewModel.onFirstAppear()
+        advanceUntilIdle()
+
+        val tabRequests = mutableListOf<SpotTab>()
+        val job = launch { shellNavigationBus.tabRequests.collect { tabRequests.add(it) } }
+        // Give the SharedFlow collector a chance to actually attach before we
+        // emit (ShellNavigationBus uses replay=0).
+        advanceUntilIdle()
+
+        viewModel.openInMap(viewModel.uiState.value.spots.first())
+        advanceUntilIdle()
+
+        val focus = mapFocusCoordinator.pendingFocus.value
+        assertTrue(focus != null)
+        assertEquals("spot-1", focus!!.spotId)
+        assertEquals(40.7128, focus.target.latitude, 0.0001)
+        assertEquals("spot-1", mapFocusCoordinator.pendingHomeReturnScroll.value)
+        assertTrue(tabRequests.contains(SpotTab.Map))
+        job.cancel()
+    }
+
+    @Test
+    fun `openInMap noops for invalid coordinates`() = runTest {
+        fakeFeedRepository.homeFeedResult = Result.success(
+            listOf(sampleRow("spot-1", latitude = 0.0, longitude = 0.0)),
+        )
+        viewModel.onFirstAppear()
+        advanceUntilIdle()
+
+        viewModel.openInMap(viewModel.uiState.value.spots.first())
+        advanceUntilIdle()
+
+        assertNull(mapFocusCoordinator.pendingFocus.value)
+        assertNull(mapFocusCoordinator.pendingHomeReturnScroll.value)
+    }
+
+    @Test
+    fun `pending return scroll surfaces in ui state and is consumable`() = runTest {
+        fakeFeedRepository.homeFeedResult = Result.success(listOf(sampleRow("spot-1")))
+        viewModel.onFirstAppear()
+        advanceUntilIdle()
+
+        mapFocusCoordinator.openInMap(
+            spotId = "spot-1",
+            target = com.google.android.gms.maps.model.LatLng(0.0, 0.0),
+        )
+        advanceUntilIdle()
+
+        assertEquals("spot-1", viewModel.uiState.value.pendingReturnScrollSpotId)
+        val consumed = viewModel.consumeHomeReturnScroll()
+        advanceUntilIdle()
+        assertEquals("spot-1", consumed)
+        assertNull(viewModel.uiState.value.pendingReturnScrollSpotId)
+    }
+
+    @Test
     fun `refresh error preserves existing spots and shows toast`() = runTest {
         fakeFeedRepository.homeFeedResult = Result.success(listOf(sampleRow("spot-1")))
         viewModel.onFirstAppear()
@@ -232,14 +303,16 @@ class HomeFeedViewModelTest {
     private fun sampleRow(
         spotId: String,
         userId: String = "user-1",
+        latitude: Double = 1.0,
+        longitude: Double = 2.0,
     ): HomeFeedRowDto {
         return HomeFeedRowDto(
             spot_id = spotId,
             user_id = userId,
             vibe_tag_id = null,
             caption = "caption",
-            latitude = 1.0,
-            longitude = 2.0,
+            latitude = latitude,
+            longitude = longitude,
             location_name = "Test",
             likes_count = 1,
             saves_count = 0,

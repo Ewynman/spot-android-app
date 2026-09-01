@@ -1,5 +1,10 @@
 package com.spot.android.core.design.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +30,7 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,8 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,15 +61,30 @@ import com.spot.android.core.design.Dimensions
 import com.spot.android.core.design.theme.SpotColors
 import com.spot.android.core.design.theme.SpotTheme
 import com.spot.android.core.media.SpotImageRequest
+import com.spot.android.core.util.Constants
 import com.spot.android.core.util.cityStateFromLocation
+import com.spot.android.core.util.rememberReduceMotionEnabled
 import com.spot.android.data.model.Spot
+import com.spot.android.data.model.hasValidCoordinates
+import com.spot.android.feature.home.HomeSpotMapPreview
 
 private val LikedRed = Color(0xFFE53935)
 private val IdleGray = Color(0xFF9E9E9E)
 
 /**
- * Core content card matching iOS SpotCard anatomy:
- * header (avatar/username | location) → rounded media → ♡/bookmark/⋮ | vibe pill.
+ * Core content card matching iOS SpotCard anatomy (post task 13):
+ *
+ *  1. Location name (bold) — place-first.
+ *  2. Vibe chip below the location.
+ *  3. Photo (existing carousel).
+ *  4. "Shared by @username" — author attribution moved below the media.
+ *  5. Interaction bar: Like · Save · Map-flip · ⋮ | rotating vibe pill.
+ *
+ * When [onOpenInMap] is non-null and the spot has valid coordinates the map
+ * flip toggle is enabled; tapping it rotates the card 400 ms around Y (or
+ * cross-fades under Reduce Motion) to reveal a [HomeSpotMapPreview] with an
+ * "Open in Map" pill. Non-home surfaces (profile, search, deep-link) leave
+ * the callback null and get only the front-face changes.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -72,6 +95,7 @@ fun SpotCard(
     onLikeClick: (() -> Unit)? = null,
     onBookmarkClick: (() -> Unit)? = null,
     onMoreClick: (() -> Unit)? = null,
+    onOpenInMap: ((Spot) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val vibeLabels = remember(spot.vibeTags, spot.vibeTag) {
@@ -83,47 +107,69 @@ fun SpotCard(
         }
     }
     var showVibeSheet by remember { mutableStateOf(false) }
+    var showMapFace by remember(spot.id) { mutableStateOf(false) }
+    val hasCoords = remember(spot.latitude, spot.longitude) { spot.hasValidCoordinates }
+    val flipEnabled = onOpenInMap != null && hasCoords
+    val reduceMotion = rememberReduceMotionEnabled()
+
+    val aspect = spot.mediaDisplayAspectRatio.toFloat().takeIf { it > 0f } ?: 1f
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .testTag("spotCard.${spot.id}"),
     ) {
-        SpotCardHeader(
+        SpotCardPlaceHeader(
+            locationName = spot.locationName,
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
+
+        if (vibeLabels.isNotEmpty()) {
+            SpotCardPrimaryVibe(
+                labels = vibeLabels,
+                onTap = {
+                    if (vibeLabels.size > 1) {
+                        showVibeSheet = true
+                    } else {
+                        onVibeClick?.invoke(vibeLabels.first())
+                    }
+                },
+            )
+            Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
+        }
+
+        SpotCardMediaFace(
+            spot = spot,
+            aspect = aspect,
+            showMapFace = showMapFace,
+            flipEnabled = flipEnabled,
+            reduceMotion = reduceMotion,
+            onOpenInMap = { onOpenInMap?.invoke(spot) },
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.Spacing.small))
+
+        SpotCardAuthorLine(
             username = spot.username,
             userProfileImageURL = spot.userProfileImageURL,
             authorIsPro = spot.authorIsPro,
-            locationName = spot.locationName,
             onUserClick = { onUserClick?.invoke(spot.userId) },
         )
-
-        Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
-
-        val imageModels = spotImageModels(spot)
-        if (imageModels.isNotEmpty()) {
-            SpotCardMediaGallery(
-                imageModels = imageModels,
-                mediaDisplayAspectRatio = spot.mediaDisplayAspectRatio,
-                showPagerIndicator = imageModels.size > 1,
-            )
-        }
 
         Spacer(modifier = Modifier.height(Dimensions.Spacing.medium))
 
         SpotCardInteractionBar(
             isLiked = spot.isLiked,
             isSaved = spot.isSaved,
-            vibeLabels = vibeLabels,
+            flipEnabled = flipEnabled,
+            flipShowsBack = showMapFace,
             onLikeClick = onLikeClick,
             onBookmarkClick = onBookmarkClick,
             onMoreClick = onMoreClick,
-            onVibeClick = {
-                if (vibeLabels.size > 1) {
-                    showVibeSheet = true
-                } else if (vibeLabels.isNotEmpty()) {
-                    onVibeClick?.invoke(vibeLabels.first())
-                }
-            },
+            onMapFlipClick = if (flipEnabled) {
+                { showMapFace = !showMapFace }
+            } else null,
         )
 
         Spacer(modifier = Modifier.height(Dimensions.Spacing.xl))
@@ -158,62 +204,180 @@ fun SpotCard(
 }
 
 @Composable
-private fun SpotCardHeader(
+private fun SpotCardPlaceHeader(
+    locationName: String?,
+) {
+    val display = locationName?.takeIf { it.isNotBlank() }?.let(::cityStateFromLocation)
+    Text(
+        text = display ?: "Unknown location",
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+        color = SpotColors.Primary,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .testTag("spotCard.location"),
+    )
+}
+
+@Composable
+private fun SpotCardPrimaryVibe(
+    labels: List<String>,
+    onTap: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RotatingVibeTags(
+            labels = labels,
+            onTap = onTap,
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun SpotCardMediaFace(
+    spot: Spot,
+    aspect: Float,
+    showMapFace: Boolean,
+    flipEnabled: Boolean,
+    reduceMotion: Boolean,
+    onOpenInMap: () -> Unit,
+) {
+    val imageModels = remember(spot.id, spot.images, spot.imageURLs, spot.imageURL) {
+        spotImageModels(spot)
+    }
+    val hasMedia = imageModels.isNotEmpty()
+
+    if (!flipEnabled) {
+        if (hasMedia) {
+            SpotCardMediaGallery(
+                imageModels = imageModels,
+                aspect = aspect,
+                testTag = "spotCard.mediaGallery",
+            )
+        }
+        return
+    }
+
+    if (reduceMotion) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            AnimatedVisibility(
+                visible = !showMapFace,
+                enter = fadeIn(tween(Constants.HomeMapPreview.REDUCE_MOTION_CROSSFADE_MS)),
+                exit = fadeOut(tween(Constants.HomeMapPreview.REDUCE_MOTION_CROSSFADE_MS)),
+            ) {
+                if (hasMedia) {
+                    SpotCardMediaGallery(
+                        imageModels = imageModels,
+                        aspect = aspect,
+                        testTag = "spotCard.mediaGallery",
+                    )
+                }
+            }
+            AnimatedVisibility(
+                visible = showMapFace,
+                enter = fadeIn(tween(Constants.HomeMapPreview.REDUCE_MOTION_CROSSFADE_MS)),
+                exit = fadeOut(tween(Constants.HomeMapPreview.REDUCE_MOTION_CROSSFADE_MS)),
+            ) {
+                HomeSpotMapPreview(
+                    spotId = spot.id,
+                    latitude = spot.latitude,
+                    longitude = spot.longitude,
+                    aspectRatio = aspect,
+                    onOpenInMap = onOpenInMap,
+                )
+            }
+        }
+        return
+    }
+
+    val rotation by animateFloatAsState(
+        targetValue = if (showMapFace) 180f else 0f,
+        animationSpec = tween(Constants.HomeMapPreview.FLIP_ANIMATION_MS),
+        label = "spotCard.flip",
+    )
+    val density = LocalDensity.current
+    val cameraDist = with(density) { 8.dp.toPx() } * 8f
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                rotationY = rotation
+                cameraDistance = cameraDist
+            },
+    ) {
+        if (rotation <= 90f) {
+            if (hasMedia) {
+                SpotCardMediaGallery(
+                    imageModels = imageModels,
+                    aspect = aspect,
+                    testTag = "spotCard.mediaGallery",
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer { rotationY = 180f },
+            ) {
+                HomeSpotMapPreview(
+                    spotId = spot.id,
+                    latitude = spot.latitude,
+                    longitude = spot.longitude,
+                    aspectRatio = aspect,
+                    onOpenInMap = onOpenInMap,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpotCardAuthorLine(
     username: String,
     userProfileImageURL: String?,
     authorIsPro: Boolean,
-    locationName: String?,
     onUserClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
-            .testTag("spotCard.header"),
+            .clickable(onClick = onUserClick)
+            .testTag("spotCard.author"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .clickable(onClick = onUserClick),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Avatar(
-                imageUrl = userProfileImageURL,
-                isPro = authorIsPro,
-                size = 32.dp,
-                contentDescription = "$username avatar",
-                modifier = Modifier.testTag("spotCard.avatar"),
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = username,
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                color = SpotColors.Primary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.testTag("spotCard.username"),
-            )
-
-            if (authorIsPro) {
-                Spacer(modifier = Modifier.width(4.dp))
-                ProBadge()
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        if (!locationName.isNullOrBlank()) {
-            Text(
-                text = cityStateFromLocation(locationName),
-                style = MaterialTheme.typography.bodySmall,
-                color = SpotColors.Primary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.testTag("spotCard.location"),
-            )
+        Avatar(
+            imageUrl = userProfileImageURL,
+            isPro = authorIsPro,
+            size = 24.dp,
+            contentDescription = "$username avatar",
+            modifier = Modifier.testTag("spotCard.avatar"),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "Shared by ",
+            style = MaterialTheme.typography.bodySmall,
+            color = SpotColors.Primary.copy(alpha = 0.7f),
+        )
+        Text(
+            text = "@$username",
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+            color = SpotColors.Primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.testTag("spotCard.username"),
+        )
+        if (authorIsPro) {
+            Spacer(modifier = Modifier.width(4.dp))
+            ProBadge()
         }
     }
 }
@@ -222,17 +386,16 @@ private fun SpotCardHeader(
 @Composable
 private fun SpotCardMediaGallery(
     imageModels: List<Any>,
-    mediaDisplayAspectRatio: Double,
-    showPagerIndicator: Boolean,
+    aspect: Float,
+    testTag: String,
 ) {
-    val aspect = mediaDisplayAspectRatio.toFloat().takeIf { it > 0f } ?: 1f
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .clip(RoundedCornerShape(Dimensions.Radius.medium))
             .aspectRatio(aspect)
-            .testTag("spotCard.mediaGallery"),
+            .testTag(testTag),
     ) {
         if (imageModels.size == 1) {
             SpotAsyncImage(
@@ -252,7 +415,7 @@ private fun SpotCardMediaGallery(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            if (showPagerIndicator) {
+            if (imageModels.size > 1) {
                 PageIndicator(
                     pageCount = imageModels.size,
                     currentPage = pagerState.currentPage,
@@ -287,16 +450,17 @@ private fun SpotAsyncImage(
 private fun SpotCardInteractionBar(
     isLiked: Boolean,
     isSaved: Boolean,
-    vibeLabels: List<String>,
+    flipEnabled: Boolean,
+    flipShowsBack: Boolean,
     onLikeClick: (() -> Unit)?,
     onBookmarkClick: (() -> Unit)?,
     onMoreClick: (() -> Unit)?,
-    onVibeClick: (() -> Unit)?,
+    onMapFlipClick: (() -> Unit)?,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 12.dp)
+            .padding(start = 8.dp, end = 12.dp)
             .testTag("spotCard.interactionBar"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -326,6 +490,21 @@ private fun SpotCardInteractionBar(
             )
         }
 
+        if (flipEnabled && onMapFlipClick != null) {
+            IconButton(
+                onClick = onMapFlipClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .testTag("spotCard.mapFlipButton"),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Place,
+                    contentDescription = if (flipShowsBack) "Show photo" else "Show map",
+                    tint = if (flipShowsBack) SpotColors.MapMarkerGreen else SpotColors.MapMarkerGreen.copy(alpha = 0.7f),
+                )
+            }
+        }
+
         IconButton(
             onClick = { onMoreClick?.invoke() },
             modifier = Modifier
@@ -340,13 +519,6 @@ private fun SpotCardInteractionBar(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
-        if (vibeLabels.isNotEmpty()) {
-            RotatingVibeTags(
-                labels = vibeLabels,
-                onTap = onVibeClick,
-            )
-        }
     }
 }
 
