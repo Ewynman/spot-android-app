@@ -59,7 +59,7 @@ derived from recent iOS shipping work.
 
 | # | Task | Date | Android PR |
 |---|------|------|------------|
-| 13 | [Home place-first Spot card + map flip](tasks/13-home-card-place-first-flip.md) | 2026-08-31 | _pending_ |
+| 13 | [Home place-first Spot card + map flip](tasks/13-home-card-place-first-flip.md) | 2026-08-31 | [#29](https://github.com/Ewynman/spot-android-app/pull/29) |
 | 12 | [Map photo-preview pin markers](tasks/12-map-photo-pins.md) | 2026-08-30 | [#28](https://github.com/Ewynman/spot-android-app/pull/28) |
 
 Format:
