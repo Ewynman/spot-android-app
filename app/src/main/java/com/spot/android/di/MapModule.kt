@@ -1,8 +1,14 @@
 package com.spot.android.di
 
+import com.spot.android.core.media.AndroidMapMarkerImageCache
+import com.spot.android.core.media.HttpMarkerBitmapSource
+import com.spot.android.core.media.MapMarkerImageCache
+import com.spot.android.core.media.MarkerBitmapSource
 import com.spot.android.data.location.AndroidMapLocationTracker
 import com.spot.android.data.location.MapLocationTracker
+import com.spot.android.data.map.DefaultMapMarkerFeatureFlags
 import com.spot.android.data.map.FollowingIdsRepository
+import com.spot.android.data.map.MapMarkerFeatureFlags
 import com.spot.android.data.map.MapRepository
 import com.spot.android.data.map.SupabaseFollowingIdsRepository
 import com.spot.android.data.map.SupabaseMapRepository
@@ -38,4 +44,22 @@ abstract class MapModule {
     abstract fun bindMapLocationTracker(
         impl: AndroidMapLocationTracker,
     ): MapLocationTracker
+
+    @Binds
+    @Singleton
+    abstract fun bindMapMarkerFeatureFlags(
+        impl: DefaultMapMarkerFeatureFlags,
+    ): MapMarkerFeatureFlags
+
+    @Binds
+    @Singleton
+    abstract fun bindMapMarkerImageCache(
+        impl: AndroidMapMarkerImageCache,
+    ): MapMarkerImageCache
+
+    @Binds
+    @Singleton
+    abstract fun bindMarkerBitmapSource(
+        impl: HttpMarkerBitmapSource,
+    ): MarkerBitmapSource
 }

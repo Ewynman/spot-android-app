@@ -7,6 +7,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.spot.android.core.analytics.AnalyticsTracker
 import com.spot.android.core.logging.LogCategory
 import com.spot.android.core.logging.SpotLogger
+import com.spot.android.core.media.MapMarkerImageCache
 import com.spot.android.core.supabase.SessionBridge
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +43,10 @@ class SpotApplication : Application(), ImageLoaderFactory {
 
     @Inject
     lateinit var notificationService: com.spot.android.data.notifications.SpotNotificationService
-    
+
+    @Inject
+    lateinit var mapMarkerImageCache: MapMarkerImageCache
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     
     override fun onCreate() {
@@ -51,6 +55,21 @@ class SpotApplication : Application(), ImageLoaderFactory {
         initializeSessionBridge()
         initializeLoggingAndAnalytics()
         notificationService.ensureChannels()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        // Drop the bespoke map-marker bitmap cache whenever the system signals
+        // memory pressure (matches iOS task 12 behaviour).
+        if (level >= android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+            mapMarkerImageCache.onTrimMemory()
+        }
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapMarkerImageCache.onTrimMemory()
     }
     
     /**

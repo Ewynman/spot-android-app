@@ -103,7 +103,7 @@ fun ProfileMapView(
                         true
                     },
                 ) {
-                    MapPinMarker(
+                    TeardropPinMarker(
                         isSelected = isSelected,
                         testTag = "profile.mapPin.${pin.spot.id}",
                     )

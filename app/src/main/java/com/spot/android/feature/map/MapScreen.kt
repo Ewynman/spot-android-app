@@ -41,6 +41,7 @@ import com.spot.android.core.design.component.Toast
 import com.spot.android.core.design.component.ToastType
 import com.spot.android.core.design.component.TopNavigationView
 import com.spot.android.core.design.theme.SpotColors
+import com.spot.android.core.media.MapMarkerImageCache
 import com.spot.android.core.util.Constants
 import com.spot.android.data.permissions.PermissionState
 import com.spot.android.feature.permissions.PermissionsViewModel
@@ -172,18 +173,38 @@ fun MapScreen(
                 ),
                 onMapClick = { viewModel.onMapTapped() },
             ) {
+                val photoPinsEnabled by viewModel.photoPinMarkersEnabled.collectAsStateWithLifecycle()
+                val markerImageCache = viewModel.markerImageCache
                 uiState.pins.forEach { pin ->
                     val isSelected = pin.spot.id == uiState.selectedSpotId
+                    val hasImage = !pin.spot.imageURL.isNullOrBlank()
+                    val showPhotoPin = photoPinsEnabled && hasImage
+                    LaunchedEffect(pin.spot.id, hasImage) {
+                        viewModel.onPinImpression(pin.spot.id, hasImage = hasImage)
+                    }
                     MarkerComposable(
+                        pin.spot.id, isSelected, showPhotoPin,
                         state = MarkerState(position = pin.displayPosition),
+                        zIndex = if (isSelected) Constants.PhotoPin.SELECTED_Z_INDEX else 0f,
                         onClick = {
-                            viewModel.onPinSelected(pin.spot.id)
+                            viewModel.onPinTapped(
+                                spotId = pin.spot.id,
+                                zoomLevel = cameraPositionState.position.zoom,
+                                hasImage = hasImage,
+                            )
                             true
                         },
                     ) {
                         MapPinMarker(
                             isSelected = isSelected,
+                            showPhotoPin = showPhotoPin,
+                            imageUrl = pin.spot.imageURL,
+                            imageCache = markerImageCache,
+                            onImageLoaded = { cacheHit -> viewModel.onMarkerImageLoaded(cacheHit) },
+                            onImageFailed = { viewModel.onMarkerImageFailed() },
                             testTag = "map.pin.${pin.spot.id}",
+                            username = pin.spot.username,
+                            locationName = pin.spot.locationName,
                         )
                     }
                 }

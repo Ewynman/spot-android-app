@@ -1,9 +1,14 @@
 package com.spot.android.feature.map
 
+import com.spot.android.core.analytics.AnalyticsTracker
+import com.spot.android.core.analytics.DeepLinkOrigin
 import com.spot.android.core.logging.FakeLogWriter
 import com.spot.android.core.logging.SpotLogger
 import com.spot.android.core.media.ImageUrlSigner
+import com.spot.android.core.media.MapMarkerImageCache
+import com.spot.android.core.media.MapMarkerImageLoadResult
 import com.spot.android.core.supabase.SupabaseClientProvider
+import com.spot.android.core.util.Constants
 import com.spot.android.data.auth.UserSessionHolder
 import com.spot.android.data.content.LocalContentRemovalBus
 import com.spot.android.data.dto.MapSpotRowDto
@@ -11,6 +16,7 @@ import com.spot.android.data.feed.FakeEngagementRepository
 import com.spot.android.data.feed.FeedEventService
 import com.spot.android.data.location.MapLocationTracker
 import com.spot.android.data.location.ViewerLocation
+import com.spot.android.data.map.FakeMapMarkerFeatureFlags
 import com.spot.android.data.map.FakeMapRepository
 import com.spot.android.data.map.FollowingIdsRepository
 import com.spot.android.data.map.MapSpotHydrator
@@ -43,6 +49,9 @@ class MapViewModelTest {
 
     private lateinit var fakeMapRepository: FakeMapRepository
     private lateinit var userSessionHolder: UserSessionHolder
+    private lateinit var fakeAnalytics: RecordingAnalyticsTracker
+    private lateinit var fakeFeatureFlags: FakeMapMarkerFeatureFlags
+    private lateinit var fakeMarkerCache: FakeMapMarkerImageCache
     private lateinit var viewModel: MapViewModel
 
     @Before
@@ -52,6 +61,9 @@ class MapViewModelTest {
         fakeMapRepository = FakeMapRepository()
         fakeMapRepository.spots = listOf(sampleRow("spot-1"), sampleRow("spot-2"))
         userSessionHolder = UserSessionHolder()
+        fakeAnalytics = RecordingAnalyticsTracker()
+        fakeFeatureFlags = FakeMapMarkerFeatureFlags(photoPinEnabled = true)
+        fakeMarkerCache = FakeMapMarkerImageCache()
 
         val imageUrlSigner = mockk<ImageUrlSigner>()
         coEvery { imageUrlSigner.getImageUrl(any(), any()) } returns "https://signed.example/image.jpg"
@@ -81,6 +93,9 @@ class MapViewModelTest {
                 override fun startTracking() = Unit
                 override fun stopTracking() = Unit
             },
+            mapMarkerFeatureFlags = fakeFeatureFlags,
+            analyticsTracker = fakeAnalytics,
+            markerImageCache = fakeMarkerCache,
             logger = logger,
         )
     }
@@ -170,6 +185,76 @@ class MapViewModelTest {
         assertNull(viewModel.uiState.value.selectedSpotId)
     }
 
+    @Test
+    fun `pin impression fires once per spot per session and re-fires after tab left`() = runTest {
+        viewModel.onPinImpression("spot-1", hasImage = true)
+        viewModel.onPinImpression("spot-1", hasImage = true)
+        viewModel.onPinImpression("spot-2", hasImage = false)
+
+        assertEquals(2, fakeAnalytics.impressions.size)
+        assertEquals(
+            Constants.Analytics.Values.MARKER_TYPE_PHOTO_PIN,
+            fakeAnalytics.impressions.first(),
+        )
+        assertEquals(
+            Constants.Analytics.Values.MARKER_TYPE_TEARDROP,
+            fakeAnalytics.impressions.last(),
+        )
+
+        viewModel.onTabLeft()
+        viewModel.onPinImpression("spot-1", hasImage = true)
+        assertEquals(3, fakeAnalytics.impressions.size)
+    }
+
+    @Test
+    fun `pin tap records marker type and zoom rounded to half`() = runTest {
+        viewModel.onFirstAppear()
+        viewModel.onCameraIdle(40.7128, -74.0060, 13f, userInitiated = false)
+        advanceTimeBy(300)
+        advanceUntilIdle()
+
+        val spotId = viewModel.uiState.value.allSpots.keys.first()
+        viewModel.onPinTapped(spotId = spotId, zoomLevel = 13.4f, hasImage = true)
+
+        assertEquals(1, fakeAnalytics.taps.size)
+        val (type, zoom) = fakeAnalytics.taps.first()
+        assertEquals(Constants.Analytics.Values.MARKER_TYPE_PHOTO_PIN, type)
+        assertEquals(13.5, zoom, 0.001)
+    }
+
+    @Test
+    fun `pin tap without photo pin reports teardrop type`() = runTest {
+        fakeFeatureFlags.setPhotoPinMarkersEnabled(false)
+
+        viewModel.onFirstAppear()
+        viewModel.onCameraIdle(40.7128, -74.0060, 13f, userInitiated = false)
+        advanceTimeBy(300)
+        advanceUntilIdle()
+
+        val spotId = viewModel.uiState.value.allSpots.keys.first()
+        viewModel.onPinTapped(spotId = spotId, zoomLevel = 12.1f, hasImage = true)
+
+        val (type, zoom) = fakeAnalytics.taps.first()
+        assertEquals(Constants.Analytics.Values.MARKER_TYPE_TEARDROP, type)
+        assertEquals(12.0, zoom, 0.001)
+    }
+
+    @Test
+    fun `marker image load callbacks track success failure and cache hit`() {
+        viewModel.onMarkerImageLoaded(cacheHit = false)
+        viewModel.onMarkerImageLoaded(cacheHit = true)
+        viewModel.onMarkerImageFailed()
+
+        assertEquals(
+            listOf(
+                Triple(true, false, false),
+                Triple(true, true, false),
+                Triple(false, false, false),
+            ).map { it.first to it.second },
+            fakeAnalytics.imageLoads,
+        )
+    }
+
     private fun sampleRow(spotId: String): MapSpotRowDto {
         return MapSpotRowDto(
             spot_id = spotId,
@@ -188,4 +273,39 @@ class MapViewModelTest {
             distance_meters = 100.0,
         )
     }
+}
+
+private class RecordingAnalyticsTracker : AnalyticsTracker {
+    val impressions = mutableListOf<String>()
+    val taps = mutableListOf<Pair<String, Double>>()
+    val imageLoads = mutableListOf<Pair<Boolean, Boolean>>()
+
+    override fun logEvent(name: String, params: Map<String, Any?>) = Unit
+    override fun trackAuthReinstall() = Unit
+    override fun trackPermissionsRequested(permissionType: String) = Unit
+    override fun trackFeedDropPrivate(reason: String) = Unit
+    override fun trackImageLoadFailed(source: String) = Unit
+    override fun trackAuthEmailInUse() = Unit
+    override fun trackAuthDeleteByEmail() = Unit
+    override fun trackDeepLink(origin: DeepLinkOrigin, route: String) = Unit
+
+    override fun trackMapMarkerImpression(markerType: String) {
+        impressions += markerType
+    }
+
+    override fun trackMapMarkerImageLoad(success: Boolean, cacheHit: Boolean) {
+        imageLoads += success to cacheHit
+    }
+
+    override fun trackMapMarkerTapped(markerType: String, zoomLevel: Double) {
+        taps += markerType to zoomLevel
+    }
+}
+
+private class FakeMapMarkerImageCache : MapMarkerImageCache {
+    override suspend fun load(url: String, targetPx: Int): MapMarkerImageLoadResult =
+        MapMarkerImageLoadResult.Failure
+    override fun onTrimMemory() = Unit
+    override fun clear() = Unit
+    override fun size(): Int = 0
 }
